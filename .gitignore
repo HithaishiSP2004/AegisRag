@@ -30,8 +30,19 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files — commit .env.example ONLY
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# corpus — local only, never commit
+/corpus/
+
+# supabase local dev
+supabase/.branches
+supabase/.temp
 
 # vercel
 .vercel
@@ -39,3 +50,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ─── LOCAL DEV / DEBUG SCRIPTS (never commit) ────────────────────────────────
+# One-off debug & scratch scripts at repo root
+check-all-profiles.js
+check-profile.js
+check-tables.js
+db-audit.js
+debug-risk-query.js
+scratch-counts.js
+scratch-test.js
+seed-dashboard.js
+test-e2e-api.js
+
+# scratch / temporary work directory
+/scratch/
+
+# dev-only helper scripts folder
+/scripts/

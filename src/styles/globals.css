@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+/* ── AegisRAG Design Tokens ───────────────────────────────────────────────── */
+:root {
+  /* Background */
+  --bg-primary:   #080C14;
+  --bg-secondary: #0D1117;
+  --bg-elevated:  #131923;
+  --bg-overlay:   #1A2332;
+
+  /* Accent */
+  --accent-blue:    #3B82F6;
+  --accent-indigo:  #6366F1;
+  --accent-cyan:    #22D3EE;
+  --accent-emerald: #10B981;
+  --accent-amber:   #F59E0B;
+  --accent-rose:    #F43F5E;
+  --accent-violet:  #8B5CF6;
+
+  /* Text */
+  --text-primary:   #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted:     #475569;
+  --text-code:      #22D3EE;
+
+  /* Glass */
+  --glass-surface:       rgba(255,255,255,0.04);
+  --glass-surface-hover: rgba(255,255,255,0.07);
+  --glass-border:        rgba(255,255,255,0.08);
+  --glass-border-hover:  rgba(255,255,255,0.16);
+
+  /* Fonts */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), 'Courier New', monospace;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+/* ── Base Reset ───────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Liquid Glass Utility Classes ─────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+}
+
+.glass-card:hover {
+  background: var(--glass-surface-hover);
+  border-color: var(--glass-border-hover);
+}
+
+.glass-panel {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-xl);
+}
+
+/* Navigation icon container — Liquid Glass with premium hover */
+.nav-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.nav-icon-container:hover {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.20);
+  box-shadow: 0 0 20px rgba(59,130,246,0.10);
+}
+
+.nav-icon-container.active {
+  background: rgba(59,130,246,0.15);
+  border-color: rgba(59,130,246,0.30);
+  box-shadow: 0 0 24px rgba(59,130,246,0.20);
+}
+
+/* ── Typography Utilities ─────────────────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-sans);
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+.font-mono-data {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--text-code);
+  letter-spacing: 0.02em;
+}
+
+/* ── Glow Utilities ───────────────────────────────────────────────────────── */
+.glow-blue   { box-shadow: 0 0 20px rgba(59,130,246,0.15); }
+.glow-cyan   { box-shadow: 0 0 20px rgba(34,211,238,0.10); }
+.glow-emerald{ box-shadow: 0 0 20px rgba(16,185,129,0.10); }
+.glow-rose   { box-shadow: 0 0 20px rgba(244,63,94,0.15); }
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.20); }
+
+/* ── Selection ────────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(59,130,246,0.30);
+  color: #F8FAFC;
+}
+
+/* ── Focus Ring ───────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
