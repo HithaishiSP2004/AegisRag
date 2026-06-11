@@ -94,6 +94,16 @@ interface GovernanceStats {
   fallback_rate_pct:       number
 }
 
+interface CorpusStats {
+  total_documents:   number
+  total_pages:       number
+  total_chunks:      number
+  total_embeddings:  number
+  documents_added_today: number
+  documents_updated_today: number
+  documents_deleted_today: number
+}
+
 export function CommandCenterDashboard({
   profile,
   initialEmail,
@@ -106,6 +116,8 @@ export function CommandCenterDashboard({
     alerts: SecurityAlert[]
     secStats: SecurityEventStats | null
     events: SecurityEventRow[]
+    corpusStats: CorpusStats | null
+    globalCorpusStats: CorpusStats | null
   } | null>(null)
 
   const [complianceData, setComplianceData] = useState<{
@@ -167,135 +179,15 @@ export function CommandCenterDashboard({
         throw new Error(`Failed to fetch governance reports stream (status: ${govRes.status}).`)
       }
 
-      const dbEvents = secJson.events ?? []
-      const fallbackEvents = dbEvents.length > 0 ? dbEvents : [
-        {
-          id: 'mock-1',
-          event_type: 'Compliance Audit',
-          severity: 'nominal',
-          description: 'Verified SOC2 Control CC6.1: Access privilege authorization logs parsed.',
-          blocked: false,
-          created_at: new Date(Date.now() - 5 * 60000).toISOString()
-        },
-        {
-          id: 'mock-2',
-          event_type: 'Model Fallback',
-          severity: 'warning',
-          description: 'Gemini-3.1-Pro latency exceeded threshold. Falling back to Gemini-3.1-Flash.',
-          blocked: false,
-          created_at: new Date(Date.now() - 15 * 60000).toISOString()
-        },
-        {
-          id: 'mock-3',
-          event_type: 'Injection Attempt',
-          severity: 'danger',
-          description: 'Vector search prompt injection detected and blocked in Knowledge Vault.',
-          blocked: true,
-          created_at: new Date(Date.now() - 25 * 60000).toISOString()
-        },
-        {
-          id: 'mock-4',
-          event_type: 'Compliance Audit',
-          severity: 'nominal',
-          description: 'Verified HIPAA Control: Encrypted storage verification check succeeded.',
-          blocked: false,
-          created_at: new Date(Date.now() - 40 * 60000).toISOString()
-        },
-        {
-          id: 'mock-5',
-          event_type: 'Retrieval Query',
-          severity: 'nominal',
-          description: 'High-fidelity retrieval query executed with groundedness score of 98.2%.',
-          blocked: false,
-          created_at: new Date(Date.now() - 60 * 60000).toISOString()
-        },
-        {
-          id: 'mock-6',
-          event_type: 'Unauthorized Attempt',
-          severity: 'danger',
-          description: 'Blocked unauthorized organization switching request on /api/documents.',
-          blocked: true,
-          created_at: new Date(Date.now() - 120 * 60000).toISOString()
-        },
-        {
-          id: 'mock-7',
-          event_type: 'Compliance Audit',
-          severity: 'nominal',
-          description: 'System-wide policy enforcement scan completed successfully.',
-          blocked: false,
-          created_at: new Date(Date.now() - 180 * 60000).toISOString()
-        },
-        {
-          id: 'mock-8',
-          event_type: 'Hallucination Block',
-          severity: 'warning',
-          description: 'Answer groundedness fell below threshold (80.5%). Rerouting to manual validation.',
-          blocked: false,
-          created_at: new Date(Date.now() - 240 * 60000).toISOString()
-        },
-        {
-          id: 'mock-9',
-          event_type: 'Security Scan',
-          severity: 'nominal',
-          description: 'Vulnerability scan complete. No critical compliance issues found.',
-          blocked: false,
-          created_at: new Date(Date.now() - 300 * 60000).toISOString()
-        },
-        {
-          id: 'mock-10',
-          event_type: 'Injection Attempt',
-          severity: 'danger',
-          description: 'Blocked prompt leak attempt containing system instructions.',
-          blocked: true,
-          created_at: new Date(Date.now() - 360 * 60000).toISOString()
-        },
-        {
-          id: 'mock-11',
-          event_type: 'Compliance Audit',
-          severity: 'nominal',
-          description: 'Verified ISO27001 Control A.12.4.1: Audit logging policies active.',
-          blocked: false,
-          created_at: new Date(Date.now() - 420 * 60000).toISOString()
-        },
-        {
-          id: 'mock-12',
-          event_type: 'Retrieval Query',
-          severity: 'nominal',
-          description: 'Knowledge retrieval from legal contracts vault yielded 4 citations.',
-          blocked: false,
-          created_at: new Date(Date.now() - 480 * 60000).toISOString()
-        },
-        {
-          id: 'mock-13',
-          event_type: 'Unauthorized Attempt',
-          severity: 'danger',
-          description: 'External API key authentication token revoked due to key rotation rule.',
-          blocked: true,
-          created_at: new Date(Date.now() - 540 * 60000).toISOString()
-        },
-        {
-          id: 'mock-14',
-          event_type: 'Model Fallback',
-          severity: 'warning',
-          description: 'Gemini rate limits active; fallback routing pipeline engaged.',
-          blocked: false,
-          created_at: new Date(Date.now() - 600 * 60000).toISOString()
-        },
-        {
-          id: 'mock-15',
-          event_type: 'Compliance Audit',
-          severity: 'nominal',
-          description: 'Completed automated SOC2 evidence collection for tenant database.',
-          blocked: false,
-          created_at: new Date(Date.now() - 660 * 60000).toISOString()
-        }
-      ]
+            const dbEvents = secJson.events ?? []
 
       setSecurityData({
         kpi: secJson.kpi,
         alerts: secJson.alerts ?? [],
         secStats: secJson.secStats,
-        events: fallbackEvents,
+        events: dbEvents,
+        corpusStats: secJson.corpusStats ?? null,
+        globalCorpusStats: secJson.globalCorpusStats ?? null,
       })
 
       setComplianceData({
@@ -362,17 +254,17 @@ export function CommandCenterDashboard({
   const riskVal = Math.max(0, rawRiskVal - remediatedAlertIds.length * 15) // Dynamic updates
   const riskLvl = criticalAlerts > 0 ? 'CRITICAL' : warningAlerts > 0 ? 'WARNING' : 'NOMINAL'
 
-  const compTotal = complianceData?.stats?.total_controls ?? 1
+  const compTotal = complianceData?.stats?.total_controls ?? 0
   const compEvidence = complianceData?.stats?.controls_with_evidence ?? 0
-  const compPercentage = Math.round((compEvidence / compTotal) * 100)
+  const compPercentage = compTotal > 0 ? Math.round((compEvidence / compTotal) * 100) : 0
 
-  const retrievalGroundedness = retrievalData?.avg_groundedness != null ? Math.round(retrievalData.avg_groundedness * 100) : 92
+  const retrievalGroundedness = retrievalData?.avg_groundedness != null ? Math.round(retrievalData.avg_groundedness * 100) : 0
   const retrievalFailures = complianceData?.riskScore?.retrieval_failures ?? 0
-  const retrievalLatency = retrievalData?.avg_total_latency_ms ?? 340
+  const retrievalLatency = retrievalData?.avg_total_latency_ms ?? 0
 
   const totalCalls = governanceData?.total_calls ?? 0
   const failedCalls = governanceData?.failed_calls ?? 0
-  const successRate = totalCalls > 0 ? Math.round(((totalCalls - failedCalls) / totalCalls) * 1000) / 10 : 100.0
+  const successRate = totalCalls > 0 ? Math.round(((totalCalls - failedCalls) / totalCalls) * 1000) / 10 : 0
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', animation: 'fadeInUp 0.35s ease', padding: '12px' }}>
@@ -496,6 +388,25 @@ export function CommandCenterDashboard({
                 fontFamily: font.mono
               }}>
                 {activeAlertsSource.length} PNDG
+              </span>
+            </div>
+
+            <span style={{ width: '1px', height: '18px', background: 'rgba(255,255,255,0.06)' }} />
+
+            {/* Corpus size */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ fontSize: '7px', fontWeight: 750, color: colors.textMuted, fontFamily: font.mono }}>
+                {profile?.role === 'super_admin' ? 'GLOBAL_PAGES' : 'CORPUS_PAGES'}
+              </span>
+              <span style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                color: colors.violetLight,
+                fontFamily: font.mono
+              }}>
+                {profile?.role === 'super_admin'
+                  ? (securityData?.globalCorpusStats?.total_pages ?? 0)
+                  : (securityData?.corpusStats?.total_pages ?? 0)}
               </span>
             </div>
           </div>
@@ -755,6 +666,104 @@ export function CommandCenterDashboard({
                 >
                   Run Injection Audit →
                 </button>
+              </div>
+            </div>
+          </ChamferedShard>
+
+          {/* Telemetry Card 4: Global/Org Corpus Stats */}
+          <ChamferedShard 
+            variant="default" 
+            accentColor={colors.violet} 
+            noPad={true}
+            style={{
+              borderLeft: `3px solid ${colors.violet}`,
+              boxShadow: '0 0 0 1px rgba(139,92,246,0.06), inset 0 0 20px rgba(139,92,246,0.02)',
+              background: 'rgba(139,92,246,0.02)',
+            }}
+          >
+            <div style={{ padding: '10px 12px 8px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: colors.violet, boxShadow: `0 0 4px ${colors.violet}`, flexShrink: 0 }} />
+                  <span style={{ fontSize: '8.5px', color: colors.violetLight, fontWeight: 800, letterSpacing: '0.05em', fontFamily: font.mono }}>
+                    {profile?.role === 'super_admin' ? 'GLOBAL CORPUS' : 'KNOWLEDGE CORPUS'}
+                  </span>
+                </div>
+                <span style={{ color: colors.violet, display: 'flex', alignItems: 'center', opacity: 0.7 }}>
+                  <Layers size={11} />
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                <p style={{ fontSize: '18px', fontWeight: 850, margin: 0, color: colors.textPrimary, fontFamily: font.mono }}>
+                  {profile?.role === 'super_admin'
+                    ? (securityData?.globalCorpusStats?.total_documents ?? 0)
+                    : (securityData?.corpusStats?.total_documents ?? 0)}
+                </p>
+                <span style={{ fontSize: '9px', color: colors.violetLight, fontFamily: font.mono, fontWeight: 700 }}>
+                  DOCS INDEXED
+                </span>
+              </div>
+              <p style={{ fontSize: '9.5px', color: colors.textSecondary, margin: '1px 0 6px' }}>
+                {profile?.role === 'super_admin'
+                  ? `System-wide Global Knowledge Base`
+                  : `Tenant Isolated Knowledge Base`}
+              </p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '9.5px', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '5px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: colors.textSecondary }}>Total Pages</span>
+                  <span style={{ color: colors.textPrimary, fontFamily: font.mono }}>
+                    {profile?.role === 'super_admin'
+                      ? (securityData?.globalCorpusStats?.total_pages ?? 0)
+                      : (securityData?.corpusStats?.total_pages ?? 0)}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: colors.textSecondary }}>Total Chunks</span>
+                  <span style={{ color: colors.textPrimary, fontFamily: font.mono }}>
+                    {profile?.role === 'super_admin'
+                      ? (securityData?.globalCorpusStats?.total_chunks ?? 0)
+                      : (securityData?.corpusStats?.total_chunks ?? 0)}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: colors.textSecondary }}>Total Embeddings</span>
+                  <span style={{ color: colors.textPrimary, fontFamily: font.mono }}>
+                    {profile?.role === 'super_admin'
+                      ? (securityData?.globalCorpusStats?.total_embeddings ?? 0)
+                      : (securityData?.corpusStats?.total_embeddings ?? 0)}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.03)', marginTop: '4px', paddingTop: '4px' }}>
+                  <span style={{ color: colors.textSecondary }}>Added Today</span>
+                  <span style={{ color: colors.emerald, fontFamily: font.mono }}>
+                    {profile?.role === 'super_admin'
+                      ? (securityData?.globalCorpusStats?.documents_added_today ?? 0)
+                      : (securityData?.corpusStats?.documents_added_today ?? 0)}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: colors.textSecondary }}>Updated Today</span>
+                  <span style={{ color: colors.blueLight, fontFamily: font.mono }}>
+                    {profile?.role === 'super_admin'
+                      ? (securityData?.globalCorpusStats?.documents_updated_today ?? 0)
+                      : (securityData?.corpusStats?.documents_updated_today ?? 0)}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: colors.textSecondary }}>Deleted Today</span>
+                  <span style={{ color: colors.rose, fontFamily: font.mono }}>
+                    {profile?.role === 'super_admin'
+                      ? (securityData?.globalCorpusStats?.documents_deleted_today ?? 0)
+                      : (securityData?.corpusStats?.documents_deleted_today ?? 0)}
+                  </span>
+                </div>
+              </div>
+              
+              <div style={{ marginTop: '5px', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '4px' }}>
+                <Link href="/knowledge-vault" style={{ fontSize: '9.5px', color: colors.violetLight, textDecoration: 'none', fontWeight: 650, display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                  Manage Documents →
+                </Link>
               </div>
             </div>
           </ChamferedShard>
@@ -1231,7 +1240,11 @@ export function CommandCenterDashboard({
               flexDirection: 'column',
               gap: '10px'
             }}>
-              {(securityData?.events ?? []).slice(0, 4).map((evt) => {
+              {(securityData?.events ?? []).length === 0 ? (
+                <div style={{ padding: '20px 10px', textAlign: 'center', color: colors.textMuted, fontSize: '10px', fontFamily: font.mono }}>
+                  No Security Activity Recorded
+                </div>
+              ) : (securityData?.events ?? []).slice(0, 4).map((evt) => {
                 const isThreat = evt.blocked || evt.severity === 'danger' || evt.severity === 'critical';
                 const isWarning = evt.severity === 'warning';
                 

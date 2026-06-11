@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Shield,
   LogOut,
+  Activity,
 } from 'lucide-react'
 import { colors, font, radius, transition, iconSize } from '@/components/ui/tokens'
 import { UsageWidget } from '@/features/trial/components/UsageWidget'
@@ -68,6 +69,11 @@ export function Sidebar({ userEmail, userName, role }: Props) {
           icon:  <MessageSquare size={iconSize.md} aria-hidden="true" />,
         },
         {
+          href:  '/workflows',
+          label: 'Compliance Workflows',
+          icon:  <ScrollText size={iconSize.md} aria-hidden="true" />,
+        },
+        {
           href:  '/knowledge-vault',
           label: 'Knowledge Vault',
           icon:  <Database size={iconSize.md} aria-hidden="true" />,
@@ -81,11 +87,25 @@ export function Sidebar({ userEmail, userName, role }: Props) {
           href:  '/dashboard/security',
           label: 'Security',
           icon:  <ShieldAlert size={iconSize.md} aria-hidden="true" />,
+          roles: ['super_admin', 'compliance_officer', 'security_analyst', 'auditor'],
         },
         {
           href:  '/dashboard/compliance',
           label: 'Compliance',
           icon:  <Scale size={iconSize.md} aria-hidden="true" />,
+          roles: ['super_admin', 'compliance_officer', 'security_analyst', 'auditor'],
+        },
+        {
+          href:  '/dashboard/governance',
+          label: 'AI Governance',
+          icon:  <Shield size={iconSize.md} aria-hidden="true" />,
+          roles: ['super_admin', 'compliance_officer'],
+        },
+        {
+          href:  '/dashboard/resilience',
+          label: 'System Resilience',
+          icon:  <Activity size={iconSize.md} aria-hidden="true" />,
+          roles: ['super_admin', 'compliance_officer'],
         },
       ]
     },
@@ -224,62 +244,72 @@ export function Sidebar({ userEmail, userName, role }: Props) {
         aria-label="App navigation"
         style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '12px 0' }}
       >
-        {NAV_GROUPS.map((group, groupIdx) => (
-          <div key={group.title} style={{ marginBottom: '18px' }}>
-            {!collapsed ? (
-              <div className="sidebar-group-header">
-                {group.title}
-              </div>
-            ) : (
-              groupIdx > 0 && (
-                <div
-                  style={{
-                    height: '1px',
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    margin: '6px 12px 10px',
-                  }}
-                  aria-hidden="true"
-                />
-              )
-            )}
+        {NAV_GROUPS.map((group, groupIdx) => {
+          const visibleItems = group.items.filter(item => {
+            if (!item.roles) return true
+            if (!role) return false
+            return item.roles.includes(role)
+          })
 
-            <ul role="list" style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '4px', margin: 0, padding: 0 }}>
-              {group.items.map((item) => {
-                const active = isActive(item)
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={`sidebar-nav-item ${active ? 'active' : ''}`}
-                      aria-current={active ? 'page' : undefined}
-                      title={collapsed ? item.label : undefined}
-                      style={{
-                        justifyContent: collapsed ? 'center' : undefined,
-                      }}
-                    >
-                      <span
-                        aria-hidden="true"
+          if (visibleItems.length === 0) return null
+
+          return (
+            <div key={group.title} style={{ marginBottom: '18px' }}>
+              {!collapsed ? (
+                <div className="sidebar-group-header">
+                  {group.title}
+                </div>
+              ) : (
+                groupIdx > 0 && (
+                  <div
+                    style={{
+                      height: '1px',
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      margin: '6px 12px 10px',
+                    }}
+                    aria-hidden="true"
+                  />
+                )
+              )}
+
+              <ul role="list" style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '4px', margin: 0, padding: 0 }}>
+                {visibleItems.map((item) => {
+                  const active = isActive(item)
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={`sidebar-nav-item ${active ? 'active' : ''}`}
+                        aria-current={active ? 'page' : undefined}
+                        title={collapsed ? item.label : undefined}
                         style={{
-                          flexShrink: 0,
-                          color: active ? colors.indigoLight : colors.textMuted,
-                          display: 'flex',
-                          transition: transition.fast,
+                          justifyContent: collapsed ? 'center' : undefined,
                         }}
                       >
-                        {item.icon}
-                      </span>
-                      {!collapsed && (
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {item.label}
+                        <span
+                          aria-hidden="true"
+                          style={{
+                            flexShrink: 0,
+                            color: active ? colors.indigoLight : colors.textMuted,
+                            display: 'flex',
+                            transition: transition.fast,
+                          }}
+                        >
+                          {item.icon}
                         </span>
-                      )}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        ))}
+                        {!collapsed && (
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {item.label}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )
+        })}
       </nav>
 
       {!collapsed && <UsageWidget role={role} />}

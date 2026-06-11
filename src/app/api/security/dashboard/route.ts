@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
 
   const admin = createAdminClient()
 
-  const [kpiResult, alertsResult, secStatsResult, eventsResult] = await Promise.all([
+  const [kpiResult, alertsResult, secStatsResult, eventsResult, corpusStatsResult, globalCorpusStatsResult] = await Promise.all([
     // 1. KPI aggregates
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (admin as any).rpc('get_security_kpi', { p_org_id: profile.org_id, p_days: days }),
@@ -66,16 +66,30 @@ export async function GET(req: NextRequest) {
       .eq('is_demo', false)
       .order('created_at', { ascending: false })
       .limit(10),
+
+    // 5. Organization corpus stats
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (admin as any).rpc('get_corpus_stats', { p_org_id: profile.org_id }),
+
+    // 6. Global corpus stats (for super admins)
+    profile.role === 'super_admin'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ? (admin as any).rpc('get_global_corpus_stats')
+      : Promise.resolve({ data: null, error: null })
   ])
 
   const kpi      = (kpiResult.data as Record<string, number>[] | null)?.[0] ?? null
   const alerts   = alertsResult.data ?? []
   const secStats = (secStatsResult.data as Record<string, number>[] | null)?.[0] ?? null
   const events   = eventsResult.data ?? []
+  const corpusStats = (corpusStatsResult.data as Record<string, number>[] | null)?.[0] ?? null
+  const globalCorpusStats = (globalCorpusStatsResult.data as Record<string, number>[] | null)?.[0] ?? null
 
   if (kpiResult.error)      console.error('[security/dashboard] kpi error:', kpiResult.error.message)
   if (alertsResult.error)   console.error('[security/dashboard] alerts error:', alertsResult.error.message)
   if (secStatsResult.error) console.error('[security/dashboard] secStats error:', secStatsResult.error.message)
+  if (corpusStatsResult.error) console.error('[security/dashboard] corpusStats error:', corpusStatsResult.error.message)
+  if (globalCorpusStatsResult.error) console.error('[security/dashboard] globalCorpusStats error:', globalCorpusStatsResult.error.message)
 
-  return NextResponse.json({ days, kpi, alerts, secStats, events })
+  return NextResponse.json({ days, kpi, alerts, secStats, events, corpusStats, globalCorpusStats })
 }

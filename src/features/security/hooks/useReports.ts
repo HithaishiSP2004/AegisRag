@@ -136,6 +136,14 @@ export interface SecurityReportData {
     created_at:            string
     documents: { filename: string }
   }>
+  recentEvents: Array<{
+    id:          string
+    event_type:  string
+    severity:    string
+    description: string | null
+    blocked:     boolean
+    created_at:  string
+  }>
 }
 
 export interface RetrievalReportData {
@@ -190,6 +198,14 @@ export interface GovernanceReportData {
   }>
   auditSummary: Record<string, number>
   auditCount: number
+  violations?: Array<{
+    id: string
+    category: string
+    severity: string
+    action_taken: string
+    risk_score: number
+    created_at: string
+  }>
 }
 
 export function useReports(reportType: 'executive' | 'compliance' | 'security' | 'retrieval' | 'governance', days = 30) {

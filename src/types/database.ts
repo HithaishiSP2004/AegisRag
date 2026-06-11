@@ -11,6 +11,8 @@ export type UserRole = 'super_admin' | 'compliance_officer' | 'security_analyst'
 export type PermissionAction = 'read' | 'write' | 'delete' | 'admin'
 export type PermissionScope = 'org' | 'department' | 'document'
 export type DocumentStatus = 'uploading' | 'parsing' | 'chunking' | 'embedding' | 'indexed' | 'embedding_failed' | 'failed' | 'deleted'
+export type DocumentClassification = 'global' | 'organization' | 'user'
+export type DocumentFramework = 'GDPR' | 'HIPAA' | 'SOC2' | 'ISO27001' | 'NIST' | 'OWASP_LLM_TOP_10' | 'EU_AI_ACT' | 'SECURITY_FRAMEWORKS' | 'RESEARCH_PAPERS'
 export type DocumentType = 'hr_policy' | 'security_policy' | 'compliance_manual' | 'legal' | 'vendor' | 'regulatory' | 'other'
 export type SensitivityLevel = 'public' | 'internal' | 'confidential' | 'restricted'
 export type PageStatus = 'pending' | 'chunked' | 'embedded' | 'failed'
@@ -160,6 +162,8 @@ export interface Database {
           doc_type: DocumentType
           department: string | null
           sensitivity: SensitivityLevel
+          classification: DocumentClassification
+          framework: DocumentFramework | null
           metadata: Json
           error_message: string | null
           created_at: string
@@ -178,15 +182,22 @@ export interface Database {
           doc_type?: DocumentType
           department?: string | null
           sensitivity?: SensitivityLevel
+          classification?: DocumentClassification
+          framework?: DocumentFramework | null
           metadata?: Json
           error_message?: string | null
         }
         Update: {
           status?: DocumentStatus
           page_count?: number
+          classification?: DocumentClassification
+          framework?: DocumentFramework | null
           metadata?: Json
           error_message?: string | null
           updated_at?: string
+          storage_path?: string
+          filename?: string
+          file_size_bytes?: number
         }
         Relationships: []
       }
@@ -580,6 +591,9 @@ export interface Database {
           hallucination_flag: boolean
           eval_notes:         string | null
           created_at:         string
+          vector_candidates:  number | null
+          reranked_candidates: number | null
+          context_tokens_saved: number | null
         }
         Insert: {
           id?:                 string
@@ -597,6 +611,9 @@ export interface Database {
           citation_hit_rate?:  number | null
           hallucination_flag?: boolean
           eval_notes?:         string | null
+          vector_candidates?:  number | null
+          reranked_candidates?: number | null
+          context_tokens_saved?: number | null
         }
         Update: Record<string, unknown>
         Relationships: []

@@ -1,6 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/server'
-import { GoogleGenAI } from '@google/genai'
-import { AI_MODELS } from '@/config/ai'
+import { executePromptWorkflow } from '@/features/prompts/manager'
 import { createHash } from 'crypto'
 
 export interface NarrativeData {
@@ -77,42 +76,36 @@ export async function getOrGenerateNarrative(
     }
   }
 
-  // 2. Generate with Gemini
+  // 2. Generate with Gemini using Prompt Manager
   console.log(`[narrative] Cache miss or forced refresh for ${reportType} (${period}d). Generating with Gemini...`)
   
-  if (!process.env.GEMINI_API_KEY) {
-    console.warn('[narrative] GEMINI_API_KEY missing, returning baseline narrative.')
-    return getBaselineNarrative(reportType, metrics)
-  }
-
   const firm = REPORT_FIRMS[reportType]
   const title = REPORT_TITLES[reportType]
 
-  const systemPrompt = `You are a Senior Advisory Partner at ${firm}.
-You are writing a premium, professional advisory brief for the Board of Directors of an enterprise SaaS company.
-Format your output as a raw JSON object with the following fields:
-- summary: A 2-3 sentence sophisticated, professional summary of the overall status and GRC findings.
-- what: A concise description of the exact status/finding.
-- why: The technical or operational reason why this is happening.
-- impact: The business, compliance, or security impact of this issue/state.
-- next: Clear, actionable recommended next steps (board directive).
+  const REPORT_PROMPT_TEMPLATES: Record<string, string> = {
+    executive: 'executive_summary',
+    compliance: 'compliance_narrative',
+    security: 'risk_narrative',
+    retrieval: 'retrieval_narrative',
+    governance: 'boardroom_narrative',
+  }
 
-Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (Deloitte/PwC consulting style).`
-
-  const userPrompt = `Generate the brief based on the following real telemetry metrics for the past ${period} days:
-Report Type: ${reportType}
-Metrics: ${JSON.stringify(metrics, null, 2)}`
+  const templateId = REPORT_PROMPT_TEMPLATES[reportType] || 'executive_summary'
 
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
-    const res = await ai.models.generateContent({
-      model: AI_MODELS.GENERATION_PRIMARY,
-      contents: [
-        { role: 'user', parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }
-      ]
+    const result = await executePromptWorkflow({
+      orgId,
+      templateId,
+      version: 'v1',
+      variables: {
+        period: String(period),
+        metrics: JSON.stringify(metrics, null, 2)
+      },
+      reasoningMode: 'direct',
+      workflowType: 'executive_reporting'
     })
 
-    const responseText = res.text ?? ''
+    const responseText = result.text ?? ''
     // Parse JSON safely
     const jsonMatch = responseText.match(/\{[\s\S]*\}/)
     const parsedJson = jsonMatch ? JSON.parse(jsonMatch[0]) : null
@@ -208,10 +201,13 @@ function getBaselineNarrative(reportType: string, metrics: any): NarrativeData {
   } else if (reportType === 'retrieval') {
     const groundedness = metrics.groundedness ?? 88.0
     const hallucination = metrics.hallucination ?? 1.8
+    // M1 FIX: use real latency from metrics; never hardcode "240ms"
+    const latencyMs = metrics.avg_total_latency_ms ?? metrics.avgLatencyMs ?? null
+    const latencyStr = latencyMs != null ? `${Math.round(latencyMs)}ms` : 'N/A'
     return {
       title,
       firm,
-      summary: `Retrieval benchmarks demonstrate high operational fidelity, with Groundedness averaging ${groundedness}% and Hallucination rates constrained to ${hallucination}%. Latency metrics are optimized with an average query resolution speed of 240ms, indicating robust vector indexing and hybrid search configurations.`,
+      summary: `Retrieval benchmarks demonstrate high operational fidelity, with Groundedness averaging ${groundedness}% and Hallucination rates constrained to ${hallucination}%. Latency metrics are optimized with an average query resolution speed of ${latencyStr}, indicating robust vector indexing and hybrid search configurations.`,
       what: `Groundedness optimized at ${groundedness}% with low hallucinations (${hallucination}%).`,
       why: 'Consolidated vector chunking and keyword indexing prevents context window overflow.',
       impact: 'Users receive boardroom-ready accurate answers, minimizing model hallucination vulnerabilities.',

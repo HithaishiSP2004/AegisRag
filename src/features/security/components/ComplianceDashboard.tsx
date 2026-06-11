@@ -8,8 +8,13 @@ import { useState } from 'react'
 import { Home, Shield, CheckSquare, FileDown, List, Scale, ShieldCheck } from 'lucide-react'
 import { ComplianceKPICards }      from './ComplianceKPICards'
 import { FrameworkCoveragePanel }  from './FrameworkCoveragePanel'
-import { ComplianceTrendsPanel }   from './ComplianceTrendsPanel'
 import { ControlHealthTable }      from './ControlHealthTable'
+import dynamic from 'next/dynamic'
+
+const ComplianceTrendsPanel = dynamic(
+  () => import('./ComplianceTrendsPanel').then((m) => m.ComplianceTrendsPanel),
+  { ssr: false }
+)
 import { ReviewQueuePanel }        from './ReviewQueuePanel'
 import { EvidenceStatusPanel }     from './EvidenceStatusPanel'
 import { RiskScoreCard }           from './RiskScoreCard'

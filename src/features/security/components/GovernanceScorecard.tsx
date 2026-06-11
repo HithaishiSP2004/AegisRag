@@ -31,10 +31,10 @@ export function GovernanceScorecard({ data, loading }: Props) {
   const auditSummary = data.auditSummary ?? {}
   const auditCount = data.auditCount ?? 0
 
-  const totalTokens = tokenStats?.total_tokens_all ?? 1540200
-  const totalCalls = tokenStats?.total_calls ?? 482
-  const failedCalls = tokenStats?.failed_calls ?? 4
-  const fallbackRate = tokenStats?.fallback_rate_pct ?? 0.83
+  const totalTokens = tokenStats?.total_tokens_all ?? 0
+  const totalCalls = tokenStats?.total_calls ?? 0
+  const failedCalls = tokenStats?.failed_calls ?? 0
+  const fallbackRate = tokenStats?.fallback_rate_pct ?? 0
 
   const fmt = (n: number) => {
     if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
@@ -46,23 +46,37 @@ export function GovernanceScorecard({ data, loading }: Props) {
   const currentCost = (totalTokens / 1_000_000) * 15.0
   const projected30dCost = currentCost * 1.4
 
-  const governanceViolations = [
-    { time: '09:15 AM', trigger: 'PII leakage attempt: user requested social security numbers', severity: 'Critical' },
-    { time: '02:40 PM', trigger: 'Model fallback execution: rate limits reached on gemini-2.5-pro', severity: 'Low' },
-  ]
+  const governanceViolations = (data.violations ?? []).map(v => {
+    const time = new Date(v.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    return {
+      time,
+      trigger: `${v.category}: ${v.action_taken}`,
+      severity: v.severity
+    }
+  })
 
   const advisories = {
     violations: {
       title: 'AI Security & Policy Violation Report',
-      what: 'Two policy trigger violations were logged by governance daemon.',
-      why: 'User input queries triggered sensitive pattern matching filters (PII protection filters).',
-      impact: 'Incident logs are securely captured for SOC2 auditing; no data leaks occurred.',
-      next: 'Configure auto-blocking rules for repeated policy offenders.'
+      what: governanceViolations.length === 0
+        ? 'No policy trigger violations were logged by governance daemon.'
+        : `${governanceViolations.length} policy trigger violation${governanceViolations.length === 1 ? '' : 's'} logged by governance daemon.`,
+      why: governanceViolations.length === 0
+        ? 'All analyzed user queries complied with defined security and policy guardrails.'
+        : 'User input queries triggered sensitive pattern matching filters (PII protection filters).',
+      impact: governanceViolations.length === 0
+        ? 'No incidents detected; system telemetry is nominal.'
+        : 'Incident logs are securely captured for SOC2 auditing; no data leaks occurred.',
+      next: governanceViolations.length === 0
+        ? 'Maintain active real-time monitoring of RAG retrieval endpoints.'
+        : 'Configure auto-blocking rules for repeated policy offenders.'
     },
     cost: {
       title: 'AI Usage & Cost Projections Advisory',
       what: `AI Token consumption costs projected to reach $${projected30dCost.toFixed(2)} monthly.`,
-      why: 'Increased utilization of gemini-2.5-pro model for complex document audits.',
+      why: totalTokens === 0
+        ? 'No AI activity recorded; baseline billing is inactive.'
+        : 'Increased utilization of gemini-2.5-pro model for complex document audits.',
       impact: 'Remains well within organization operational budget limits.',
       next: 'Deploy gemini-2.5-flash for simpler summary tasks to lower costs.'
     }
@@ -167,14 +181,25 @@ export function GovernanceScorecard({ data, loading }: Props) {
           }}>
             <span style={{ color: '#E2E8F0', fontWeight: 600, fontSize: '12px' }}>Governance Violation Alerts</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {governanceViolations.map((v, idx) => (
+              {governanceViolations.length === 0 ? (
+                <div style={{ padding: '20px 10px', textAlign: 'center', color: colors.textMuted, fontSize: '10px', fontFamily: font.mono }}>
+                  No Governance Violations Logged
+                </div>
+              ) : governanceViolations.map((v, idx) => (
                 <div key={idx} style={{
                   display: 'flex', gap: '10px', background: 'rgba(255,255,255,0.005)',
                   border: '1px solid rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: radius.md, alignItems: 'center'
                 }}>
                   <span style={{ fontFamily: font.mono, fontSize: '9px', color: colors.textMuted }}>{v.time}</span>
                   <span style={{ color: colors.textPrimary, fontSize: '10px', flex: 1 }}>{v.trigger}</span>
-                  <span style={{ fontSize: '8px', fontWeight: 700, background: 'rgba(239, 68, 68, 0.08)', color: '#EF4444', padding: '1px 4px', borderRadius: radius.xs }}>{v.severity}</span>
+                  <span style={{
+                    fontSize: '8px',
+                    fontWeight: 700,
+                    background: v.severity === 'BLOCK' || v.severity === 'danger' || v.severity === 'critical' || v.severity === 'Critical' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(245, 158, 11, 0.08)',
+                    color: v.severity === 'BLOCK' || v.severity === 'danger' || v.severity === 'critical' || v.severity === 'Critical' ? '#EF4444' : '#F59E0B',
+                    padding: '1px 4px',
+                    borderRadius: radius.xs
+                  }}>{v.severity}</span>
                 </div>
               ))}
             </div>

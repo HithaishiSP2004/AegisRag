@@ -25,6 +25,10 @@ export interface SearchFilters {
   dateTo?:      string
   /** Maximum number of results to return. Default: 8 */
   limit?:       number
+  framework?:   string
+  classification?: string
+  documentId?:  string
+  organizationId?: string
 }
 
 // ── Metadata attached to every chunk (mirrors chunk.metadata JSONB) ───────────
@@ -67,9 +71,11 @@ export interface SearchResult {
 
 // ── The query object passed to searchDocuments() ──────────────────────────────
 export interface SearchQuery {
-  text:    string
-  orgId:   string
-  filters: SearchFilters
+  text:      string
+  orgId:     string
+  filters:   SearchFilters
+  userId?:   string
+  userRole?: string
 }
 
 // ── Citation reference embedded in a chat message ─────────────────────────────

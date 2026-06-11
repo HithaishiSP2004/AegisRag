@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import { 
-  ResponsiveContainer, 
   ScatterChart, 
   Scatter, 
   XAxis, 
@@ -14,6 +13,7 @@ import {
 } from 'recharts'
 import { Activity, ShieldAlert, Award, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react'
 import { colors, radius, font, shadow } from '@/components/ui/tokens'
+import { useResizeObserver } from '../hooks/useResizeObserver'
 
 interface Props {
   data: any
@@ -82,8 +82,28 @@ function buildCorrelationData(data: any) {
   return { coverage_vs_risk, groundedness_vs_hallucination, evidence_vs_readiness, backlog_vs_health, retrieval_vs_risk }
 }
 
+/**
+ * Compute Pearson r from two parallel arrays.
+ * Returns null when fewer than 2 data points are available.
+ */
+function pearsonR(xs: number[], ys: number[]): number | null {
+  const n = xs.length
+  if (n < 2) return null
+  const meanX = xs.reduce((a, b) => a + b, 0) / n
+  const meanY = ys.reduce((a, b) => a + b, 0) / n
+  let num = 0, sdX = 0, sdY = 0
+  for (let i = 0; i < n; i++) {
+    num  += (xs[i] - meanX) * (ys[i] - meanY)
+    sdX  += (xs[i] - meanX) ** 2
+    sdY  += (ys[i] - meanY) ** 2
+  }
+  const denom = Math.sqrt(sdX * sdY)
+  return denom === 0 ? null : Math.round((num / denom) * 100) / 100
+}
+
 export function CorrelationAnalytics({ data, loading }: Props) {
   const [activeChart, setActiveChart] = useState<CorrelationType>('coverage_vs_risk')
+  const [containerRef, containerSize] = useResizeObserver()
 
   if (loading) {
     return (
@@ -101,30 +121,33 @@ export function CorrelationAnalytics({ data, loading }: Props) {
   // Derive correlation series from real API data
   const chartData = buildCorrelationData(data)
 
-  const chartMeta = {
+  const chartMeta: Record<CorrelationType, {
+    title: string
+    xLabel: string
+    yLabel: string
+    interpretation: string
+    what: string
+    why: string
+    impactText: string
+    next: string
+  }> = {
     coverage_vs_risk: {
       title: 'Compliance Coverage vs Risk Score',
       xLabel: 'Compliance Coverage (%)',
       yLabel: 'Risk Score (0-100)',
-      r: -0.92,
-      direction: 'Strong Negative Correlation',
-      impact: 'High Impact',
-      interpretation: 'A strong negative correlation (r = -0.92) is verified between compliance coverage and organizational risk score. Incrementing control mappings and automated evidence verification dynamically reduces systemic security risks.',
-      what: 'Risk score decreased from 75 to 29 as compliance coverage expanded from 30% to 69%.',
+      interpretation: 'As compliance coverage grows, organizational risk score tends to decrease. Incrementing control mappings and automated evidence verification dynamically reduces systemic security risks.',
+      what: 'Risk score and compliance coverage show an inverse relationship over the measured period.',
       why: 'Evidence mapping to regulatory frameworks acts as a risk mitigation vector, identifying and fixing security gaps.',
-      impactText: 'Substantive reduction in audit failure liabilities and structural security drift events.',
+      impactText: 'Improving coverage reduces audit failure liabilities and structural security drift.',
       next: 'Target 85%+ coverage to lower remaining risk below 15 points.'
     },
     groundedness_vs_hallucination: {
       title: 'Groundedness vs Hallucination Rate',
       xLabel: 'Groundedness Score (%)',
       yLabel: 'Hallucination Rate (%)',
-      r: -0.96,
-      direction: 'Strong Negative Correlation',
-      impact: 'Critical Impact',
-      interpretation: 'Perfect negative correlation (r = -0.96) is observed. As the retrieval models enhance groundedness metrics, the model hallucination rate drops below critical thresholds, mitigating AI governance policy violations.',
-      what: 'Hallucination rate was successfully reduced to 1.8% while groundedness grew to 88%.',
-      why: 'Hybrid retrieval configuration (vector + keyword) delivers precise reference text chunks, minimizing AI generation drift.',
+      interpretation: 'As the retrieval groundedness improves, the model hallucination rate drops. Hybrid retrieval (vector + keyword) delivers precise reference chunks, minimizing generation drift.',
+      what: 'Groundedness and hallucination rate move in opposing directions over time.',
+      why: 'Hybrid retrieval configuration delivers precise reference text chunks, minimizing AI generation drift.',
       impactText: 'Enhanced trust in AI response accuracy, securing client and internal auditing approval.',
       next: 'Configure strict threshold matching on citation verification to lower hallucinations below 1.0%.'
     },
@@ -132,24 +155,18 @@ export function CorrelationAnalytics({ data, loading }: Props) {
       title: 'Evidence Count vs Audit Readiness',
       xLabel: 'Verified Evidence Count',
       yLabel: 'Audit Readiness Score (%)',
-      r: 0.98,
-      direction: 'Strong Positive Correlation',
-      impact: 'Critical Impact',
-      interpretation: 'A strong positive correlation (r = 0.98) is confirmed. Uploading and cryptographically signing evidence packages is the primary contributor to Audit Readiness scoring metrics.',
-      what: 'Audit readiness scored 78% with 22 active verified evidence items loaded.',
+      interpretation: 'Uploading and verifying evidence packages is the primary contributor to Audit Readiness scoring. Each verified evidence package directly satisfies requirements in framework mapping formulas.',
+      what: 'Audit readiness correlates with the number of active verified evidence items.',
       why: 'Each verified evidence package directly satisfies requirements in framework mapping matrix formulas.',
       impactText: 'Prepares the tenant space for rapid SOC2/ISO audit packages assembly without custom overrides.',
-      next: 'Resolve the remaining 8 blocking issues to trigger readiness above the 90% AUDIT READY threshold.'
+      next: 'Resolve remaining blocking issues to trigger readiness above the 90% AUDIT READY threshold.'
     },
     backlog_vs_health: {
       title: 'Review Backlog vs Compliance Health',
       xLabel: 'Pending Reviews Count',
       yLabel: 'Control Health Score (%)',
-      r: -0.89,
-      direction: 'Moderate Negative Correlation',
-      impact: 'Medium Impact',
-      interpretation: 'Negative correlation (r = -0.89) indicates that backlog size negatively impacts controls health metrics. Keeping pending review queues low ensures fresh compliance posture.',
-      what: 'Control health improved to 92% as the pending review backlog was reduced to 3 items.',
+      interpretation: 'Backlog size negatively impacts controls health metrics. Keeping pending review queues low ensures a fresh compliance posture.',
+      what: 'Control health improves as the pending review backlog decreases.',
       why: 'Remediation of expired and overdue reviews refreshes compliance control validity telemetry.',
       impactText: 'Mitigates the threat of control failure under live audits.',
       next: 'Set up automated reminder notifications to clear the remaining backlog in less than 24 hours.'
@@ -158,11 +175,8 @@ export function CorrelationAnalytics({ data, loading }: Props) {
       title: 'Retrieval Failures vs Organizational Risk',
       xLabel: 'Daily Retrieval Failures',
       yLabel: 'Organizational Risk Score',
-      r: 0.91,
-      direction: 'Strong Positive Correlation',
-      impact: 'High Impact',
-      interpretation: 'Positive correlation (r = 0.91) demonstrates that platform reliability and retrieval failures are a direct contributor to system risk, increasing information gaps.',
-      what: 'Retrieval failures drop from 45/day to 8/day, matching a risk reduction trend.',
+      interpretation: 'Platform reliability and retrieval failures are a direct contributor to system risk, increasing information gaps.',
+      what: 'Retrieval failures and organizational risk score move together over time.',
       why: 'High-availability failovers and latency optimization prevent queries from failing under high loads.',
       impactText: 'Ensures continuous compliance integrity for LLM operations.',
       next: 'Implement secondary backup semantic embedding caches to achieve zero retrieval failures.'
@@ -171,6 +185,24 @@ export function CorrelationAnalytics({ data, loading }: Props) {
 
   const activeMeta = chartMeta[activeChart]
   const activeData = chartData[activeChart]
+
+  // H5 FIX: compute Pearson r from actual series data, not hardcoded constants
+  const computedR = pearsonR(
+    activeData.map((p) => p.x),
+    activeData.map((p) => p.y)
+  )
+  const rLabel = computedR !== null ? computedR.toFixed(2) : null
+  const direction = computedR === null
+    ? 'Insufficient data'
+    : computedR <= -0.7
+      ? 'Strong Negative Correlation'
+      : computedR <= -0.4
+        ? 'Moderate Negative Correlation'
+        : computedR >= 0.7
+          ? 'Strong Positive Correlation'
+          : computedR >= 0.4
+            ? 'Moderate Positive Correlation'
+            : 'Weak / No Correlation'
 
   const buttons = (Object.keys(chartMeta) as CorrelationType[]).map((key) => ({
     id: key,
@@ -199,7 +231,7 @@ export function CorrelationAnalytics({ data, loading }: Props) {
           </p>
         </div>
 
-        {/* Pearson Coefficient Indicator */}
+        {/* H5 FIX: Pearson Coefficient computed from real series, not hardcoded */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
             background: 'rgba(255, 255, 255, 0.02)',
@@ -209,17 +241,20 @@ export function CorrelationAnalytics({ data, loading }: Props) {
             fontSize: '11px',
             color: colors.textPrimary
           }}>
-            Pearson Coefficient <strong style={{ color: activeMeta.r < 0 ? '#EF4444' : '#10B981', marginLeft: '4px' }}>r = {activeMeta.r}</strong>
+            {rLabel !== null
+              ? <>Pearson Coefficient <strong style={{ color: Number(rLabel) < 0 ? '#EF4444' : '#10B981', marginLeft: '4px' }}>r = {rLabel}</strong></>
+              : <span style={{ color: colors.textMuted }}>Pearson r — Insufficient data</span>
+            }
           </div>
           <span style={{
             fontSize: '10px',
             fontWeight: 700,
-            background: activeMeta.r < 0 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-            color: activeMeta.r < 0 ? '#EF4444' : '#10B981',
+            background: rLabel !== null && Number(rLabel) < 0 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+            color: rLabel !== null && Number(rLabel) < 0 ? '#EF4444' : '#10B981',
             padding: '3px 8px',
             borderRadius: radius.full
           }}>
-            {activeMeta.direction}
+            {direction}
           </span>
         </div>
       </div>
@@ -263,7 +298,7 @@ export function CorrelationAnalytics({ data, loading }: Props) {
         alignItems: 'start'
       }}>
         {/* Left: Recharts */}
-        <div style={{
+        <div ref={containerRef} style={{
           background: 'rgba(255, 255, 255, 0.01)',
           border: '1px solid rgba(255, 255, 255, 0.04)',
           borderRadius: radius.lg,
@@ -271,10 +306,11 @@ export function CorrelationAnalytics({ data, loading }: Props) {
           height: '280px',
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+          minWidth: 0
         }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={activeData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+          {containerSize.width > 0 && containerSize.height > 0 ? (
+            <LineChart width={containerSize.width} height={containerSize.height} data={activeData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
               <XAxis 
                 dataKey="x" 
@@ -305,7 +341,11 @@ export function CorrelationAnalytics({ data, loading }: Props) {
                 activeDot={{ r: 6 }}
               />
             </LineChart>
-          </ResponsiveContainer>
+          ) : (
+            <div style={{ color: colors.textSecondary, fontSize: 11 }}>
+              Recalculating layout...
+            </div>
+          )}
         </div>
 
         {/* Right: Deloitte Executive narrative */}
@@ -314,7 +354,7 @@ export function CorrelationAnalytics({ data, loading }: Props) {
           flexDirection: 'column',
           gap: '12px'
         }}>
-          {/* PwC interpretation */}
+          {/* AegisRAG Interpretation */}
           <div style={{
             background: 'rgba(99, 102, 241, 0.03)',
             borderLeft: `3px solid ${colors.indigoLight}`,
@@ -324,8 +364,11 @@ export function CorrelationAnalytics({ data, loading }: Props) {
             lineHeight: 1.5,
             color: colors.textSecondary
           }}>
-            <strong style={{ color: colors.textPrimary, display: 'block', marginBottom: '6px' }}>Deloitte Executive Interpretation</strong>
-            {activeMeta.interpretation}
+            <strong style={{ color: colors.textPrimary, display: 'block', marginBottom: '6px' }}>AegisRAG Correlation Interpretation</strong>
+            {rLabel === null
+              ? <em>Insufficient telemetry data to compute this correlation. Collect more retrieval and compliance events to enable statistical analysis.</em>
+              : activeMeta.interpretation
+            }
           </div>
 
           {/* Narrative questions */}

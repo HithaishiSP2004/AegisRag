@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Icon } from '@iconify/react'
 import { formatBytes } from '@/lib/utils'
 import { requestTierUpgrade } from '@/features/trial/actions'
+import { AI_MODELS } from '@/config/ai'
 
 interface KnowledgeVaultShellProps {
   children:  React.ReactNode
@@ -583,7 +584,7 @@ export function KnowledgeVaultShell({ children, canUpload, userRole, stats }: Kn
             {/* Ingestion Engine */}
             <div style={intelMetricGroupStyle()}>
               <span style={intelLabelStyle()}>Indexing Model</span>
-              <span style={{ ...intelValueStyle(), fontSize: '0.72rem', color: '#94A3B8' }}>text-embedding-004</span>
+              <span style={{ ...intelValueStyle(), fontSize: '0.72rem', color: '#94A3B8' }}>{AI_MODELS.EMBEDDING}</span>
             </div>
 
             {/* Vector Dimensions */}

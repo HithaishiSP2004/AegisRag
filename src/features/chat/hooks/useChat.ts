@@ -20,6 +20,7 @@ function toMessage(raw: Record<string, unknown>): Message {
     mode:        (raw.retrieval_mode ?? raw.mode) as Message['mode'] ?? null,
     createdAt:   raw.created_at ? new Date(raw.created_at as string) : new Date(),
     isStreaming: false,
+    reasoning_metadata: raw.reasoning_metadata,
   }
 }
 
@@ -125,6 +126,7 @@ export function useChat(
         mode:        data.mode ?? null,
         createdAt:   new Date(),
         isStreaming: false,
+        reasoning_metadata: data.reasoning_metadata,
       }
 
       setMessages((prev) => prev.map((m) => m.id === asstId ? finalMsg : m))

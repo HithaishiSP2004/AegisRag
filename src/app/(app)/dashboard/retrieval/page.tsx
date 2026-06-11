@@ -29,6 +29,9 @@ interface RetrievalStats {
   avg_vector_latency_ms:  number
   avg_keyword_latency_ms: number
   avg_chunk_count:        number
+  avg_vector_candidates:  number
+  avg_reranked_candidates: number
+  avg_tokens_saved:       number
 }
 
 interface EvalRow {
@@ -268,6 +271,24 @@ export default function RetrievalDashboard() {
                 value={ms(s?.avg_total_latency_ms)}
                 sub="end-to-end retrieval"
                 color="#FB923C"
+              />
+              <StatCard
+                label="Recall Candidates" icon="solar:double-alt-arrow-right-bold-duotone"
+                value={s ? String(s.avg_vector_candidates ?? 0) : '0'}
+                sub="avg recalled (Stage 1)"
+                color="#C084FC"
+              />
+              <StatCard
+                label="Reranked Chunks" icon="solar:filter-bold-duotone"
+                value={s ? String(s.avg_reranked_candidates ?? 0) : '0'}
+                sub="avg selected (Stage 2)"
+                color="#34D399"
+              />
+              <StatCard
+                label="Tokens Compressed" icon="solar:zip-file-bold-duotone"
+                value={s ? `${Math.round(s.avg_tokens_saved ?? 0)} tokens` : '0'}
+                sub="avg tokens saved"
+                color="#38BDF8"
               />
             </div>
 

@@ -99,6 +99,21 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
     URL.revokeObjectURL(url)
   }
 
+  // L1 FIX: Compute a real SHA-256 hash using the Web Crypto API.
+  // Replaces Math.random() fake hex strings in audit stamps.
+  const computeReportHash = async (payload: object): Promise<string> => {
+    try {
+      const text = JSON.stringify(payload)
+      const encoded = new TextEncoder().encode(text)
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', encoded)
+      const hashArray = Array.from(new Uint8Array(hashBuffer))
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    } catch {
+      // Fallback: timestamp-based pseudohash if crypto.subtle unavailable (e.g. HTTP context)
+      return Date.now().toString(16).padStart(64, '0')
+    }
+  }
+
   // Helper to call audit logging POST endpoint
   const logExportEvent = async (format: string): Promise<void> => {
     try {
@@ -227,6 +242,8 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
   const handleExportPPTX = async () => {
     setExporting('PPTX')
     try {
+      // L1 FIX: compute real hash before building PPTX
+      const reportHash = await computeReportHash({ reportType, days, generated_at: new Date().toISOString(), data })
       const pptx = new pptxgen()
       pptx.layout = 'LAYOUT_16x9'
 
@@ -392,7 +409,7 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
       const slide10 = pptx.addSlide({ masterName: 'AEGIS_DARK' })
       slide10.addText('APPENDIX & COMPLIANCE VERIFICATION', { x: 0.8, y: 0.6, fontSize: 24, bold: true, color: 'E2E8F0' })
       slide10.addText('Secure Telemetry Validation Logs', { x: 0.8, y: 1.1, fontSize: 14, color: '94A3B8' })
-      slide10.addText(`• Audit Stamp: AEGISRAG-${reportType.toUpperCase()}-VERIFIED-${Math.floor(10000 + Math.random() * 90000)}\n• Verification Hash: SHA256-${Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join('')}\n• Sign-off: Security Operations Center Lead Auditor\n• System Environment: AegisRAG Analytics Suite v1.1.2`, { x: 0.8, y: 2.0, w: 11, fontSize: 14, color: '64748B', lineSpacing: 24 })
+      slide10.addText(`• Audit Stamp: AEGISRAG-${reportType.toUpperCase()}-VERIFIED-${Math.floor(10000 + Math.random() * 90000)}\n• Verification Hash: SHA256-${reportHash.slice(0, 16)}\n• Sign-off: Security Operations Center Lead Auditor\n• System Environment: AegisRAG Analytics Suite v1.1.2`, { x: 0.8, y: 2.0, w: 11, fontSize: 14, color: '64748B', lineSpacing: 24 })
 
       const buffer = await pptx.write({ outputType: 'blob' }) as Blob
       const filename = `${prefix}.pptx`
@@ -413,6 +430,8 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
   const handleExportPDF = async () => {
     setExporting('PDF')
     try {
+      // L1 FIX: compute real hash before building PDF
+      const reportHash = await computeReportHash({ reportType, days, generated_at: new Date().toISOString(), data })
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
       const primaryColor = '#6366F1'
       const darkBg = '#0B0F19'
@@ -542,7 +561,7 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
       doc.setFontSize(9)
       doc.setTextColor(100, 116, 139)
       doc.text('Audited By: AegisRAG Automated Telemetry Controller', 20, 155)
-      doc.text(`Verification Code: AEGIS-${Math.floor(10000 + Math.random()*90000)}-SHA256-A189`, 20, 162)
+      doc.text(`Verification Code: AEGIS-SHA256-${reportHash.slice(0, 16).toUpperCase()}`, 20, 162)
 
       const blob = doc.output('blob')
       const filename = `${prefix}.pdf`

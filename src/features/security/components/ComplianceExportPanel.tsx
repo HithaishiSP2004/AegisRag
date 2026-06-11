@@ -350,7 +350,7 @@ export function ComplianceExportPanel() {
               style={selStyle}
             >
               {[7, 14, 30, 60, 90].map((d) => (
-                <option key={d} value={d}>Last {d} days</option>
+                <option key={d} value={d} style={{ background: '#0D1117', color: '#94A3B8' }}>Last {d} days</option>
               ))}
             </select>
           </div>

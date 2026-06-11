@@ -24,12 +24,27 @@ export type DocumentType =
 
 export type SensitivityLevel = 'public' | 'internal' | 'confidential' | 'restricted'
 
+export type DocumentClassification = 'global' | 'organization' | 'user'
+
+export type DocumentFramework =
+  | 'GDPR'
+  | 'HIPAA'
+  | 'SOC2'
+  | 'ISO27001'
+  | 'NIST'
+  | 'OWASP_LLM_TOP_10'
+  | 'EU_AI_ACT'
+  | 'SECURITY_FRAMEWORKS'
+  | 'RESEARCH_PAPERS'
+
 // ── Upload form payload (from the UI) ────────────────────────────────────────
 export interface DocumentUploadInput {
   file: File
   doc_type: DocumentType
   sensitivity: SensitivityLevel
   department: string | null
+  classification?: DocumentClassification
+  framework?: DocumentFramework | null
   /** Custom metadata tags the user can provide */
   tags?: string[]
 }
@@ -48,6 +63,8 @@ export interface DocumentRecord {
   doc_type: DocumentType
   department: string | null
   sensitivity: SensitivityLevel
+  classification: DocumentClassification
+  framework: DocumentFramework | null
   metadata: Record<string, unknown>
   error_message: string | null
   created_at: string

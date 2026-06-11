@@ -137,12 +137,12 @@ export async function GET(req: NextRequest) {
   }
 
   // 4. Calculate Readiness Scores
-  const evidenceScore = totalControls > 0 ? (controlsWithEvidence / totalControls) * 100 : 100
-  const signoffScore = totalControls > 0 ? (controlsWithSignoff / totalControls) * 100 : 100
-  const integrityScore = totalEvidenceCount > 0 ? (validEvidenceCount / totalEvidenceCount) * 100 : 100
+  const evidenceScore = totalControls > 0 ? (controlsWithEvidence / totalControls) * 100 : 0
+  const signoffScore = totalControls > 0 ? (controlsWithSignoff / totalControls) * 100 : 0
+  const integrityScore = totalEvidenceCount > 0 ? (validEvidenceCount / totalEvidenceCount) * 100 : 0
 
   // Final composite score (evidence: 40%, signoff: 40%, integrity: 20%)
-  const score = Math.round(evidenceScore * 0.4 + signoffScore * 0.4 + integrityScore * 0.2)
+  const score = totalControls > 0 ? Math.round(evidenceScore * 0.4 + signoffScore * 0.4 + integrityScore * 0.2) : 0
 
   return NextResponse.json({
     score,

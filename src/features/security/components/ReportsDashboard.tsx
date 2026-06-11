@@ -16,8 +16,6 @@ import {
 } from '../hooks/useReports'
 import { ExecutiveKPICommandCenter } from './ExecutiveKPICommandCenter'
 import { ExecutiveIntelligence }      from './ExecutiveIntelligence'
-import { CorrelationAnalytics }      from './CorrelationAnalytics'
-import { PredictiveAnalytics }       from './PredictiveAnalytics'
 import { ExecutiveNarrative }        from './ExecutiveNarrative'
 import { TrendChart }        from './TrendChart'
 import { ComplianceScorecard } from './ComplianceScorecard'
@@ -25,6 +23,16 @@ import { SecurityScorecard }   from './SecurityScorecard'
 import { RetrievalScorecard }  from './RetrievalScorecard'
 import { GovernanceScorecard } from './GovernanceScorecard'
 import { ReportExportPanel }   from './ReportExportPanel'
+import dynamic from 'next/dynamic'
+
+const CorrelationAnalytics = dynamic(
+  () => import('./CorrelationAnalytics').then((m) => m.CorrelationAnalytics),
+  { ssr: false }
+)
+const PredictiveAnalytics = dynamic(
+  () => import('./PredictiveAnalytics').then((m) => m.PredictiveAnalytics),
+  { ssr: false }
+)
 import { TabBar }    from '@/components/ui/TabBar'
 import { PageHeader }from '@/components/ui/PageHeader'
 import { colors, font, radius } from '@/components/ui/tokens'

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import {
-  ResponsiveContainer,
   AreaChart,
   Area,
   XAxis,
@@ -15,10 +14,13 @@ import {
 import { useComplianceDashboard } from '../hooks/useComplianceDashboard'
 import { colors, radius, font, shadow } from '@/components/ui/tokens'
 import { TrendingUp, FileText, ShieldCheck } from 'lucide-react'
+import { useResizeObserver } from '../hooks/useResizeObserver'
 
 export function ComplianceTrendsPanel() {
   const { stats, loading } = useComplianceDashboard()
   const [mounted, setMounted] = useState(false)
+  const [coverageRef, coverageSize] = useResizeObserver()
+  const [evidenceRef, evidenceSize] = useResizeObserver()
 
   useEffect(() => {
     setMounted(true)
@@ -102,7 +104,7 @@ export function ComplianceTrendsPanel() {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', width: '100%' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '20px', width: '100%' }}>
       {/* Coverage Trend Chart */}
       <div style={{
         background: colors.bgCard,
@@ -112,7 +114,8 @@ export function ComplianceTrendsPanel() {
         boxShadow: shadow.sm,
         display: 'flex',
         flexDirection: 'column',
-        gap: '16px'
+        gap: '16px',
+        minWidth: 0
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -137,9 +140,9 @@ export function ComplianceTrendsPanel() {
           </span>
         </div>
 
-        <div style={{ width: '100%', height: '240px' }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+        <div ref={coverageRef} style={{ width: '100%', height: '240px', minWidth: 0 }}>
+          {coverageSize.width > 0 && coverageSize.height > 0 ? (
+            <AreaChart width={coverageSize.width} height={coverageSize.height} data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorCoverage" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={colors.indigo} stopOpacity={0.25} />
@@ -173,7 +176,11 @@ export function ComplianceTrendsPanel() {
                 fill="url(#colorCoverage)"
               />
             </AreaChart>
-          </ResponsiveContainer>
+          ) : (
+            <div style={{ height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.textSecondary, fontSize: 11 }}>
+              Recalculating layout...
+            </div>
+          )}
         </div>
       </div>
 
@@ -186,7 +193,8 @@ export function ComplianceTrendsPanel() {
         boxShadow: shadow.sm,
         display: 'flex',
         flexDirection: 'column',
-        gap: '16px'
+        gap: '16px',
+        minWidth: 0
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -211,9 +219,9 @@ export function ComplianceTrendsPanel() {
           </span>
         </div>
 
-        <div style={{ width: '100%', height: '240px' }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+        <div ref={evidenceRef} style={{ width: '100%', height: '240px', minWidth: 0 }}>
+          {evidenceSize.width > 0 && evidenceSize.height > 0 ? (
+            <BarChart width={evidenceSize.width} height={evidenceSize.height} data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
               <XAxis
                 dataKey="name"
@@ -238,7 +246,11 @@ export function ComplianceTrendsPanel() {
                 maxBarSize={12}
               />
             </BarChart>
-          </ResponsiveContainer>
+          ) : (
+            <div style={{ height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.textSecondary, fontSize: 11 }}>
+              Recalculating layout...
+            </div>
+          )}
         </div>
       </div>
     </div>

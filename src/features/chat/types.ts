@@ -17,6 +17,7 @@ export interface Message {
   createdAt:  Date
   isStreaming?: boolean
   error?:     string | null
+  reasoning_metadata?: any
 }
 
 export interface Conversation {
@@ -49,4 +50,5 @@ export interface ChatResponse {
   conversationId: string
   mode:           RetrievalMode
   sources:        SearchResult[]
+  reasoning_metadata?: any
 }

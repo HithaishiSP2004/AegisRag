@@ -39,7 +39,8 @@ export async function GET(req: NextRequest) {
     const [
       tokenStatsResult,
       aiRequestsResult,
-      auditLogsResult
+      auditLogsResult,
+      guardrailTelemetryResult
     ] = await Promise.all([
       (admin as any).rpc('get_token_usage_stats', { p_org_id: profile.org_id }),
       admin
@@ -51,7 +52,13 @@ export async function GET(req: NextRequest) {
         .from('audit_logs')
         .select('action, resource_type, created_at')
         .eq('org_id', profile.org_id)
+        .gte('created_at', since),
+      (admin as any)
+        .from('guardrail_telemetry')
+        .select('id, category, severity, risk_score, action_taken, created_at')
+        .eq('org_id', profile.org_id)
         .gte('created_at', since)
+        .order('created_at', { ascending: false })
     ])
 
     const tokenStats = (tokenStatsResult.data as Record<string, number>[] | null)?.[0] ?? null
@@ -97,12 +104,15 @@ export async function GET(req: NextRequest) {
       auditSummary[key] = (auditSummary[key] || 0) + 1
     }
 
+    const rawTelemetry = guardrailTelemetryResult.data ?? []
+
     return NextResponse.json({
       days,
       tokenStats,
       modelBreakdown,
       auditSummary,
-      auditCount: rawAudit.length
+      auditCount: rawAudit.length,
+      violations: rawTelemetry
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })

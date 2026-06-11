@@ -6,6 +6,7 @@ import { colors, font, radius } from '@/components/ui/tokens'
 
 interface Props {
   onSubmit: (text: string, mode: 'ask' | 'deep' | 'citation') => void
+  docCount?: number
 }
 
 const SUGGESTED: { icon: string; label: string; query: string }[] = [
@@ -41,7 +42,7 @@ const CAPABILITIES = [
   },
 ]
 
-export function WelcomeState({ onSubmit }: Props) {
+export function WelcomeState({ onSubmit, docCount = 0 }: Props) {
   const [value, setValue] = useState('')
   const [mode, setMode] = useState<'ask' | 'deep' | 'citation'>('ask')
   const [focused, setFocused] = useState(false)
@@ -136,7 +137,7 @@ export function WelcomeState({ onSubmit }: Props) {
             color: colors.textMuted,
             fontFamily: font.mono, letterSpacing: '0.02em',
           }}>
-            132 documents indexed · Hybrid retrieval active · All responses grounded
+            {docCount} document{docCount === 1 ? '' : 's'} indexed · Hybrid retrieval active · All responses grounded
           </p>
         </div>
 

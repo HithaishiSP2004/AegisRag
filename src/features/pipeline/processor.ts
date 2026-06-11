@@ -44,7 +44,7 @@ export async function processDocument(documentId: string): Promise<{
   // ── 1. Fetch document metadata ────────────────────────────────────────────
   const { data: rawDoc, error: docErr } = await admin
     .from('documents')
-    .select('id, org_id, storage_path, doc_type, department, sensitivity, uploaded_by, filename')
+    .select('id, org_id, storage_path, doc_type, department, sensitivity, uploaded_by, filename, classification, framework')
     .eq('id', documentId)
     .single()
 
@@ -54,7 +54,6 @@ export async function processDocument(documentId: string): Promise<{
     return { success: false, pagesProcessed: 0, chunksCreated: 0, embeddingsCreated: 0, error: msg }
   }
 
-  // Type the doc object explicitly (Supabase generated types are complex to unwrap here)
   const doc = rawDoc as {
     id: string
     org_id: string
@@ -64,6 +63,8 @@ export async function processDocument(documentId: string): Promise<{
     sensitivity: string
     uploaded_by: string
     filename: string
+    classification: string
+    framework: string | null
   }
 
   console.log('[pipeline] Starting for doc:', documentId, '| org:', doc.org_id)
@@ -77,8 +78,15 @@ export async function processDocument(documentId: string): Promise<{
     // ── 2. Set status → parsing (already set by confirmUpload, but ensure) ──
     await setStatus(admin, documentId, 'parsing')
 
-    // Delete existing pages (which cascades to chunks and embeddings) for clean re-indexing
-    await admin.from('pages').delete().eq('document_id', documentId)
+    // Fetch existing pages (if any) before download to determine if this is an update
+    const { data: existingPages, error: existingPagesErr } = await admin
+      .from('pages')
+      .select('id, page_number, raw_text')
+      .eq('document_id', documentId)
+
+    if (existingPagesErr) {
+      throw new Error(`Failed to fetch existing pages: ${existingPagesErr.message}`)
+    }
 
     // ── 3. Download file bytes from Storage ───────────────────────────────────
     console.log('[pipeline] Downloading file from storage:', doc.storage_path)
@@ -88,37 +96,150 @@ export async function processDocument(documentId: string): Promise<{
     // ── 4. Parse file → extract text per page ─────────────────────────────────
     const ext = doc.filename.substring(doc.filename.lastIndexOf('.')).toLowerCase()
     console.log(`[pipeline] Parsing file with extension ${ext}...`)
-    const pages = await parseDocument(fileBytes, ext)
-    console.log('[pipeline] Parsed', pages.length, 'pages')
+    const parsedPages = await parseDocument(fileBytes, ext)
+    console.log('[pipeline] Parsed', parsedPages.length, 'pages')
 
-    // ── 5. Persist pages rows ─────────────────────────────────────────────────
-    const pageRows = pages.map((p) => ({
-      document_id: documentId,
-      org_id:      doc.org_id,
-      page_number: p.pageNumber,
-      raw_text:    p.text,
-      word_count:  countWords(p.text),
-      status:      'pending' as const,
-    }))
+    const hasExisting = existingPages && existingPages.length > 0
+    let insertedPages: Array<{ id: string; page_number: number; raw_text: string }> = []
+    let pagesToProcess: Array<{ id: string; page_number: number; raw_text: string }> = []
+    let isUpdate = false
 
+    if (hasExisting) {
+      isUpdate = true
+      console.log('[pipeline] Version update detected. Performing page-level change detection...')
+      const existingPageMap = new Map(existingPages.map(p => [p.page_number, p]))
+      const newPageMap = new Map(parsedPages.map(p => [p.pageNumber, p]))
 
+      // A. Deleted pages (exist in DB, not in new document)
+      const deletedPageNums = Array.from(existingPageMap.keys()).filter(n => !newPageMap.has(n))
+      if (deletedPageNums.length > 0) {
+        console.log('[pipeline] Deleting pages:', deletedPageNums)
+        const { error: delErr } = await admin
+          .from('pages')
+          .delete()
+          .eq('document_id', documentId)
+          .in('page_number', deletedPageNums)
+        if (delErr) throw new Error(`Failed to delete old pages: ${delErr.message}`)
 
-    const { data: insertedPages, error: pageErr } = await admin
-      .from('pages')
-      .insert(pageRows)
-      .select('id, page_number, raw_text')
+        for (const pageNum of deletedPageNums) {
+          const pageRecord = existingPageMap.get(pageNum)
+          await auditLog(admin, doc.org_id, doc.uploaded_by, 'PAGE_DELETED', documentId, { page_number: pageNum, page_id: pageRecord?.id })
+        }
+      }
 
+      // B. Modified & Added pages
+      const pagesToInsert: Array<{ document_id: string; org_id: string; page_number: number; raw_text: string; word_count: number; status: 'pending' }> = []
+      const pagesToUpdate: Array<{ id: string; raw_text: string; word_count: number; status: 'pending' }> = []
 
+      for (const newPage of parsedPages) {
+        const existingPage = existingPageMap.get(newPage.pageNumber)
+        if (existingPage) {
+          if (existingPage.raw_text !== newPage.text) {
+            // Modified page
+            pagesToUpdate.push({
+              id: existingPage.id,
+              raw_text: newPage.text,
+              word_count: countWords(newPage.text),
+              status: 'pending'
+            })
+          } else {
+            // Unchanged page - keep it in the final insertedPages list
+            insertedPages.push({
+              id: existingPage.id,
+              page_number: existingPage.page_number,
+              raw_text: existingPage.raw_text || ''
+            })
+          }
+        } else {
+          // Added page
+          pagesToInsert.push({
+            document_id: documentId,
+            org_id: doc.org_id,
+            page_number: newPage.pageNumber,
+            raw_text: newPage.text,
+            word_count: countWords(newPage.text),
+            status: 'pending'
+          })
+        }
+      }
 
-    if (pageErr || !insertedPages) {
-      throw new Error(`pages INSERT failed: ${pageErr?.message ?? 'no data'}`)
+      // Perform updates
+      for (const updateInfo of pagesToUpdate) {
+        const { data: updated, error: updErr } = await admin
+          .from('pages')
+          .update({
+            raw_text: updateInfo.raw_text,
+            word_count: updateInfo.word_count,
+            status: 'pending',
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', updateInfo.id)
+          .select('id, page_number, raw_text')
+          .single()
+        
+        if (updErr || !updated) throw new Error(`Failed to update modified page ${updateInfo.id}: ${updErr?.message}`)
+
+        // Delete existing chunks for modified page (cascades to embeddings)
+        const { error: chunkDelErr } = await admin
+          .from('chunks')
+          .delete()
+          .eq('page_id', updateInfo.id)
+        if (chunkDelErr) throw new Error(`Failed to delete chunks for modified page ${updateInfo.id}: ${chunkDelErr.message}`)
+
+        insertedPages.push(updated as any)
+        pagesToProcess.push(updated as any)
+      }
+
+      // Perform inserts
+      if (pagesToInsert.length > 0) {
+        const { data: inserted, error: insErr } = await admin
+          .from('pages')
+          .insert(pagesToInsert)
+          .select('id, page_number, raw_text')
+
+        if (insErr || !inserted) throw new Error(`Failed to insert added pages: ${insErr?.message}`)
+        insertedPages.push(...inserted as any)
+        pagesToProcess.push(...inserted as any)
+      }
+
+      // Update document page_count
+      await admin
+        .from('documents')
+        .update({ page_count: parsedPages.length })
+        .eq('id', documentId)
+
+    } else {
+      // Clean initial upload flow
+      isUpdate = false
+      await admin.from('pages').delete().eq('document_id', documentId)
+
+      const pageRows = parsedPages.map((p) => ({
+        document_id: documentId,
+        org_id:      doc.org_id,
+        page_number: p.pageNumber,
+        raw_text:    p.text,
+        word_count:  countWords(p.text),
+        status:      'pending' as const,
+      }))
+
+      const { data: inserted, error: pageErr } = await admin
+        .from('pages')
+        .insert(pageRows)
+        .select('id, page_number, raw_text')
+
+      if (pageErr || !inserted) {
+        throw new Error(`pages INSERT failed: ${pageErr?.message ?? 'no data'}`)
+      }
+
+      insertedPages = inserted as any
+      pagesToProcess = inserted as any
+
+      // Update document page_count
+      await admin
+        .from('documents')
+        .update({ page_count: insertedPages.length })
+        .eq('id', documentId)
     }
-
-    // Update document page_count
-    await admin
-      .from('documents')
-      .update({ page_count: insertedPages.length })
-      .eq('id', documentId)
 
     // ── 6. Set status → chunking ──────────────────────────────────────────────
     await setStatus(admin, documentId, 'chunking')
@@ -127,26 +248,28 @@ export async function processDocument(documentId: string): Promise<{
     console.log('[pipeline] Chunking text...')
     const allChunks: ChunkInsertRow[] = []
 
-    for (const page of insertedPages) {
-      const text = (page as { raw_text?: string }).raw_text ?? ''
+    for (const page of pagesToProcess) {
+      const text = page.raw_text ?? ''
       if (!text.trim()) continue
 
       const textChunks = chunkText(text)
       for (let i = 0; i < textChunks.length; i++) {
         allChunks.push({
           document_id: documentId,
-          page_id:     (page as { id: string }).id,
+          page_id:     page.id,
           org_id:      doc.org_id,
-          chunk_index: allChunks.length,
+          chunk_index: page.page_number * 10000 + i, // structured unique index
           content:     textChunks[i],
           token_count: estimateTokens(textChunks[i]),
           metadata: {
-            page_number:          (page as { page_number: number }).page_number,
+            page_number:          page.page_number,
             document_id:          documentId,
             org_id:               doc.org_id,
             doc_type:             doc.doc_type,
             department:           doc.department,
             sensitivity:          doc.sensitivity,
+            classification:       doc.classification,
+            framework:            doc.framework,
             chunk_in_page:        i,
             total_chunks_in_page: textChunks.length,
           } satisfies Json,
@@ -154,26 +277,28 @@ export async function processDocument(documentId: string): Promise<{
       }
     }
 
-    console.log('[pipeline] Created', allChunks.length, 'chunks')
+    console.log('[pipeline] Created', allChunks.length, 'new/updated chunks')
 
     // Insert chunks in batches of 100
     const insertedChunkIds: string[] = []
-    for (let i = 0; i < allChunks.length; i += 100) {
-      const batch = allChunks.slice(i, i + 100)
-      const { data: inserted, error: chunkErr } = await admin
-        .from('chunks')
-        .insert(batch)
-        .select('id')
+    if (allChunks.length > 0) {
+      for (let i = 0; i < allChunks.length; i += 100) {
+        const batch = allChunks.slice(i, i + 100)
+        const { data: inserted, error: chunkErr } = await admin
+          .from('chunks')
+          .insert(batch)
+          .select('id')
 
-      if (chunkErr || !inserted) {
-        throw new Error(`chunks INSERT batch ${i / 100} failed: ${chunkErr?.message ?? 'no data'}`)
+        if (chunkErr || !inserted) {
+          throw new Error(`chunks INSERT batch ${i / 100} failed: ${chunkErr?.message ?? 'no data'}`)
+        }
+
+        insertedChunkIds.push(...(inserted as Array<{ id: string }>).map((c) => c.id))
+
+        // Mark pages chunked
+        const pageIdsInBatch = [...new Set(batch.map((c) => c.page_id))]
+        await admin.from('pages').update({ status: 'chunked' }).in('id', pageIdsInBatch)
       }
-
-      insertedChunkIds.push(...(inserted as Array<{ id: string }>).map((c) => c.id))
-
-      // Mark pages chunked
-      const pageIdsInBatch = [...new Set(batch.map((c) => c.page_id))]
-      await admin.from('pages').update({ status: 'chunked' }).in('id', pageIdsInBatch)
     }
 
     // ── 8. Set status → embedding ─────────────────────────────────────────────
@@ -181,55 +306,54 @@ export async function processDocument(documentId: string): Promise<{
 
     // ── 9. Generate embeddings ────────────────────────────────────────────────
     console.log('[pipeline] Generating embeddings for', insertedChunkIds.length, 'chunks...')
+    let embeddingRows: EmbeddingInsertRow[] = []
 
-    const { data: chunkRows, error: fetchChunkErr } = await admin
-      .from('chunks')
-      .select('id, content')
-      .eq('document_id', documentId)
-      .order('chunk_index', { ascending: true })
+    if (insertedChunkIds.length > 0) {
+      const { data: chunkRows, error: fetchChunkErr } = await admin
+        .from('chunks')
+        .select('id, content')
+        .in('id', insertedChunkIds)
+        .order('chunk_index', { ascending: true })
 
-    if (fetchChunkErr || !chunkRows) {
-      throw new Error(`Failed to fetch chunks for embedding: ${fetchChunkErr?.message}`)
-    }
+      if (fetchChunkErr || !chunkRows) {
+        throw new Error(`Failed to fetch chunks for embedding: ${fetchChunkErr?.message}`)
+      }
 
-    // ── TEMPORARY DIAGNOSTIC — Gemini API key audit ──────────────────────────
-    console.log('[pipeline] Gemini API key audit:', {
-      GEMINI_API_KEY_EXISTS: !!process.env.GEMINI_API_KEY,
-      GEMINI_API_KEY_PREFIX: process.env.GEMINI_API_KEY?.slice(0, 10),
-      GEMINI_API_KEY_LENGTH: process.env.GEMINI_API_KEY?.length,
-    })
-    // ─────────────────────────────────────────────────────────────────────────
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
+      embeddingRows = await generateEmbeddings(
+        ai,
+        doc.org_id,
+        chunkRows as Array<{ id: string; content: string }>
+      )
 
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
-    const embeddingRows = await generateEmbeddings(
-      ai,
-      doc.org_id,
-      chunkRows as Array<{ id: string; content: string }>
-    )
+      console.log('[pipeline] Generated', embeddingRows.length, 'embeddings')
 
-    console.log('[pipeline] Generated', embeddingRows.length, 'embeddings')
+      // Insert embeddings in batches of 50
+      for (let i = 0; i < embeddingRows.length; i += 50) {
+        const batch = embeddingRows.slice(i, i + 50)
+        const { error: embErr } = await admin.from('embeddings').insert(batch)
+        if (embErr) {
+          throw new Error(`embeddings INSERT batch ${i / 50} failed: ${embErr.message}`)
+        }
+      }
 
-    // Insert embeddings in batches of 50
-    for (let i = 0; i < embeddingRows.length; i += 50) {
-      const batch = embeddingRows.slice(i, i + 50)
-      const { error: embErr } = await admin.from('embeddings').insert(batch)
-      if (embErr) {
-        throw new Error(`embeddings INSERT batch ${i / 50} failed: ${embErr.message}`)
+      // Mark processed pages as embedded
+      const pageIdsToEmbed = pagesToProcess.map(p => p.id)
+      if (pageIdsToEmbed.length > 0) {
+        await admin
+          .from('pages')
+          .update({ status: 'embedded' })
+          .in('id', pageIdsToEmbed)
       }
     }
 
-    // Mark all pages as embedded only when we actually have embeddings
-    if (embeddingRows.length > 0) {
-      await admin
-        .from('pages')
-        .update({ status: 'embedded' })
-        .eq('document_id', documentId)
+    // Write page-level update audit logs
+    for (const page of pagesToProcess) {
+      await auditLog(admin, doc.org_id, doc.uploaded_by, 'PAGE_UPDATED', documentId, { page_number: page.page_number, page_id: page.id })
     }
 
     // ── 10. Set final status ──────────────────────────────────────────────────
-    // Pages and chunks are always preserved regardless of embedding outcome.
-    // Only mark fully indexed when embeddings were successfully generated.
-    if (embeddingRows.length === 0) {
+    if (pagesToProcess.length > 0 && embeddingRows.length === 0 && insertedChunkIds.length > 0) {
       const reason = 'Embedding step produced 0 vectors — check GEMINI_API_KEY and quota.'
       console.warn('[pipeline] ⚠ embedding_failed:', reason)
 
@@ -249,13 +373,9 @@ export async function processDocument(documentId: string): Promise<{
         embedding_status: 'failed — 0 vectors generated',
       })
 
-      console.log('[pipeline] ⚠ Partial complete (embedding_failed):', {
-        pages: insertedPages.length, chunks: allChunks.length, embeddings: 0,
-      })
-
       return {
         success:           false,
-        pagesProcessed:    insertedPages.length,
+        pagesProcessed:    pagesToProcess.length,
         chunksCreated:     allChunks.length,
         embeddingsCreated: 0,
         error:             reason,
@@ -264,22 +384,29 @@ export async function processDocument(documentId: string): Promise<{
 
     await setStatus(admin, documentId, 'indexed')
 
-    // Audit: parser completed
+    // Audit: DOCUMENT_CREATED or DOCUMENT_UPDATED
+    const completionAction = isUpdate ? 'DOCUMENT_UPDATED' : 'DOCUMENT_CREATED'
+    await auditLog(admin, doc.org_id, doc.uploaded_by, completionAction, documentId, {
+      pages:      parsedPages.length,
+      is_update:  isUpdate
+    })
+
+    // Audit: parser completed (legacy compatibility)
     await auditLog(admin, doc.org_id, doc.uploaded_by, 'document.parser_completed', documentId, {
-      pages:      insertedPages.length,
+      pages:      parsedPages.length,
       chunks:     allChunks.length,
       embeddings: embeddingRows.length,
     })
 
     console.log('[pipeline] ✅ Complete:', {
-      pages: insertedPages.length,
+      pages: parsedPages.length,
       chunks: allChunks.length,
       embeddings: embeddingRows.length,
     })
 
     return {
       success:           true,
-      pagesProcessed:    insertedPages.length,
+      pagesProcessed:    parsedPages.length,
       chunksCreated:     allChunks.length,
       embeddingsCreated: embeddingRows.length,
     }
@@ -379,7 +506,7 @@ async function parseDocument(bytes: ArrayBuffer, ext: string): Promise<ParsedPag
   return pages
 }
 
-function chunkText(text: string): string[] {
+export function chunkText(text: string): string[] {
   if (text.length <= CHUNK_MAX) return [text]
 
   const chunks: string[] = []
@@ -414,7 +541,7 @@ function chunkText(text: string): string[] {
   return chunks.filter((c) => c.length >= 10)
 }
 
-interface ChunkInsertRow {
+export interface ChunkInsertRow {
   document_id: string
   page_id:     string
   org_id:      string
@@ -424,7 +551,7 @@ interface ChunkInsertRow {
   metadata:    Json
 }
 
-interface EmbeddingInsertRow {
+export interface EmbeddingInsertRow {
   chunk_id:   string
   org_id:     string
   embedding:  number[]
@@ -471,7 +598,7 @@ async function embedContentWithRetry(
   return { embeddings }
 }
 
-async function generateEmbeddings(
+export async function generateEmbeddings(
   ai: GoogleGenAI,
   orgId: string,
   chunks: Array<{ id: string; content: string }>
@@ -586,7 +713,7 @@ function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length
 }
 
-function estimateTokens(text: string): number {
+export function estimateTokens(text: string): number {
   // Rough approximation: 1 token ≈ 4 characters
   return Math.ceil(text.length / 4)
 }

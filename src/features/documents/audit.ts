@@ -19,6 +19,12 @@ export type AuditAction =
   | 'document.parser_completed'
   | 'document.parser_failed'
   | 'trial.upgrade_requested'
+  | 'DOCUMENT_CREATED'
+  | 'DOCUMENT_UPDATED'
+  | 'DOCUMENT_DELETED'
+  | 'PAGE_UPDATED'
+  | 'PAGE_DELETED'
+
 
 
 /**

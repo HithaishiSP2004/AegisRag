@@ -39,12 +39,18 @@ export async function keywordSearch(query: SearchQuery): Promise<SearchResult[]>
 
   // ── Call the PG function ─────────────────────────────────────────────────
   const rpcPayload = {
-    query_text:         text,
-    match_org_id:       orgId,
-    match_count:        limit,
-    filter_department:  filters.department  ?? null,
-    filter_doc_type:    filters.docType     ?? null,
-    filter_sensitivity: filters.sensitivity ?? null,
+    query_text:            text,
+    match_org_id:          orgId,
+    match_user_id:         query.userId ?? null,
+    match_user_role:       query.userRole ?? null,
+    match_count:           limit,
+    filter_department:     filters.department  ?? null,
+    filter_doc_type:       filters.docType     ?? null,
+    filter_sensitivity:    filters.sensitivity ?? null,
+    filter_framework:      filters.framework   ?? null,
+    filter_classification: filters.classification ?? null,
+    filter_document_id:    filters.documentId  ?? null,
+    filter_organization_id: filters.organizationId ?? null,
   }
   console.log('[retrieval/keyword] query_text   :', text)
   console.log('[retrieval/keyword] match_org_id :', orgId)

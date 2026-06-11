@@ -22,8 +22,31 @@ import type { RetrievalFiltersState } from './RetrievalFilters'
 import type { ConversationMeta } from '../hooks/useConversations'
 import { colors, font, radius, transition } from '@/components/ui/tokens'
 import { AegisConduit } from '@/components/ui'
+import { createClient } from '@/lib/supabase/client'
 
 export function ChatWorkspace() {
+  const [documentCount, setDocumentCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    async function fetchDocCount() {
+      try {
+        const supabase = createClient()
+        const { count, error } = await supabase
+          .from('documents')
+          .select('*', { count: 'exact', head: true })
+        if (!error && count !== null) {
+          setDocumentCount(count)
+        } else {
+          setDocumentCount(0)
+        }
+      } catch (err) {
+        console.error('Failed to fetch document count:', err)
+        setDocumentCount(0)
+      }
+    }
+    fetchDocCount()
+  }, [])
+
   const [retrieval,   setRetrieval]   = useState<RetrievalFiltersState>({})
   const [dateFilters, setDateFilters] = useState<Pick<SearchFiltersUI,'dateFrom'|'dateTo'>>({})
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -268,7 +291,7 @@ export function ChatWorkspace() {
                 borderRadius: radius.full,
               }}
             >
-              <StatusDot label="132 Documents Indexed" />
+              <StatusDot label={`${documentCount ?? 0} Document${documentCount === 1 ? '' : 's'} Indexed`} />
               <StatusDot label="Vector Search Active" />
               <StatusDot label="Grounding Enabled" />
             </div>
@@ -347,7 +370,7 @@ export function ChatWorkspace() {
             {/* Messages or welcome state */}
             {showWelcome ? (
               <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-                <WelcomeState onSubmit={handleWelcomeSubmit} />
+                <WelcomeState onSubmit={handleWelcomeSubmit} docCount={documentCount ?? 0} />
               </div>
             ) : (
               /* MessagesArea: the ONLY scrollable region in the chat column */

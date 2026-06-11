@@ -23,16 +23,25 @@ export interface RiskScoreSummary {
   unauthorized_events: number
 }
 
+export interface TableCounts {
+  documents: number
+  reports: number
+  workflows: number
+  violations: number
+  audit_logs: number
+}
+
 interface DashboardState {
   stats:    ComplianceStats | null
   riskScore: RiskScoreSummary | null
+  counts:   TableCounts | null
   loading:  boolean
   error:    string | null
 }
 
 export function useComplianceDashboard() {
   const [state, setState] = useState<DashboardState>({
-    stats: null, riskScore: null, loading: true, error: null,
+    stats: null, riskScore: null, counts: null, loading: true, error: null,
   })
 
   const load = useCallback(async () => {
@@ -41,7 +50,7 @@ export function useComplianceDashboard() {
       const res = await fetch('/api/compliance/stats')
       if (!res.ok) throw new Error((await res.json()).error ?? res.statusText)
       const json = await res.json()
-      setState({ stats: json.stats, riskScore: json.riskScore, loading: false, error: null })
+      setState({ stats: json.stats, riskScore: json.riskScore, counts: json.counts, loading: false, error: null })
     } catch (e) {
       setState(s => ({ ...s, loading: false, error: (e as Error).message }))
     }

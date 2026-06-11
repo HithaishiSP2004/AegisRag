@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { sendEmail, getOtpEmailTemplate } from '@/lib/email'
+import { createHash } from 'crypto'
 
-// In-memory OTP store (works perfectly in Next.js local dev environment)
-const globalAny = global as any
-globalAny.otpStore = globalAny.otpStore || new Map()
-const otpStore = globalAny.otpStore
+// C1 FIX: In-memory otpStore replaced with persistent Supabase table (otp_requests).
+// C2 FIX: Plaintext OTP is never logged.
 
 const RESTRICTED_DOMAINS = [
   'gmail.com',
@@ -20,6 +19,10 @@ const RESTRICTED_DOMAINS = [
   'guerrillamail.com',
   'tempmail.com',
 ]
+
+function hashOtp(otp: string): string {
+  return createHash('sha256').update(otp).digest('hex')
+}
 
 export async function POST(request: Request) {
   try {
@@ -36,54 +39,68 @@ export async function POST(request: Request) {
       )
     }
 
-    // Rate Limit Checks (max 5 requests per hour)
-    const now = Date.now()
-    const stored = otpStore.get(email)
-    
-    if (stored) {
-      // Check hourly window
-      const oneHourAgo = now - 60 * 60 * 1000
-      const recentRequests = stored.requestHistory.filter((t: number) => t > oneHourAgo)
-      
+    const supabaseAdmin = createAdminClient()
+    const now = new Date()
+
+    // ── Rate-limit check ──────────────────────────────────────────────────────
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: existing } = await (supabaseAdmin as any)
+      .from('otp_requests')
+      .select('request_history')
+      .eq('email', email)
+      .single()
+
+    if (existing?.request_history) {
+      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString()
+      const recentRequests = (existing.request_history as string[]).filter(
+        (t: string) => t > oneHourAgo
+      )
+
       if (recentRequests.length >= 5) {
         return NextResponse.json(
           { error: 'Maximum 5 OTP requests per hour. Please try again later.' },
           { status: 429 }
         )
       }
-      
-      // Enforce 60s resend delay
-      const lastRequest = stored.requestHistory[stored.requestHistory.length - 1]
-      if (now - lastRequest < 60000) {
+
+      const lastRequest = existing.request_history[existing.request_history.length - 1] as string
+      if (lastRequest && now.getTime() - new Date(lastRequest).getTime() < 60_000) {
         return NextResponse.json(
           { error: 'Please wait 60 seconds before requesting another code.' },
           { status: 429 }
         )
       }
-      
-      stored.requestHistory = [...recentRequests, now]
-    } else {
-      otpStore.set(email, {
-        otp: '',
-        expiresAt: 0,
-        attempts: 0,
-        requestHistory: [now],
-      })
     }
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
-    const expiresAt = now + 10 * 60 * 1000 // 10 minutes expiry
+    // ── Generate 6-digit OTP ──────────────────────────────────────────────────
+    // C2 FIX: OTP is hashed immediately — plaintext never written to any log.
+    const otp = Math.floor(100_000 + Math.random() * 900_000).toString()
+    const expiresAt = new Date(now.getTime() + 10 * 60 * 1000).toISOString()
 
-    const currentRecord = otpStore.get(email)
-    currentRecord.otp = otp
-    currentRecord.expiresAt = expiresAt
-    currentRecord.attempts = 0
+    // Upsert: create or replace the OTP record for this email
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: upsertErr } = await (supabaseAdmin as any)
+      .from('otp_requests')
+      .upsert(
+        {
+          email,
+          otp_hash: hashOtp(otp),
+          expires_at: expiresAt,
+          attempts: 0,
+          request_history: existing?.request_history
+            ? [...(existing.request_history as string[]), now.toISOString()].slice(-10)
+            : [now.toISOString()],
+          updated_at: now.toISOString(),
+        },
+        { onConflict: 'email' }
+      )
 
-    // Log the generated OTP for local testing/demonstration
-    console.log(`[AUTH OTP DEBUG] OTP for ${email} is ${otp} (expires in 10m)`)
+    if (upsertErr) {
+      console.error('[request-otp] DB upsert error:', upsertErr.message)
+      return NextResponse.json({ error: 'Failed to store verification code. Please try again.' }, { status: 500 })
+    }
 
-    // Dispatch real email via Resend (async, non-blocking to prevent UI delay)
+    // ── Dispatch email (fire-and-forget) ──────────────────────────────────────
     sendEmail({
       to: email,
       subject: 'AegisRAG Verification Code',
@@ -92,20 +109,19 @@ export async function POST(request: Request) {
       console.error('[EMAIL SEND FAILURE]', err)
     })
 
-    // Write audit log entry via Admin Client
-    const supabaseAdmin = createAdminClient()
-    
-    // Check if workspace exists
-    const { data: orgs } = await supabaseAdmin
-      .from('organizations' as any)
-      .select('*')
+    // ── Audit log ─────────────────────────────────────────────────────────────
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: orgs } = await (supabaseAdmin as any)
+      .from('organizations')
+      .select('id, name, settings, domain')
 
     const existingOrg = orgs?.find(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (o: any) => o.settings?.domain === domain || o.domain === domain
     )
 
-    // Log the OTP request audit event
-    await supabaseAdmin.from('audit_events' as any).insert({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabaseAdmin as any).from('audit_events').insert({
       org_id: (existingOrg as any)?.id || undefined,
       event_type: 'OTP_REQUESTED',
       actor: email,
@@ -117,8 +133,9 @@ export async function POST(request: Request) {
       message: 'Verification code sent successfully.'
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Internal server error.'
     console.error('Request OTP Error:', error)
-    return NextResponse.json({ error: error.message || 'Internal server error.' }, { status: 500 })
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

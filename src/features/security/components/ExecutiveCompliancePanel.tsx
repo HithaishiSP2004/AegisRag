@@ -22,53 +22,97 @@ interface Metric {
 
 export function ExecutiveCompliancePanel() {
   const [metrics, setMetrics] = useState<Metric>({
-    coverage: 69,
-    readiness: 72,
-    riskScore: 29,
-    status: 'Attention Required'
+    coverage: 0,
+    readiness: 0,
+    riskScore: 0,
+    status: 'Not Ready'
   })
+  const [ranking, setRanking] = useState<any[]>([])
+  const [risks, setRisks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // Dynamic fetch of compliance readiness & overview statistics
     Promise.all([
       fetch('/api/compliance/readiness'),
-      fetch('/api/compliance/controls')
+      fetch('/api/compliance/stats'),
+      fetch('/api/compliance/frameworks')
     ])
-      .then(async ([res1, res2]) => {
+      .then(async ([res1, res2, res3]) => {
         const data1 = await res1.json()
         const data2 = await res2.json()
+        const data3 = await res3.json()
 
-        const readiness = Math.round(data1.readiness_score ?? 72)
-        const controls = data2.controls ?? []
-        const total = controls.length
-        const approved = controls.filter((c: any) => c.last_review?.status === 'approved').length
-        const coverage = total > 0 ? Math.round((approved / total) * 100) : 69
+        const readiness = Math.round(data1.score ?? 0)
+        const riskScore = Math.round(data2.riskScore?.risk_score ?? 0)
+
+        const totalControls = data2.stats?.total_controls ?? 0
+        const controlsWithEvidence = data2.stats?.controls_with_evidence ?? 0
+        const coverage = totalControls > 0 ? Math.round((controlsWithEvidence / totalControls) * 100) : 0
 
         setMetrics({
           coverage,
           readiness,
-          riskScore: 29, // Matches standard risk score
+          riskScore,
           status: readiness >= 95 ? 'AUDIT READY' : readiness >= 80 ? 'NEAR READY' : readiness >= 60 ? 'ATTENTION REQUIRED' : 'NOT READY'
         })
+
+        // Framework rankings mapping
+        const frameworksList = data3.frameworks ?? []
+        const mappedRankings = frameworksList.map((fw: any) => {
+          const score = fw.control_count > 0 ? Math.round((fw.evidence_count / fw.control_count) * 100) : 0
+          let color = '#EF4444' // red / Not Ready
+          let status = 'Not Ready'
+          if (score >= 80) {
+            color = '#10B981'
+            status = 'High Coverage'
+          } else if (score >= 60) {
+            color = '#F59E0B'
+            status = 'Near Ready'
+          } else if (score >= 40) {
+            color = '#FB923C'
+            status = 'Attention Required'
+          }
+          return {
+            name: fw.name,
+            score,
+            status,
+            color
+          }
+        }).sort((a: any, b: any) => b.score - a.score)
+
+        setRanking(mappedRankings.map((fw: any, idx: number) => ({
+          rank: idx + 1,
+          ...fw
+        })))
+
+        // Risks mapping
+        const mappedRisks = (data1.issues ?? []).map((issue: any) => {
+          let title = 'Compliance Issue'
+          let color = '#F59E0B' // yellow
+          if (issue.type === 'evidence_completeness') {
+            title = 'Critical Evidence Gap'
+            color = '#EF4444'
+          } else if (issue.type === 'reference_integrity') {
+            title = 'Broken Reference / Deletion'
+            color = '#EF4444'
+          } else if (issue.type === 'signoff_coverage') {
+            title = 'Pending Signoff / Control Overdue'
+            color = '#FB923C'
+          }
+          
+          return {
+            title,
+            desc: `${issue.control_code}: ${issue.message}`,
+            severity: issue.severity.toUpperCase(),
+            color
+          }
+        })
+        setRisks(mappedRisks)
       })
       .catch(err => console.error('Error fetching executive metrics:', err))
       .finally(() => setLoading(false))
   }, [])
-
-  const ranking = [
-    { rank: 1, name: 'ISO27001', score: 90, status: 'High Coverage', color: '#10B981' },
-    { rank: 2, name: 'HIPAA', score: 82, status: 'Near Ready', color: '#F59E0B' },
-    { rank: 3, name: 'SOC2', score: 67, status: 'Attention Required', color: '#FB923C' },
-    { rank: 4, name: 'GDPR', score: 55, status: 'Attention Required', color: '#EF4444' },
-    { rank: 5, name: 'NIST', score: 40, status: 'Not Ready', color: '#EF4444' },
-  ]
-
-  const risks = [
-    { title: 'Critical Evidence Gap', desc: 'No MFA evidence for SOC2 CC6.2 control', severity: 'Critical', color: '#EF4444' },
-    { title: 'Upcoming Policy Expiration', desc: 'ISO27001 A.5.1 policy review overdue in 4 days', severity: 'High', color: '#FB923C' },
-    { title: 'Failed Technical Control', desc: 'GDPR ART.32 backup redundancy review rejected', severity: 'High', color: '#FB923C' }
-  ]
 
   return (
     <div style={{
@@ -196,35 +240,41 @@ export function ExecutiveCompliancePanel() {
         }}>
           <span style={{ color: colors.textSecondary, fontSize: '13px', fontWeight: 600 }}>Active Framework Rankings</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {ranking.map((item) => (
-              <div key={item.rank} style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '6px 10px',
-                background: 'rgba(255, 255, 255, 0.01)',
-                border: '1px solid rgba(255, 255, 255, 0.03)',
-                borderRadius: radius.md,
-                fontSize: '12px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: colors.textMuted, fontWeight: 700, width: '16px' }}>{item.rank}.</span>
-                  <span style={{ color: colors.textPrimary, fontWeight: 600 }}>{item.name}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: colors.textSecondary }}>{item.score}%</span>
-                  <div style={{
-                    width: '60px',
-                    height: '4px',
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    borderRadius: '2px',
-                    overflow: 'hidden'
-                  }}>
-                    <div style={{ width: `${item.score}%`, height: '100%', background: item.color }} />
+            {ranking.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: colors.textMuted, fontSize: '12px' }}>
+                No Framework Coverage Data Available
+              </div>
+            ) : (
+              ranking.map((item) => (
+                <div key={item.rank} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '6px 10px',
+                  background: 'rgba(255, 255, 255, 0.01)',
+                  border: '1px solid rgba(255, 255, 255, 0.03)',
+                  borderRadius: radius.md,
+                  fontSize: '12px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ color: colors.textMuted, fontWeight: 700, width: '16px' }}>{item.rank}.</span>
+                    <span style={{ color: colors.textPrimary, fontWeight: 600 }}>{item.name}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ color: colors.textSecondary }}>{item.score}%</span>
+                    <div style={{
+                      width: '60px',
+                      height: '4px',
+                      background: 'rgba(255, 255, 255, 0.06)',
+                      borderRadius: '2px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{ width: `${item.score}%`, height: '100%', background: item.color }} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -240,27 +290,33 @@ export function ExecutiveCompliancePanel() {
         }}>
           <span style={{ color: colors.textSecondary, fontSize: '13px', fontWeight: 600 }}>Top Compliance Risks</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {risks.map((risk, idx) => (
-              <div key={idx} style={{
-                display: 'flex',
-                gap: '10px',
-                padding: '8px 12px',
-                background: `${risk.color}05`,
-                borderLeft: `3px solid ${risk.color}`,
-                borderRadius: `0 ${radius.sm} ${radius.sm} 0`
-              }}>
-                <AlertTriangle size={14} style={{ color: risk.color, marginTop: '2px', flexShrink: 0 }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ color: colors.textPrimary, fontSize: '12px', fontWeight: 600 }}>{risk.title}</span>
-                    <span style={{ fontSize: '9px', background: `${risk.color}20`, color: risk.color, padding: '1px 4px', borderRadius: radius.xs, fontWeight: 700 }}>
-                      {risk.severity}
-                    </span>
-                  </div>
-                  <span style={{ color: colors.textSecondary, fontSize: '11px' }}>{risk.desc}</span>
-                </div>
+            {risks.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: colors.textMuted, fontSize: '12px' }}>
+                No Active Compliance Risks
               </div>
-            ))}
+            ) : (
+              risks.map((risk, idx) => (
+                <div key={idx} style={{
+                  display: 'flex',
+                  gap: '10px',
+                  padding: '8px 12px',
+                  background: `${risk.color}05`,
+                  borderLeft: `3px solid ${risk.color}`,
+                  borderRadius: `0 ${radius.sm} ${radius.sm} 0`
+                }}>
+                  <AlertTriangle size={14} style={{ color: risk.color, marginTop: '2px', flexShrink: 0 }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ color: colors.textPrimary, fontSize: '12px', fontWeight: 600 }}>{risk.title}</span>
+                      <span style={{ fontSize: '9px', background: `${risk.color}20`, color: risk.color, padding: '1px 4px', borderRadius: radius.xs, fontWeight: 700 }}>
+                        {risk.severity}
+                      </span>
+                    </div>
+                    <span style={{ color: colors.textSecondary, fontSize: '11px' }}>{risk.desc}</span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -29,10 +29,11 @@ export function SecurityScorecard({ data, loading }: Props) {
   const eventsSummary = data.eventsSummary
   const mismatches = data.mismatches ?? []
 
-  const totalEvents = eventsSummary?.total ?? 142
-  const blockedEvents = eventsSummary?.blocked ?? 12
-  const severities = eventsSummary?.severities ?? { critical: 0, high: 2, medium: 5, low: 18, info: 117 }
-  const types = eventsSummary?.types ?? { 'Auth Failure': 14, 'Config Drift': 4, 'Access Mismatch': 6 }
+  // H4 FIX: Use real event data with zero-based defaults — no fabricated fallback numbers
+  const totalEvents = eventsSummary?.total ?? 0
+  const blockedEvents = eventsSummary?.blocked ?? 0
+  const severities = eventsSummary?.severities ?? { critical: 0, high: 0, medium: 0, low: 0, info: 0 }
+  const types = eventsSummary?.types ?? {}
 
   // Severity colors
   const sevColor = (sev: string) => {
@@ -45,12 +46,9 @@ export function SecurityScorecard({ data, loading }: Props) {
     }
   }
 
-  // Mocked Security Intelligence Center details
-  const attackTimeline = [
-    { time: '08:42 AM', event: 'Authentication mismatch on CC6.2 control mapping', severity: 'High' },
-    { time: '10:15 AM', event: 'Policy violation: declared sensitivity drift in training_data.pdf', severity: 'Medium' },
-    { time: '02:30 PM', event: 'Rate limit threshold warning (Gemini API 503 fallback execution)', severity: 'Low' },
-  ]
+  // M7 FIX: Use real security events from the API instead of a hardcoded static timeline.
+  // recentEvents comes from /api/reports/security → security_events table.
+  const recentEvents = data.recentEvents ?? []
 
   const advisories = {
     drift: {
@@ -163,17 +161,28 @@ export function SecurityScorecard({ data, loading }: Props) {
           }}>
             <span style={{ color: '#E2E8F0', fontWeight: 600, fontSize: '12px' }}>Real-time Policy Violation Timeline</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {attackTimeline.map((item, idx) => (
-                <div key={idx} style={{
-                  display: 'flex', gap: '12px', alignItems: 'center', background: 'rgba(255,255,255,0.005)',
-                  border: '1px solid rgba(255,255,255,0.03)', padding: '10px', borderRadius: radius.md
-                }}>
-                  <span style={{ fontFamily: font.mono, fontSize: '10px', color: colors.textMuted }}>{item.time}</span>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: sevColor(item.severity) }} />
-                  <span style={{ color: colors.textPrimary, fontSize: '11px', flex: 1 }}>{item.event}</span>
-                  <span style={{ fontSize: '9px', fontWeight: 700, color: sevColor(item.severity) }}>{item.severity.toUpperCase()}</span>
+              {recentEvents.length === 0 ? (
+                <div style={{ padding: '20px 0', textAlign: 'center', color: colors.textMuted, fontSize: '11px' }}>
+                  No security events recorded in the selected period.
                 </div>
-              ))}
+              ) : (
+                recentEvents.map((item) => {
+                  const ts = new Date(item.created_at)
+                  const timeStr = ts.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                  const label = item.description || item.event_type.replace(/_/g, ' ')
+                  return (
+                    <div key={item.id} style={{
+                      display: 'flex', gap: '12px', alignItems: 'center', background: 'rgba(255,255,255,0.005)',
+                      border: '1px solid rgba(255,255,255,0.03)', padding: '10px', borderRadius: radius.md
+                    }}>
+                      <span style={{ fontFamily: font.mono, fontSize: '10px', color: colors.textMuted }}>{timeStr}</span>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: sevColor(item.severity) }} />
+                      <span style={{ color: colors.textPrimary, fontSize: '11px', flex: 1 }}>{label}</span>
+                      <span style={{ fontSize: '9px', fontWeight: 700, color: sevColor(item.severity) }}>{item.severity.toUpperCase()}</span>
+                    </div>
+                  )
+                })
+              )}
             </div>
           </div>
 

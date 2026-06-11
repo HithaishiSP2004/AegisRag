@@ -25,7 +25,7 @@ export function AuditorPackageGenerator() {
     readinessReport: true
   })
   
-  const [readinessScore, setReadinessScore] = useState(72)
+  const [readinessScore, setReadinessScore] = useState(0)
   const [forceExport, setForceExport] = useState(false)
   const [exporting, setExporting] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -36,8 +36,8 @@ export function AuditorPackageGenerator() {
     fetch('/api/compliance/readiness')
       .then(res => res.json())
       .then(data => {
-        if (data.readiness_score !== undefined) {
-          setReadinessScore(Math.round(data.readiness_score))
+        if (data.score !== undefined) {
+          setReadinessScore(Math.round(data.score))
         }
       })
       .catch(err => console.error('Error fetching readiness for generator:', err))
@@ -146,11 +146,11 @@ export function AuditorPackageGenerator() {
                 outline: 'none'
               }}
             >
-              <option value="soc2">SOC2 Package</option>
-              <option value="iso27001">ISO27001 Package</option>
-              <option value="hipaa">HIPAA Package</option>
-              <option value="gdpr">GDPR Package</option>
-              <option value="executive">Executive GRC Package</option>
+              <option value="soc2" style={{ background: '#0D111A', color: colors.textPrimary }}>SOC2 Package</option>
+              <option value="iso27001" style={{ background: '#0D111A', color: colors.textPrimary }}>ISO27001 Package</option>
+              <option value="hipaa" style={{ background: '#0D111A', color: colors.textPrimary }}>HIPAA Package</option>
+              <option value="gdpr" style={{ background: '#0D111A', color: colors.textPrimary }}>GDPR Package</option>
+              <option value="executive" style={{ background: '#0D111A', color: colors.textPrimary }}>Executive GRC Package</option>
             </select>
           </div>
 

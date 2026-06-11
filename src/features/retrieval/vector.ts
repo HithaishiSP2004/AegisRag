@@ -44,14 +44,17 @@ export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> 
     return []
   }
 
-  // ── Guard: check if org has any embeddings ────────────────────────────────
+  // ── Guard: check if this org has any embeddings ───────────────────────────
+  // C3 FIX: scoped to orgId — prevents burning Gemini quota for a new org
+  // that has uploaded nothing, even when other tenants have embeddings.
   const admin = createAdminClient()
   const { count } = await admin
     .from('embeddings')
     .select('*', { count: 'exact', head: true })
     .eq('org_id', orgId)
+    .limit(1)
 
-  if (!count || count === 0) {
+  if (count === null || count === 0) {
     console.warn('[retrieval/vector] No embeddings for org', orgId, '— skipping vector search')
     return []
   }
@@ -79,13 +82,19 @@ export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> 
   // ── Run vector similarity search ──────────────────────────────────────────
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: rows, error } = await (admin as any).rpc('match_chunks', {
-    query_embedding:    queryEmbedding,
-    match_org_id:       orgId,
-    match_count:        filters.limit ?? 8,
-    match_threshold:    0.50,
-    filter_department:  filters.department  ?? null,
-    filter_doc_type:    filters.docType     ?? null,
-    filter_sensitivity: filters.sensitivity ?? null,
+    query_embedding:       queryEmbedding,
+    match_org_id:          orgId,
+    match_user_id:         query.userId ?? null,
+    match_user_role:       query.userRole ?? null,
+    match_count:           filters.limit ?? 30,
+    match_threshold:       0.40,
+    filter_department:     filters.department  ?? null,
+    filter_doc_type:       filters.docType     ?? null,
+    filter_sensitivity:    filters.sensitivity ?? null,
+    filter_framework:      filters.framework   ?? null,
+    filter_classification: filters.classification ?? null,
+    filter_document_id:    filters.documentId  ?? null,
+    filter_organization_id: filters.organizationId ?? null,
   }) as { data: RawVectorRow[] | null; error: { message: string } | null }
 
   if (error || !rows || rows.length === 0) {

@@ -20,9 +20,16 @@ import { createAdminClient } from '@/lib/supabase/server'
 import type { SearchResult } from './types'
 
 export interface EvalMeta {
-  retrieval_mode:     string
-  total_latency_ms:   number
-  conversation_id?:   string | null
+  retrieval_mode:       string
+  total_latency_ms:     number
+  conversation_id?:     string | null
+  vector_latency_ms?:   number | null
+  keyword_latency_ms?:  number | null
+  fusion_latency_ms?:   number | null
+  rerank_latency_ms?:   number | null
+  vector_candidates?:   number | null
+  reranked_candidates?:  number | null
+  context_tokens_saved?: number | null
 }
 
 interface GeminiEvalResponse {
@@ -82,7 +89,17 @@ Return ONLY valid JSON. No markdown, no explanation outside the JSON.`
     config:   { responseMimeType: 'application/json' },
   })
 
-  const parsed = JSON.parse(res.text ?? '{}')
+  const raw = res.text ?? '{}'
+
+  // H3 FIX: wrap JSON.parse in try/catch — malformed Gemini output (e.g. a
+  // 503 error body returned as text) must not propagate a SyntaxError through
+  // the outer evaluateRetrieval catch, violating "always resolves" guarantee.
+  let parsed: Record<string, unknown> = {}
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    console.warn('[eval] Gemini returned non-JSON text — using default scores. Raw:', raw.slice(0, 120))
+  }
 
   return {
     groundedness_score: typeof parsed.groundedness_score === 'number'
@@ -143,16 +160,23 @@ export async function evaluateRetrieval(
   try {
     const admin = createAdminClient()
     const { error } = await admin.from('retrieval_evals').insert({
-      org_id:             orgId,
-      conversation_id:    meta.conversation_id ?? null,
-      query_text:         question,
-      retrieval_mode:     (meta.retrieval_mode as 'vector' | 'keyword' | 'hybrid'),
-      chunk_count:        sources.length,
-      total_latency_ms:   meta.total_latency_ms,
-      groundedness_score: groundednessScore,
-      citation_hit_rate:  citationHitRate,
-      hallucination_flag: hallucinationFlag,
-      eval_notes:         evalNotes,
+      org_id:              orgId,
+      conversation_id:     meta.conversation_id ?? null,
+      query_text:          question,
+      retrieval_mode:      (meta.retrieval_mode as 'vector' | 'keyword' | 'hybrid'),
+      chunk_count:         sources.length,
+      total_latency_ms:    meta.total_latency_ms,
+      groundedness_score:  groundednessScore,
+      citation_hit_rate:   citationHitRate,
+      hallucination_flag:  hallucinationFlag,
+      eval_notes:          evalNotes,
+      vector_latency_ms:   meta.vector_latency_ms ?? null,
+      keyword_latency_ms:  meta.keyword_latency_ms ?? null,
+      fusion_latency_ms:   meta.fusion_latency_ms ?? null,
+      rerank_latency_ms:   meta.rerank_latency_ms ?? null,
+      vector_candidates:   meta.vector_candidates ?? null,
+      reranked_candidates:  meta.reranked_candidates ?? null,
+      context_tokens_saved: meta.context_tokens_saved ?? null,
     })
     if (error) {
       console.error('[eval] retrieval_evals insert error:', error.message)

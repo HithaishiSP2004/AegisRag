@@ -448,16 +448,20 @@ export function AuditTable({ logs, total, page, limit, loading, error, onPageCha
         )}
 
         {/* Empty state */}
-        {!loading && !error && sortedLogs.length === 0 && (
+        {!loading && !error && (total === 0 || sortedLogs.length === 0) && (
           <div style={{
-            display:'flex', flexDirection:'column', alignItems:'center',
-            padding:'60px 20px', gap:'12px',
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            padding: '60px 20px', gap: '12px',
           }}>
-            <Icon icon="solar:shield-check-bold" width={40} style={{ color:'#334155' }} />
-            <span style={{ color:'#64748B', fontSize:'0.82rem', fontWeight: 500 }}>
-              No audit events match the current filters.
+            <Icon icon="solar:shield-check-bold" width={40} style={{ color: '#334155' }} />
+            <span style={{ color: '#64748B', fontSize: '0.82rem', fontWeight: 500 }}>
+              {total === 0 ? 'No Audit Activity Recorded' : 'No audit events match the current filters.'}
             </span>
-            {onReset && (
+            {total === 0 ? (
+              <span style={{ color: '#475569', fontSize: '0.72rem', maxWidth: '280px', textAlign: 'center' }}>
+                System audit logs will populate as user actions and background jobs execute.
+              </span>
+            ) : onReset && (
               <button
                 id="audit-empty-reset"
                 onClick={onReset}

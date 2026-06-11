@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useComplianceReviews, type ReviewRow } from '../hooks/useComplianceReviews'
+import { useComplianceDashboard } from '../hooks/useComplianceDashboard'
 import type { ReviewStatus } from '@/types/database'
 import { colors, radius, font, shadow, transition } from '@/components/ui/tokens'
 import {
@@ -31,6 +32,7 @@ const STATUS_META: Record<ReviewStatus, { label: string; color: string; bg: stri
 export function ReviewQueuePanel() {
   const [statusFilter, setStatusFilter] = useState<ReviewStatus | undefined>(undefined)
   const { reviews, total, loading, error, mutate, limit, page, nextPage, prevPage, stats } = useComplianceReviews(statusFilter)
+  const { counts } = useComplianceDashboard()
 
   // Active triage state
   const [activeReview, setActiveReview] = useState<ReviewRow | null>(null)
@@ -222,6 +224,36 @@ export function ReviewQueuePanel() {
             <div style={{ padding: 20, color: colors.roseLight, display: 'flex', alignItems: 'center', gap: 8 }}>
               <AlertTriangle size={16} />
               <span>{error}</span>
+            </div>
+          ) : (counts?.reports === 0 && counts?.workflows === 0) ? (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '80px 24px',
+              textAlign: 'center',
+              flex: 1
+            }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: 'rgba(167,139,250,0.08)',
+                border: '1px solid rgba(167,139,250,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '16px'
+              }}>
+                <FileText size={22} style={{ color: colors.indigoLight }} />
+              </div>
+              <h4 style={{ color: colors.textPrimary, fontSize: '0.9rem', fontWeight: 600, margin: '0 0 6px 0' }}>
+                No Compliance Reviews Executed
+              </h4>
+              <p style={{ color: colors.textSecondary, fontSize: '0.8rem', margin: 0, maxWidth: '280px' }}>
+                Execute compliance review workflows to populate triage queue.
+              </p>
             </div>
           ) : reviews.length === 0 ? (
             /* Empty State */

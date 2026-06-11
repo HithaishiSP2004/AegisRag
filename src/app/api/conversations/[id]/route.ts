@@ -29,7 +29,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   const { data: msgs } = await supabase
     .from('messages')
-    .select('id, role, content, citations, retrieval_mode, created_at')
+    .select('id, role, content, citations, retrieval_mode, created_at, reasoning_metadata')
     .eq('conversation_id', id)
     .order('created_at', { ascending: true })
 

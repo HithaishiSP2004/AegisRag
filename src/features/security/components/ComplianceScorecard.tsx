@@ -20,7 +20,7 @@ interface BenchmarkData {
 }
 
 export function ComplianceScorecard({ data, loading }: Props) {
-  const [selectedFramework, setSelectedFramework] = useState<string>('SOC2')
+  const [selectedFramework, setSelectedFramework] = useState<string>('')
 
   if (loading) {
     return (
@@ -41,51 +41,72 @@ export function ComplianceScorecard({ data, loading }: Props) {
 
   const totalControls = stats?.total_controls ?? 0
   const controlsWithEvidence = stats?.controls_with_evidence ?? 0
-  const overallCoverage = totalControls > 0 ? Math.round((controlsWithEvidence / totalControls) * 100) : 69
+  const overallCoverage = totalControls > 0 ? Math.round((controlsWithEvidence / totalControls) * 100) : 0
 
-  // Framework benchmarks comparative data
-  const benchmarks: BenchmarkData[] = [
-    { framework: 'SOC2', coverage: overallCoverage, complete: controlsWithEvidence, missing: totalControls - controlsWithEvidence, evidenceHealth: 92, reviewStatus: 'Approved', riskContribution: 19 },
-    { framework: 'ISO27001', coverage: 82, complete: 18, missing: 4, evidenceHealth: 88, reviewStatus: 'Approved', riskContribution: 12 },
-    { framework: 'HIPAA', coverage: 75, complete: 15, missing: 5, evidenceHealth: 84, reviewStatus: 'Pending Review', riskContribution: 25 },
-    { framework: 'GDPR', coverage: 90, complete: 27, missing: 3, evidenceHealth: 94, reviewStatus: 'Approved', riskContribution: 8 },
-    { framework: 'NIST-CSF', coverage: 68, complete: 17, missing: 8, evidenceHealth: 79, reviewStatus: 'Needs Action', riskContribution: 36 }
-  ]
+  const benchmarks: BenchmarkData[] = frameworksList.map((fw: any) => {
+    const coverage = Math.round(fw.coverage_pct ?? 0)
+    const complete = Number(fw.controls_with_evidence ?? 0)
+    const total = Number(fw.total_controls ?? 0)
+    const missing = Math.max(0, total - complete)
+    const evidenceHealth = total > 0 ? Math.round((complete / total) * 100) : 0
+    
+    let reviewStatus = 'Approved'
+    if (total === 0) {
+      reviewStatus = 'Pending Setup'
+    } else if (Number(fw.reviews_pending ?? 0) > 0) {
+      reviewStatus = 'Pending Review'
+    } else if (complete < total) {
+      reviewStatus = 'Needs Action'
+    }
 
-  const storytelling = {
-    SOC2: {
-      what: 'SOC2 trust services criteria coverage is currently gating at 69% readiness score.',
-      why: 'Authentication controls (specifically CC6.2 Multi-Factor Authentication configuration) lack cryptographic evidence verification logs.',
-      impact: 'Prevents auto-export of board-level audit packages and introduces compliance vulnerabilities for client engagements.',
-      next: 'Collect and verify technical authentication logs for tenant environments.'
-    },
-    ISO27001: {
-      what: 'ISO27001 framework alignment stands at 82% coverage.',
-      why: 'Information security policy and asset management reviews were fully updated over the current period.',
-      impact: 'Maintains active certification readiness status with low risk contribution (12 points).',
-      next: 'Upload third-party vendor review logs to close remaining evidence gaps.'
-    },
-    HIPAA: {
-      what: 'HIPAA privacy and security rule coverage stands at 75%.',
-      why: 'Audit controls and access verification requirements are pending formal compliance officer review.',
-      impact: 'Prolongs regulatory exposure to data transmission audit trails and increases structural risk.',
-      next: 'Clear the pending review queue for HIPAA controls.'
-    },
-    GDPR: {
-      what: 'GDPR coverage leads framework rankings at 90%.',
-      why: 'Proactive data classification policies and user consent flow mapping are fully satisfied.',
-      impact: 'Ensures compliance with international privacy protocols and lowers risk to 8 points.',
-      next: 'Review compliance with cross-border transfer requirements.'
-    },
-    'NIST-CSF': {
-      what: 'NIST Cyber Security Framework alignment is lagging at 68% coverage.',
-      why: 'Incident response plan documentation and training evidence packages are missing.',
-      impact: 'Creates significant risk contribution (36 points) under security posture checks.',
-      next: 'Formulate and upload incident response tabletop drill reports.'
+    const riskContribution = total > 0 ? Math.max(0, 100 - coverage) : 0
+
+    return {
+      framework: fw.framework_name,
+      coverage,
+      complete,
+      missing,
+      evidenceHealth,
+      reviewStatus,
+      riskContribution
+    }
+  })
+
+  const currentFw = selectedFramework || (frameworksList.length > 0 ? frameworksList[0].framework_name : '')
+
+  const getAdvisory = (fwName: string, coverage: number, complete: number, missing: number, pendingReviews: number) => {
+    if (missing === 0 && coverage === 100) {
+      return {
+        what: `${fwName} compliance criteria coverage is at 100% readiness score.`,
+        why: `All technical controls are fully satisfied and mapped with active evidence.`,
+        impact: `Ensures complete audit readiness and enables board-level package exports with zero active policy gaps.`,
+        next: `Maintain periodic automated evidence collections to prevent stale posture.`
+      }
+    }
+    
+    return {
+      what: `${fwName} framework coverage is currently at ${coverage}% readiness.`,
+      why: `${missing} controls are missing evidence links, and ${pendingReviews} reviews are pending verification.`,
+      impact: `Prolongs audit exposure and prevents complete automated verification signature exports.`,
+      next: `Upload evidence for the remaining ${missing} controls and clear the review queue.`
     }
   }
 
-  const activeStory = storytelling[selectedFramework as keyof typeof storytelling] ?? storytelling.SOC2
+  const selectedFwData = frameworksList.find((f: any) => f.framework_name === currentFw)
+  const activeStory = selectedFwData 
+    ? getAdvisory(
+        selectedFwData.framework_name,
+        Math.round(selectedFwData.coverage_pct ?? 0),
+        Number(selectedFwData.controls_with_evidence ?? 0),
+        Math.max(0, Number(selectedFwData.total_controls ?? 0) - Number(selectedFwData.controls_with_evidence ?? 0)),
+        Number(selectedFwData.reviews_pending ?? 0)
+      )
+    : {
+        what: 'No framework selected or no data available.',
+        why: 'Upload framework definitions and link controls to begin compliance analysis.',
+        impact: 'Compliance health index cannot be computed.',
+        next: 'Go to Knowledge Studio to configure compliance frameworks.'
+      }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -132,48 +153,56 @@ export function ComplianceScorecard({ data, loading }: Props) {
               </tr>
             </thead>
             <tbody>
-              {benchmarks.map((b) => (
-                <tr 
-                  key={b.framework} 
-                  onClick={() => setSelectedFramework(b.framework)}
-                  style={{ 
-                    borderBottom: '1px solid rgba(255,255,255,0.03)', 
-                    background: selectedFramework === b.framework ? 'rgba(99,102,241,0.05)' : 'transparent',
-                    cursor: 'pointer',
-                    transition: 'background 0.2s'
-                  }}
-                >
-                  <td style={{ padding: '12px 16px', fontWeight: 700, color: colors.textPrimary }}>
-                    {b.framework}
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontWeight: 600, color: colors.textSecondary }}>{b.coverage}%</span>
-                      <div style={{ width: '60px', height: '4px', background: 'rgba(255,255,255,0.04)', borderRadius: '2px', overflow: 'hidden' }}>
-                        <div style={{ width: `${b.coverage}%`, height: '100%', background: colors.indigoLight }} />
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ padding: '12px 16px', color: colors.textSecondary }}>{b.complete}</td>
-                  <td style={{ padding: '12px 16px', color: b.missing > 0 ? '#FB923C' : colors.textSecondary }}>{b.missing}</td>
-                  <td style={{ padding: '12px 16px', color: '#10B981', fontWeight: 600 }}>{b.evidenceHealth}%</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{
-                      fontSize: '9px',
-                      fontWeight: 700,
-                      padding: '2px 6px',
-                      borderRadius: radius.sm,
-                      background: b.reviewStatus === 'Approved' ? 'rgba(16, 185, 129, 0.08)' : b.reviewStatus === 'Pending Review' ? 'rgba(245, 158, 11, 0.08)' : 'rgba(239, 68, 68, 0.08)',
-                      color: b.reviewStatus === 'Approved' ? '#10B981' : b.reviewStatus === 'Pending Review' ? '#F59E0B' : '#EF4444'
-                    }}>
-                      {b.reviewStatus}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px 16px', color: b.riskContribution > 20 ? '#EF4444' : '#10B981', fontWeight: 700, textAlign: 'right' }}>
-                    {b.riskContribution} pts
+              {benchmarks.length === 0 ? (
+                <tr>
+                  <td colSpan={7} style={{ padding: '32px', textAlign: 'center', color: colors.textSecondary }}>
+                    No Framework Coverage Data Available
                   </td>
                 </tr>
-              ))}
+              ) : (
+                benchmarks.map((b) => (
+                  <tr 
+                    key={b.framework} 
+                    onClick={() => setSelectedFramework(b.framework)}
+                    style={{ 
+                      borderBottom: '1px solid rgba(255,255,255,0.03)', 
+                      background: currentFw === b.framework ? 'rgba(99,102,241,0.05)' : 'transparent',
+                      cursor: 'pointer',
+                      transition: 'background 0.2s'
+                    }}
+                  >
+                    <td style={{ padding: '12px 16px', fontWeight: 700, color: colors.textPrimary }}>
+                      {b.framework}
+                    </td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontWeight: 600, color: colors.textSecondary }}>{b.coverage}%</span>
+                        <div style={{ width: '60px', height: '4px', background: 'rgba(255,255,255,0.04)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{ width: `${b.coverage}%`, height: '100%', background: colors.indigoLight }} />
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding: '12px 16px', color: colors.textSecondary }}>{b.complete}</td>
+                    <td style={{ padding: '12px 16px', color: b.missing > 0 ? '#FB923C' : colors.textSecondary }}>{b.missing}</td>
+                    <td style={{ padding: '12px 16px', color: '#10B981', fontWeight: 600 }}>{b.evidenceHealth}%</td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <span style={{
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        padding: '2px 6px',
+                        borderRadius: radius.sm,
+                        background: b.reviewStatus === 'Approved' ? 'rgba(16, 185, 129, 0.08)' : b.reviewStatus === 'Pending Review' ? 'rgba(245, 158, 11, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+                        color: b.reviewStatus === 'Approved' ? '#10B981' : b.reviewStatus === 'Pending Review' ? '#F59E0B' : '#EF4444'
+                      }}>
+                        {b.reviewStatus}
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 16px', color: b.riskContribution > 20 ? '#EF4444' : '#10B981', fontWeight: 700, textAlign: 'right' }}>
+                      {b.riskContribution} pts
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

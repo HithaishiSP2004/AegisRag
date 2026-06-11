@@ -171,7 +171,7 @@ export function UploadDropzone({ onUploadComplete }: UploadDropzoneProps) {
                 disabled={isActive}
               >
                 {(Object.entries(DOC_TYPE_LABELS) as [DocumentType, string][]).map(([val, label]) => (
-                  <option key={val} value={val}>{label}</option>
+                  <option key={val} value={val} style={{ background: '#0D1117', color: '#F8FAFC' }}>{label}</option>
                 ))}
               </select>
             </div>
@@ -187,7 +187,7 @@ export function UploadDropzone({ onUploadComplete }: UploadDropzoneProps) {
                 disabled={isActive}
               >
                 {(Object.entries(SENSITIVITY_LABELS) as [SensitivityLevel, string][]).map(([val, label]) => (
-                  <option key={val} value={val}>{label}</option>
+                  <option key={val} value={val} style={{ background: '#0D1117', color: '#F8FAFC' }}>{label}</option>
                 ))}
               </select>
             </div>

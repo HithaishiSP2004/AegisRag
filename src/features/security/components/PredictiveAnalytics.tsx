@@ -1,7 +1,8 @@
 'use client'
 import { useMemo, useState } from 'react'
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine } from 'recharts'
 import { Calendar, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { useResizeObserver } from '../hooks/useResizeObserver'
 import { colors, radius } from '@/components/ui/tokens'
 
 interface Props {
@@ -84,7 +85,17 @@ function buildSeries(data: any): {
   const currentCoverage  = comp?.total_controls > 0
     ? Math.round((comp.controls_with_evidence / comp.total_controls) * 100)
     : 69
-  const currentReadiness = 78
+  // M2 FIX: derive audit readiness from API data — do not hardcode 78.
+  // Priority: audit_readiness_score field → controls_with_evidence ratio → 0 (real zero-state)
+  const currentReadiness = (() => {
+    if (typeof (comp as any)?.audit_readiness_score === 'number') {
+      return Math.round((comp as any).audit_readiness_score)
+    }
+    if (comp?.total_controls > 0) {
+      return Math.round(((comp.controls_with_evidence ?? 0) / comp.total_controls) * 100)
+    }
+    return 0
+  })()
   const currentEvidence  = comp?.controls_with_evidence ?? 22
   const currentBacklog   = comp?.reviews_pending ?? 3
 
@@ -119,6 +130,7 @@ const HORIZON_CHART_LABELS: Record<TimeHorizon, string[]> = {
 
 export function PredictiveAnalytics({ data, loading }: Props) {
   const [horizon, setHorizon] = useState<TimeHorizon>('30d')
+  const [containerRef, containerSize] = useResizeObserver()
 
   const forecast = useMemo(() => {
     if (!data) return null
@@ -327,12 +339,12 @@ export function PredictiveAnalytics({ data, loading }: Props) {
         </div>
 
         {/* Right: Line Chart Projection */}
-        <div style={{
+        <div ref={containerRef} style={{
           background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)',
-          borderRadius: radius.lg, padding: '20px', height: '240px'
+          borderRadius: radius.lg, padding: '20px', height: '240px', minWidth: 0
         }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={forecast?.timeline ?? []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          {containerSize.width > 0 && containerSize.height > 0 ? (
+            <LineChart width={containerSize.width} height={containerSize.height} data={forecast?.timeline ?? []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" />
               <XAxis dataKey="name" stroke={colors.textMuted} fontSize={10} />
               <YAxis stroke={colors.textMuted} fontSize={10} domain={[0, 100]} />
@@ -350,7 +362,11 @@ export function PredictiveAnalytics({ data, loading }: Props) {
               <Line type="monotone" dataKey="risk"      stroke="#F43F5E" strokeWidth={2} name="Risk Score"   dot />
               <Line type="monotone" dataKey="readiness" stroke="#10B981" strokeWidth={2} name="Readiness (%) " dot />
             </LineChart>
-          </ResponsiveContainer>
+          ) : (
+            <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: colors.textSecondary, fontSize: 11 }}>
+              Recalculating layout...
+            </div>
+          )}
         </div>
       </div>
     </div>

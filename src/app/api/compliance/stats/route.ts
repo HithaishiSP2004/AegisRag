@@ -22,17 +22,37 @@ export async function GET() {
 
   const admin = createAdminClient()
 
-  const [statsResult, riskResult] = await Promise.all([
+  const [
+    statsResult,
+    riskResult,
+    documentsCountResult,
+    reportsCountResult,
+    workflowsCountResult,
+    violationsCountResult,
+    auditLogsCountResult
+  ] = await Promise.all([
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (admin as any).rpc('get_compliance_stats',  { p_org_id: profile.org_id }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (admin as any).rpc('get_org_risk_score',    { p_org_id: profile.org_id }),
+    admin.from('documents').select('*', { count: 'exact', head: true }).eq('org_id', profile.org_id),
+    admin.from('reports').select('*', { count: 'exact', head: true }).eq('org_id', profile.org_id),
+    admin.from('workflows').select('*', { count: 'exact', head: true }).eq('org_id', profile.org_id),
+    admin.from('violations').select('*', { count: 'exact', head: true }).eq('org_id', profile.org_id),
+    admin.from('audit_logs').select('*', { count: 'exact', head: true }).eq('org_id', profile.org_id),
   ])
 
   if (statsResult.error) return NextResponse.json({ error: statsResult.error.message }, { status: 500 })
 
   const stats     = (statsResult.data as Record<string, number>[] | null)?.[0] ?? null
   const riskScore = (riskResult.data  as Record<string, number | string>[] | null)?.[0] ?? null
+  const counts = {
+    documents: documentsCountResult.count ?? 0,
+    reports: reportsCountResult.count ?? 0,
+    workflows: workflowsCountResult.count ?? 0,
+    violations: violationsCountResult.count ?? 0,
+    audit_logs: auditLogsCountResult.count ?? 0,
+  }
 
-  return NextResponse.json({ stats, riskScore })
+  return NextResponse.json({ stats, riskScore, counts })
 }

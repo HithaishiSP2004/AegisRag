@@ -58,7 +58,7 @@ export function MessageBubble({ message, activeCitationIdx, onCitationClick }: P
   const [openSection, setOpenSection] = useState<'sources' | 'evidence' | 'trace' | null>(null)
   const confidence = message.citations.length > 0
     ? Math.round(message.citations.reduce((acc, c) => acc + (c.result.score || 0.85), 0) / message.citations.length * 100)
-    : 92
+    : (message.reasoning_metadata?.retrieval_confidence ?? 0)
 
   return (
     <div
@@ -204,7 +204,10 @@ export function MessageBubble({ message, activeCitationIdx, onCitationClick }: P
                   {' '}Retrieval Confidence
                   &nbsp;·&nbsp;
                   <span style={{ color: colors.textSecondary }}>
-                    {message.citations.length} Sources Verified
+                    {message.citations.length > 0
+                      ? `${message.citations.length} Sources Verified`
+                      : `Retrieved Sources: ${message.reasoning_metadata?.evidence_count ?? 0}`
+                    }
                   </span>
                 </span>
               </div>

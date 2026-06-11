@@ -40,7 +40,8 @@ export async function GET(req: NextRequest) {
       kpiResult,
       eventsResult,
       alertsResult,
-      mismatchesResult
+      mismatchesResult,
+      recentEventsResult
     ] = await Promise.all([
       (admin as any).rpc('get_security_kpi', { p_org_id: profile.org_id, p_days: days }),
       admin
@@ -63,6 +64,14 @@ export async function GET(req: NextRequest) {
         `)
         .eq('org_id', profile.org_id)
         .gte('created_at', since)
+        .order('created_at', { ascending: false })
+        .limit(10),
+      // Recent events for the live policy violation timeline
+      admin
+        .from('security_events')
+        .select('id, event_type, severity, description, blocked, created_at')
+        .eq('org_id', profile.org_id)
+        .eq('is_demo', false)
         .order('created_at', { ascending: false })
         .limit(10)
     ])
@@ -89,7 +98,8 @@ export async function GET(req: NextRequest) {
         types: typeCount
       },
       alerts: alertsResult.data ?? [],
-      mismatches: mismatchesResult.data ?? []
+      mismatches: mismatchesResult.data ?? [],
+      recentEvents: recentEventsResult.data ?? []
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })

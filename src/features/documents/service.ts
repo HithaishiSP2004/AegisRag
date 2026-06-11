@@ -155,6 +155,8 @@ export async function registerDocument(
     doc_type:        input.doc_type,
     department:      input.department,
     sensitivity:     input.sensitivity,
+    classification:  input.classification ?? 'organization',
+    framework:       input.framework ?? null,
   }
 
   const { data, error } = await supabase

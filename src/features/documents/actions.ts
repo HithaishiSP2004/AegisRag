@@ -15,7 +15,7 @@
 'use server'
 
 import { randomUUID } from 'crypto'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { validateUploadFile, buildStoragePath } from './validation'
 import {
   registerDocument,
@@ -193,20 +193,24 @@ export async function initiateDocumentUpload(
   const fullFile = { ...fakeFile, name: input.fileName } as File
   const docInput: DocumentUploadInput = {
     file: fullFile,
-    doc_type:    input.doc_type,
-    sensitivity: input.sensitivity,
-    department:  input.department,
-    tags:        input.tags,
+    doc_type:       input.doc_type,
+    sensitivity:    input.sensitivity,
+    department:     input.department,
+    classification: input.classification,
+    framework:      input.framework,
+    tags:           input.tags,
   }
 
   // ── CHECKPOINT 3: BEFORE registerDocument() ──────────────────────────────
   console.log('[initiateDocumentUpload] CHECKPOINT 3 — calling registerDocument()', {
-    orgId:       profile.org_id,
-    uploadedBy:  user.id,
+    orgId:          profile.org_id,
+    uploadedBy:     user.id,
     storagePath,
     docId,
-    doc_type:    input.doc_type,
-    sensitivity: input.sensitivity,
+    doc_type:       input.doc_type,
+    sensitivity:    input.sensitivity,
+    classification: input.classification,
+    framework:      input.framework,
   })
 
   let document: import('./types').DocumentRecord | null = null
@@ -346,6 +350,28 @@ export async function confirmDocumentUpload(
     .eq('id', user.id)
     .single()
 
+  // Find the latest version from document_versions to sync metadata
+  const admin = createAdminClient()
+  const { data: latestVersion } = await admin
+    .from('document_versions')
+    .select('storage_path, file_size_bytes')
+    .eq('document_id', documentId)
+    .order('version_number', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (latestVersion) {
+    const filename = latestVersion.storage_path.split('/').pop() || ''
+    await admin
+      .from('documents')
+      .update({
+        storage_path: latestVersion.storage_path,
+        filename,
+        file_size_bytes: latestVersion.file_size_bytes,
+      })
+      .eq('id', documentId)
+  }
+
   // Advance to parsing (Sprint 2 will process from here)
   const { error } = await updateDocumentStatus(documentId, 'parsing')
   if (error) {
@@ -371,6 +397,7 @@ export async function confirmDocumentUpload(
 
   return { success: true, error: null }
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STEP C: failUpload — called if the browser-side upload to Storage fails
@@ -527,8 +554,20 @@ export async function deleteDocument(documentId: string): Promise<{ success: boo
   const { error } = await softDeleteDocument(documentId)
   if (error) return { success: false, error }
 
+  if (profile) {
+    await logAuditEvent({
+      orgId: profile.org_id,
+      userId: user.id,
+      action: 'DOCUMENT_DELETED',
+      resourceType: 'document',
+      resourceId: documentId,
+      newValue: { status: 'deleted' },
+    })
+  }
+
   return { success: true, error: null }
 }
+
 
 export async function getDocumentViewUrl(documentId: string): Promise<{ url: string | null; error: string | null }> {
   const supabase = await createClient()

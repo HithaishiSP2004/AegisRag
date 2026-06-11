@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   // ── 2. Resolve org from user profile ─────────────────────────────────────
   const { data: profile, error: profileErr } = await supabase
     .from('user_profiles')
-    .select('org_id')
+    .select('org_id, role')
     .eq('id', user.id)
     .single()
 
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
   // ── 4. Search ─────────────────────────────────────────────────────────────
   console.log('[api/search] query:', queryText, '| org:', profile.org_id, '| filters:', filters)
 
-  const results = await searchDocuments(queryText, profile.org_id, filters)
+  const results = await searchDocuments(queryText, profile.org_id, filters, user.id, profile.role)
 
   // ── 5. Derive the effective mode from results ─────────────────────────────
   const mode = results[0]?.mode ?? 'keyword'
