@@ -11,7 +11,7 @@
 // =============================================================================
 
 import { createAdminClient } from '@/lib/supabase/server'
-import { GoogleGenAI } from '@google/genai'
+import { embeddingService } from '@/features/embeddings/embeddingService'
 import type { Json } from '@/types/database'
 import { PDFParse } from 'pdf-parse'
 import mammoth from 'mammoth'
@@ -19,8 +19,6 @@ import { AI_MODELS } from '@/config/ai'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const DOCUMENTS_BUCKET = 'documents'
-const EMBEDDING_MODEL  = AI_MODELS.EMBEDDING
-const EMBEDDING_DIM    = 768
 
 // Chunking parameters (per spec)
 const CHUNK_TARGET     = 1000   // target characters per chunk
@@ -319,9 +317,7 @@ export async function processDocument(documentId: string): Promise<{
         throw new Error(`Failed to fetch chunks for embedding: ${fetchChunkErr?.message}`)
       }
 
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
       embeddingRows = await generateEmbeddings(
-        ai,
         doc.org_id,
         chunkRows as Array<{ id: string; content: string }>
       )
@@ -558,120 +554,42 @@ export interface EmbeddingInsertRow {
   model_used: string
 }
 
-async function embedContentWithRetry(
-  ai: GoogleGenAI,
-  contents: string[],
-  retries = 5,
-  delay = 1000
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> {
-  const promises = contents.map(async (text) => {
-    for (let attempt = 1; attempt <= retries; attempt++) {
-      try {
-        const result = await ai.models.embedContent({
-          model: EMBEDDING_MODEL,
-          contents: text,
-          config: { outputDimensionality: 768 },
-        })
-        const values = result.embeddings?.[0]?.values
-        if (!values) {
-          throw new Error('No values returned in embedding')
-        }
-        return { values }
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err)
-        const isRateLimit = msg.includes('429') || msg.toLowerCase().includes('resource_exhausted') || msg.toLowerCase().includes('rate limit')
-        
-        if (isRateLimit && attempt < retries) {
-          const backoff = delay * Math.pow(2, attempt - 1) + Math.random() * 500
-          console.warn(`[pipeline] Gemini rate limit hit (429/Resource Exhausted). Retrying chunk in ${Math.round(backoff)}ms (attempt ${attempt}/${retries})...`)
-          await sleep(backoff)
-        } else {
-          throw err
-        }
-      }
-    }
-    throw new Error('Retries exhausted')
-  })
-
-  const embeddings = await Promise.all(promises)
-  return { embeddings }
-}
-
 export async function generateEmbeddings(
-  ai: GoogleGenAI,
   orgId: string,
   chunks: Array<{ id: string; content: string }>
 ): Promise<EmbeddingInsertRow[]> {
+  const providerName = embeddingService.getProviderName()
+  const modelName = embeddingService.getModelName()
+  const expectedDimensions = embeddingService.getDimensions()
+
   console.log('[embedding]', {
-    model: AI_MODELS.EMBEDDING,
+    provider: providerName,
+    model: modelName,
     chunkCount: chunks.length,
   })
 
   const rows: EmbeddingInsertRow[] = []
-  const BATCH_SIZE = 16
+  const texts = chunks.map(c => c.content)
 
-  for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
-    const batch = chunks.slice(i, i + BATCH_SIZE)
-    console.log(`[pipeline] Processing batch of ${batch.length} chunks (${i} to ${i + batch.length} of ${chunks.length})`)
+  // Call the single entry point
+  const embeddings = await embeddingService.generateEmbeddings(texts)
 
-    try {
-      // Try embedding the batch together
-      const result = await embedContentWithRetry(ai, batch.map(c => c.content))
-      const embeddings = result.embeddings ?? []
-      
-      for (let j = 0; j < batch.length; j++) {
-        const values = embeddings[j]?.values
-        console.log(`[pipeline] Chunk ${batch[j].id} embedding length: ${values?.length}, expected: ${EMBEDDING_DIM}`)
-        if (!values || values.length !== EMBEDDING_DIM) {
-          console.warn('[pipeline] Unexpected embedding dimension for chunk', batch[j].id, '— skipping')
-          continue
-        }
-        rows.push({
-          chunk_id:   batch[j].id,
-          org_id:     orgId,
-          embedding:  values,
-          model_used: EMBEDDING_MODEL,
-        })
-      }
-    } catch (batchErr: unknown) {
-      const batchMsg = batchErr instanceof Error ? batchErr.message : String(batchErr)
-      console.warn(`[pipeline] Batch embedding failed, falling back to individual chunk processing. Error: ${batchMsg}`)
-      
-      // Fallback: process chunks in this batch individually
-      for (const chunk of batch) {
-        try {
-          const result = await embedContentWithRetry(ai, [chunk.content], 3, 1000)
-          const values = result.embeddings?.[0]?.values
-          console.log(`[pipeline] Individual chunk ${chunk.id} embedding length: ${values?.length}, expected: ${EMBEDDING_DIM}`)
-          if (!values || values.length !== EMBEDDING_DIM) {
-            console.warn('[pipeline] Unexpected embedding dimension for chunk', chunk.id, '— skipping')
-            continue
-          }
-          rows.push({
-            chunk_id:   chunk.id,
-            org_id:     orgId,
-            embedding:  values,
-            model_used: EMBEDDING_MODEL,
-          })
-        } catch (individualErr: unknown) {
-          const individualMsg = individualErr instanceof Error ? individualErr.message : String(individualErr)
-          console.error(`[pipeline] Fallback embedding failed for chunk ${chunk.id}: ${individualMsg}`)
-          // Non-fatal, keep going for other chunks
-        }
-        // Small delay between fallback requests to prevent hammering
-        await sleep(200)
-      }
+  for (let i = 0; i < chunks.length; i++) {
+    const values = embeddings[i]
+    if (!values || values.length !== expectedDimensions) {
+      console.warn(`[pipeline] Unexpected embedding dimension or failed embedding for chunk ${chunks[i].id} — skipping`)
+      continue
     }
-
-    // Small delay between batch calls to prevent rate limits
-    if (i + BATCH_SIZE < chunks.length) {
-      await sleep(1000)
-    }
+    rows.push({
+      chunk_id:   chunks[i].id,
+      org_id:     orgId,
+      embedding:  values,
+      model_used: modelName,
+    })
   }
 
   console.log('[embedding] generated vectors:', rows.length)
-  return rows
+  return rows;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

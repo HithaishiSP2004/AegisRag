@@ -7,11 +7,8 @@
 // =============================================================================
 
 import { createAdminClient } from '@/lib/supabase/server'
-import { GoogleGenAI } from '@google/genai'
+import { embeddingService } from '@/features/embeddings/embeddingService'
 import type { SearchQuery, SearchResult, ChunkMetadata, DocumentMeta } from './types'
-import { AI_MODELS } from '@/config/ai'
-
-const EMBEDDING_MODEL = AI_MODELS.EMBEDDING
 
 interface RawVectorRow {
   chunk_id:    string
@@ -39,7 +36,7 @@ export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> 
   const { text, orgId, filters } = query
 
   // ── Guard: no API key → skip silently ────────────────────────────────────
-  if (!process.env.GEMINI_API_KEY) {
+  if (embeddingService.getProviderName() === 'gemini' && !process.env.GEMINI_API_KEY) {
     console.warn('[retrieval/vector] GEMINI_API_KEY not set — skipping vector search')
     return []
   }
@@ -62,13 +59,7 @@ export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> 
   // ── Embed the query ───────────────────────────────────────────────────────
   let queryEmbedding: number[]
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
-    const result = await ai.models.embedContent({
-      model:    EMBEDDING_MODEL,
-      contents: text,
-      config:   { outputDimensionality: 768 },
-    })
-    queryEmbedding = result.embeddings?.[0]?.values ?? []
+    queryEmbedding = await embeddingService.generateEmbedding(text)
     if (queryEmbedding.length === 0) {
       console.warn('[retrieval/vector] Empty embedding returned for query')
       return []

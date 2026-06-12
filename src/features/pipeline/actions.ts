@@ -3,7 +3,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { logAuditEvent } from '@/features/documents/audit'
 import { chunkText, estimateTokens, generateEmbeddings } from './processor'
-import { GoogleGenAI } from '@google/genai'
+import { embeddingService } from '@/features/embeddings/embeddingService'
 import { revalidatePath } from 'next/cache'
 
 // Allowed roles for page-level CRUD
@@ -170,8 +170,8 @@ export async function reprocessPageAction(
     }
 
     // 6. Generate embeddings
-    // H1 FIX: guard missing API key — skip embeddings rather than crashing
-    if (!process.env.GEMINI_API_KEY) {
+    // Guard missing API key for Gemini provider — skip embeddings rather than crashing
+    if (embeddingService.getProviderName() === 'gemini' && !process.env.GEMINI_API_KEY) {
       console.warn('[reprocessPageAction] GEMINI_API_KEY not set — page marked chunked, embeddings skipped')
       await admin
         .from('pages')
@@ -181,9 +181,7 @@ export async function reprocessPageAction(
       return { success: true, error: null }
     }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
     const embeddingRows = await generateEmbeddings(
-      ai,
       profile.org_id,
       insertedChunks
     )
@@ -336,8 +334,8 @@ export async function replacePageAction(
     }
 
     // 6. Generate embeddings
-    // H1 FIX: guard missing API key — skip embeddings rather than crashing
-    if (!process.env.GEMINI_API_KEY) {
+    // Guard missing API key for Gemini provider — skip embeddings rather than crashing
+    if (embeddingService.getProviderName() === 'gemini' && !process.env.GEMINI_API_KEY) {
       console.warn('[replacePageAction] GEMINI_API_KEY not set — page marked chunked, embeddings skipped')
       await admin
         .from('pages')
@@ -347,9 +345,7 @@ export async function replacePageAction(
       return { success: true, error: null }
     }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
     const embeddingRows = await generateEmbeddings(
-      ai,
       profile.org_id,
       insertedChunks
     )
