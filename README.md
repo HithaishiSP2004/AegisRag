@@ -16,20 +16,21 @@
 1. [What Is AegisRAG?](#what-is-aegisrag)
 2. [Problem Statement](#problem-statement)
 3. [Key Features](#key-features)
-4. [System Architecture](#system-architecture)
-5. [5-Stage Retrieval Pipeline](#5-stage-retrieval-pipeline)
-6. [Security & Multi-Tenant Design](#security--multi-tenant-design)
-7. [Application Screens](#application-screens)
-8. [Technology Stack](#technology-stack)
-9. [Prerequisites](#prerequisites)
-10. [Installation & Setup](#installation--setup)
-11. [Environment Variables Reference](#environment-variables-reference)
-12. [Running the BGE Sidecar (Optional)](#running-the-bge-sidecar-optional)
-13. [Database Migrations](#database-migrations)
-14. [Project Structure](#project-structure)
-15. [Future Roadmap](#future-roadmap)
-16. [Contributing](#contributing)
-17. [License](#license)
+4. [AI Model Architecture](#ai-model-architecture)
+5. [System Architecture](#system-architecture)
+6. [5-Stage Retrieval Pipeline](#5-stage-retrieval-pipeline)
+7. [Security & Multi-Tenant Design](#security--multi-tenant-design)
+8. [Application Screens](#application-screens)
+9. [Technology Stack](#technology-stack)
+10. [Prerequisites](#prerequisites)
+11. [Installation & Setup](#installation--setup)
+12. [Environment Variables Reference](#environment-variables-reference)
+13. [Running the BGE Sidecar (Optional)](#running-the-bge-sidecar-optional)
+14. [Database Migrations](#database-migrations)
+15. [Project Structure](#project-structure)
+16. [Future Roadmap](#future-roadmap)
+17. [Contributing](#contributing)
+18. [License](#license)
 
 ---
 
@@ -71,7 +72,65 @@ Standard RAG (Retrieval-Augmented Generation) pipelines fail in enterprise compl
 - **Sensitivity Clearance Gates** — Filter document results dynamically by user clearance level (Public / Internal / Confidential / Restricted)
 - **RAG Evaluation Suite** — Automated benchmarking panel measuring Faithfulness, Answer Relevance, and Context Recall
 - **Compliance PDF Reports** — One-click PDF export of full audit reports with citations, risk scores, and remediation steps
-- **Embedding Provider Abstraction** — Swap between Google Gemini embeddings and a local BGE FastAPI sidecar without code changes
+- **Embedding Provider Abstraction** — Swap between `gemini-embedding-2` (cloud, production) and a GPU-accelerated local `BAAI/bge-base-en-v1.5` FastAPI sidecar without code changes
+- **4-Model Gemini Fallback Chain** — Chat uses a 4-model waterfall; if primary is rate-limited, secondary API key activates automatically
+
+---
+
+## AI Model Architecture
+
+AegisRAG has a carefully engineered multi-model, multi-key AI strategy sourced from `src/config/ai.ts` and `src/lib/geminiClient.ts`.
+
+### Chat / Answer Generation — 4-Model Fallback Chain
+
+Every user query walks this waterfall in order until one model succeeds:
+
+| Priority | Model | Role |
+|:---------|:------|:-----|
+| 1 (Primary) | `gemini-3.5-flash` | Default — fastest, lowest latency |
+| 2 (Fallback 1) | `gemini-3.1-flash-lite` | First fallback if primary is rate-limited |
+| 3 (Fallback 2) | `gemini-2.5-flash` | Second fallback |
+| 4 (Fallback 3) | `gemini-2.5-flash-lite` | Last-resort fallback |
+
+### Dual API Key Failover
+
+AegisRAG supports two Gemini API keys (`GEMINI_API_KEY` and `GEMINI_API_KEY_2`). The failover strategy in `src/lib/geminiClient.ts` is:
+
+1. **Round 1** — Try all 4 models in sequence using the primary key (`GEMINI_API_KEY`).
+2. **Round 2** — If every model on the primary key hits a 429 / `RESOURCE_EXHAUSTED` error, the full 4-model chain is retried from the top using `GEMINI_API_KEY_2`.
+3. **Final fallback** — If both keys are exhausted, the system returns retrieved source chunks directly with a notice, never crashing.
+
+Each model that hits a rate limit is placed in a 60-second cooldown and skipped automatically on the next request.
+
+### Report / PDF Generation — Separate Model Chain
+
+Compliance PDF reports and executive narratives use a separate, dedicated model chain (not the chat models):
+
+| Priority | Model | Role |
+|:---------|:------|:-----|
+| 1 | `gemini-2.5-flash` | Primary for report/summary generation |
+| 2 | `gemini-2.5-flash-lite` | Fallback for report generation |
+
+### Query Optimizer
+
+Before retrieval, every user question is rewritten into an optimized 6-word search query by `gemini-3.1-flash-lite`. Document-structural queries (Table of Contents, abstracts) are preserved verbatim and not rewritten.
+
+### Embedding Providers
+
+| Mode | Model | Dimensions | When to Use |
+|:-----|:------|:-----------|:------------|
+| **Production / Deployment** | `gemini-embedding-2` (Google Cloud) | 768 | Default — set `EMBEDDING_PROVIDER=gemini` |
+| **Local / GPU Dev** | `BAAI/bge-base-en-v1.5` (HuggingFace) | 768 | Set `EMBEDDING_PROVIDER=bge` — requires local Python sidecar |
+
+If the local BGE sidecar fails or is unreachable, the embedding service automatically falls back to `gemini-embedding-2` so ingestion never silently dies.
+
+### Neural Reranker
+
+| Mode | Model | When to Use |
+|:-----|:------|:------------|
+| **Local / GPU** | `BAAI/bge-reranker-base` | Set `RERANKER_PROVIDER=bge` — runs on local GPU via FastAPI sidecar on port 8002 |
+
+The reranker scores each `(query, chunk)` pair using a cross-encoder and normalises raw logits to `[0, 1]` via sigmoid. It is entirely optional — if the sidecar is not running, retrieval proceeds without reranking.
 
 ---
 
@@ -208,9 +267,10 @@ Document segments are tagged with a `sensitivity_level`. Retrieval queries dynam
 | **Language** | TypeScript | 5.x | Type-safe codebase |
 | **Database** | Supabase (PostgreSQL) | Latest | Auth, data persistence, RLS enforcement |
 | **Vector Engine** | pgvector | Latest | Cosine similarity vector search with RLS |
-| **LLM Provider** | Google Gemini | `gemini-2.0-flash` | Primary generation model via `@google/genai` SDK |
-| **Embeddings** | Google Gemini / BGE | Configurable | Dual-provider embedding abstraction |
-| **Reranker** | BGE Reranker | `bge-reranker-base` | Local Python FastAPI neural reranker sidecar |
+| **LLM Provider** | Google Gemini (`@google/genai` SDK) | `gemini-3.5-flash` (primary) | 4-model fallback chain with dual API key failover |
+| **Embeddings — Cloud** | Google Gemini | `gemini-embedding-2` | Production default, 768-dim vectors |
+| **Embeddings — Local** | BGE (`BAAI/bge-base-en-v1.5`) | HuggingFace | GPU-accelerated local FastAPI sidecar (port 8001) |
+| **Reranker** | BGE (`BAAI/bge-reranker-base`) | HuggingFace | GPU-accelerated local FastAPI sidecar (port 8002) |
 | **Styling** | TailwindCSS v4 | 4.x | Cinematic dark-mode design system |
 | **Animations** | Framer Motion | 12.x | Micro-animations and page transitions |
 | **Charts** | Recharts | 3.x | Real-time metrics and benchmark visualization |
