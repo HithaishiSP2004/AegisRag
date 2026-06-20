@@ -1,0 +1,1374 @@
+[
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control AC-1 in the Access Control family specifies standard security guidelines. It requires organizations to establish policy and procedures for access control and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Awareness and Training (AT) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"SD 505],” 365 12-10-2020 Editorial Control Enhancement SR-5(2) Related Controls: Delete “SR-9” 369 12-10-2020 Editorial Control Enhancement SR-6(1): C...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the AU (Audit and Accountability) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"NIST Special Publication 800-53 Revision 5 Security and Privacy Controls for Information Systems and Organizations JOINT TASK FORCE This publication i...\""
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control CA-1 in the Assessment, Authorization, and Monitoring family specifies standard security guidelines. It requires organizations to establish policy and procedures for assessment, authorization, and monitoring and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST Special Publication 800-53 Revision 5 Security and Privacy Controls for Information Systems and Organizations JOINT TASK FORCE This publication i...\""
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Configuration Management (CM) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the CP (Contingency Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"publication should be taken to contradict the standards and guidelines made mandatory and binding on federal agencies by the Secretary of Commerce und...\""
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control IA-1 in the Identification and Authentication family specifies standard security guidelines. It requires organizations to establish policy and procedures for identification and authentication and implement specific safeguards. Here is a relevant excerpt from the source document: \"0 Bureau Drive (Mail Stop 8930) Gaithersburg, MD 20899-8930 Email: sec-cert@nist.gov All comments are subject to release under the Freedom of Informat...\""
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Incident Response (IR) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"ures, where they exist, remain operative. For planning and transition purposes, federal agencies may wish to closely follow the development of these n...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the MA (Maintenance) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control MP-1 in the Media Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for media protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"trative, technical, and physical standards and guidelines for the cost- effective security of other than national security-related information in fede...\""
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Physical and Environmental Protection (PE) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"al information systems. [EO 13800] requires federal agencies to implement the NIST Framework for Improving Critical Infrastructure Cybersecurity to ma...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the PL (Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"risk. The controls address diverse requirements derived from mission and business needs, laws, executive orders, directives, regulations, policies, st...\""
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control PS-1 in the Personnel Security family specifies standard security guidelines. It requires organizations to establish policy and procedures for personnel security and implement specific safeguards. Here is a relevant excerpt from the source document: \"iable information; Privacy Act; privacy controls; privacy functions; privacy requirements; Risk Management Framework; security controls; security func...\""
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Risk Assessment (RA) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SA (System and Services Acquisition) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"hew A. Kozma Chief Information Officer Chief Information Officer John Sherman Michael E. Waschull Principal Deputy CIO Deputy Chief Information Office...\""
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control SC-1 in the System and Communications Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for system and communications protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"ion Project Leader Tri-Chair—Civil Agencies Joint Task Force Working Group Victoria Pillitteri McKay Tolboe Dorian Pappas Kelley Dempsey NIST, JTF Lea...\""
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the System and Information Integrity (SI) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SR (Supply Chain Risk Management) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"n Kihiko, Raquel Leone, Jason Marsico, Kirsten Moncada, Ellen Nadeau, Elaine Newton, Michael Nieles, Michael Nussdorfer, Taylor Roberts, Jasmeet Seehr...\""
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control AC-2 in the Access Control family specifies standard security guidelines. It requires organizations to establish policy and procedures for access control and implement specific safeguards. Here is a relevant excerpt from the source document: \"CIAL PUBLICATION 800-53 The authors wanted to acknowledge the many individuals who contributed to previous versions of Special Publication 800-53 sinc...\""
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Awareness and Training (AT) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \" Kelly, Eustace King, Daniel Klemm, Steve LaFountain, Annabelle Lee, Robert Lentz, Steven Lipner, William MacGregor, Thomas Macklin, Thomas Madden, Ro...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the AU (Audit and Accountability) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control CA-2 in the Assessment, Authorization, and Monitoring family specifies standard security guidelines. It requires organizations to establish policy and procedures for assessment, authorization, and monitoring and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Configuration Management (CM) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"ehensive information security and privacy risk management programs can facilitate compliance with applicable laws, regulations, executive orders, and ...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the CP (Contingency Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control IA-2 in the Identification and Authentication family specifies standard security guidelines. It requires organizations to establish policy and procedures for identification and authentication and implement specific safeguards. Here is a relevant excerpt from the source document: \"ransparent public review and comment process, NIST is engaged in a collaborative partnership with the Office of Management and Budget, Office of the D...\""
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Incident Response (IR) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \" public and private sector entities to establish mappings and relationships between the standards and guidelines developed by NIST and those developed...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the MA (Maintenance) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control MP-2 in the Media Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for media protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"ce development and the associated developers whether the development is conducted internally by organizations or externally through the contracting an...\""
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Physical and Environmental Protection (PE) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the PL (Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"ystems, products, and services are sufficiently trustworthy and provide the necessary resilience to support the economic and national security interes...\""
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control PS-2 in the Personnel Security family specifies standard security guidelines. It requires organizations to establish policy and procedures for personnel security and implement specific safeguards. Here is a relevant excerpt from the source document: \" Safeguarding measures include both security and privacy controls to protect the critical and essential operations and assets of organizations and the...\""
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Risk Assessment (RA) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SA (System and Services Acquisition) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control SC-2 in the System and Communications Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for system and communications protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the System and Information Integrity (SI) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SR (Supply Chain Risk Management) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \".......................................... 5 1.5 REVISIONS AND EXTENSIONS ...............................................................................\""
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control AC-3 in the Access Control family specifies standard security guidelines. It requires organizations to establish policy and procedures for access control and implement specific safeguards. Here is a relevant excerpt from the source document: \".............................................. 14 CHAPTER THREE THE CONTROLS ............................................................................\""
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Awareness and Training (AT) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"....................................... 131 3.8 INCIDENT RESPONSE .......................................................................................\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the AU (Audit and Accountability) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"ND TRANSPARENCY ....................... 229 3.16 RISK ASSESSMENT.........................................................................................\""
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control CA-3 in the Assessment, Authorization, and Monitoring family specifies standard security guidelines. It requires organizations to establish policy and procedures for assessment, authorization, and monitoring and implement specific safeguards. Here is a relevant excerpt from the source document: \".................................................. 424 APPENDIX C CONTROL SUMMARIES .....................................................................\""
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Configuration Management (CM) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the CP (Contingency Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"ust lean significantly on deterrence to address the cyber threat posed by the most capable U.S. adversaries. It is clear that a more proactive and sys...\""
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control IA-3 in the Identification and Authentication family specifies standard security guidelines. It requires organizations to establish policy and procedures for identification and authentication and implement specific safeguards. Here is a relevant excerpt from the source document: \"ces, Internet of Things (IoT) devices, weapons systems, space systems, communications systems, environmental control systems, super computers, and ind...\""
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Incident Response (IR) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"ons; engineering organizations developing information systems, IoT devices, and systems-of-systems; and industry partners building system components, ...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the MA (Maintenance) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control MP-3 in the Media Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for media protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"ection from the controls and removing the control baselines, a significant amount of guidance and other informative material previously contained in S...\""
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Physical and Environmental Protection (PE) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the PL (Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"eadiness and security to the same degree as in any other domain…\" THE N ATIONAL S TRATEGY FOR CYBERSPACE O PERATIONS OFFICE OF THE C HAIRMAN , J OINT ...\""
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control PS-3 in the Personnel Security family specifies standard security guidelines. It requires organizations to establish policy and procedures for personnel security and implement specific safeguards. Here is a relevant excerpt from the source document: \" and combine it with other information, is creating valid concerns about privacy and about the ability of entities to manage these unprecedented volum...\""
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Risk Assessment (RA) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SA (System and Services Acquisition) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"i 12-10-2020 Editorial Acknowledgements (ODNI): Add “Michael E. Waschull, Deputy Chief Information Officer” iii 12-10-2020 Editorial Acknowledgements ...\""
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control SC-3 in the System and Communications Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for system and communications protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"sources, and supporting infrastructure and services.” 5 12-10-2020 Editorial Section 2.4 (first paragraph): Change “personally identifiable informatio...\""
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the System and Information Integrity (SI) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"10-2020 Editorial Control Enhancement AC-4(17): Change “organization, system, application, service, individual” to “organization; system; application;...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SR (Supply Chain Risk Management) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control AC-4 in the Access Control family specifies standard security guidelines. It requires organizations to establish policy and procedures for access control and implement specific safeguards. Here is a relevant excerpt from the source document: \"l systems” to “organizational systems,” 53 12-10-2020 Editorial Control Enhancement AC-20(3) Discussion: Change “AC-20(6)” to “AC-20 b.” 54 12-10-2020...\""
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Awareness and Training (AT) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"Control AT-3 Discussion: Change “security or privacy incidents” to “security incidents or breaches” 63 12-10-2020 Editorial Control AT-3 Related Contr...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the AU (Audit and Accountability) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"“Organization-level; Mission/business process-level; System-level” 83 12-10-2020 Editorial Control CA-1 Discussion: Change “security or privacy incide...\""
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control CA-4 in the Assessment, Authorization, and Monitoring family specifies standard security guidelines. It requires organizations to establish policy and procedures for assessment, authorization, and monitoring and implement specific safeguards. Here is a relevant excerpt from the source document: \"m-level” 96 12-10-2020 Editorial Control CM-1 Discussion: Change “security or privacy incidents” to “security incidents or breaches” 96 12-10-2020 Edi...\""
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Configuration Management (CM) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the CP (Contingency Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"s” 115 12-10-2020 Editorial Control CP-3 Discussion: Change “security or privacy incidents” to “security incidents or breaches” 119 12-10-2020 Editori...\""
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control IA-4 in the Identification and Authentication family specifies standard security guidelines. It requires organizations to establish policy and procedures for identification and authentication and implement specific safeguards. Here is a relevant excerpt from the source document: \"al Control Enhancement IA-2(7) Title: Change “ACCESS” to “NETWORK ACCESS” 134 12-10-2020 Editorial Control Enhancement IA-8(5) Discussion: Change “Per...\""
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Incident Response (IR) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"2020 Editorial Control Enhancement IR-5(1) Related Controls: Change “AU-7, IR-4” to “None” 156 12-10-2020 Editorial Control IR-10: Change “Incident An...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the MA (Maintenance) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"ion-level; Mission/business process-level; System-level” 171 12-10-2020 Editorial Control MP-1 Discussion: Change “security or privacy incidents” to “...\""
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control MP-4 in the Media Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for media protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Physical and Environmental Protection (PE) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \" controls, to implement the controls correctly, and to demonstrate the effectiveness of the controls in satisfying security and privacy requirements.1...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the PL (Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"Editorial Control Enhancement PE-19(1) Title: Delete ”AND TEMPEST” 192 12-10-2020 Editorial Control PL-1a.1.: Change “organization-level; mission/busi...\""
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control PS-4 in the Personnel Security family specifies standard security guidelines. It requires organizations to establish policy and procedures for personnel security and implement specific safeguards. Here is a relevant excerpt from the source document: \"hes” 204 12-10-2020 Editorial Control PM-2 References: Add “, [SP 800-181]” 204 12-10-2020 Editorial Control PM-5 References: Add “[OMB A-130],” 206 1...\""
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Risk Assessment (RA) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"orial Control PM-25 Related Controls: Add “, SI-12” 217 12-10-2020 Editorial Control PM-25 References: Change “[OMB A-130, Appendix II]” to “[OMB A-13...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SA (System and Services Acquisition) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"cidents” to “security incidents or breaches” 222 12-10-2020 Editorial Control Enhancement PS-3(3) Title: Change “WITH” to “REQUIRING” 224 12-10-2020 E...\""
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control SC-4 in the System and Communications Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for system and communications protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the System and Information Integrity (SI) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SR (Supply Chain Risk Management) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"12-10-2020 Editorial Control Enhancement PT-6(2): Change “[Assignment: organization- defined frequency]” to “[Assignment: organization-defined frequen...\""
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control AC-5 in the Access Control family specifies standard security guidelines. It requires organizations to establish policy and procedures for access control and implement specific safeguards. Here is a relevant excerpt from the source document: \"“[OMB A-130]” 247 12-10-2020 Editorial Control RA-9 Related Controls: Add “PM-11,” 247 12-10-2020 Editorial Control SA-1a.1.: Change “organization-lev...\""
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Awareness and Training (AT) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"OCESSES” 274 12-10-2020 Editorial Control SA-11a.: Change “assessments” to “control assessments” 276 12-10-2020 Editorial Control Enhancement SA-12(13...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the AU (Audit and Accountability) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"ubstantive Control Enhancement SC-7(4) Discussion: Change “management” to “management protocols“ 298 12-10-2020 Substantive Control Enhancement SC-7(4...\""
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control CA-5 in the Assessment, Authorization, and Monitoring family specifies standard security guidelines. It requires organizations to establish policy and procedures for assessment, authorization, and monitoring and implement specific safeguards. Here is a relevant excerpt from the source document: \"for protocols” to “addressed as any other technology or protocol” 313 12-10-2020 Editorial Control Enhancement SC-30(4) Related Controls: Change “SC-2...\""
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Configuration Management (CM) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"Change “AC-5,” to “AC-5, and” 349 12-10-2020 Editorial Control SI-10 References: Change “[OMB A-130, Appendix II]” to “[OMB A-130]” 351 12-10-2020 Edi...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the CP (Contingency Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"SI-18 References: Add “[OMB M-19-15],” 358 12-10-2020 Editorial Control SI-19 References: Change “[OMB A-130, Appendix II]” to “[OMB A-130]” 360 12-10...\""
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control IA-5 in the Identification and Authentication family specifies standard security guidelines. It requires organizations to establish policy and procedures for identification and authentication and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Incident Response (IR) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"trical and Electronics Engineers (ISO/IEC/IEEE) 15026-1:2019, Systems and software engineering — Systems and software assurance — Part 1: Concepts and...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the MA (Maintenance) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"on/Institute of Electrical and Electronics Engineers (ISO/IEC/IEEE) 29148:2018, Systems and software engineering—Life cycle processes—Requirements eng...\""
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control MP-5 in the Media Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for media protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Physical and Environmental Protection (PE) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"20) Workforce Framework for Cybersecurity (NICE Framework). (National Institute of Standards and Technology, Gaithersburg, MD), NIST Special Publicati...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the PL (Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"ssessment): Delete “[SP 800-161-1]” 420 12-10-2020 Editorial Appendix A Glossary (supply chain risk management): Delete “[SP 800-161-1]” 420 12-10-202...\""
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control PS-5 in the Personnel Security family specifies standard security guidelines. It requires organizations to establish policy and procedures for personnel security and implement specific safeguards. Here is a relevant excerpt from the source document: \"organization-wide. Organizations continuously assess the security and privacy risks to organizational operations and assets, individuals, other organi...\""
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Risk Assessment (RA) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"ormation Sharing and Analysis Organizations” 425 12-10-2020 Editorial Appendix B Acronyms: Add “ITL Information Technology Laboratory” 425 12-10-2020 ...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SA (System and Services Acquisition) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"ycle” 426 12-10-2020 Editorial Appendix B Acronyms: Add “SIEM Security Information and Event Management” 426 12-10-2020 Editorial Appendix B Acronyms:...\""
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control SC-5 in the System and Communications Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for system and communications protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the System and Information Integrity (SI) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"34 12-10-2020 Editorial Table C-3 AU-15: Change “Incorporated into” to “Moved to” 435 12-10-2020 Editorial Table C-4 (CA-3(1)) Title: Change “CONNECTI...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the SR (Supply Chain Risk Management) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"to “Integrated Information Security Analysis Team” 444 12-10-2020 Editorial Table C-9 (MA-4(2)): Change “MA-1, MA-4” to “MA-1 and MA-4” 445 12-10-2020...\""
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-6 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control AC-6 in the Access Control family specifies standard security guidelines. It requires organizations to establish policy and procedures for access control and implement specific safeguards. Here is a relevant excerpt from the source document: \" 12-10-2020 Editorial Table C-17 (SA-12(15)) Title: Change “PROCESS” to “PROCESSES” 456 12-10-2020 Editorial Table C-18 (SC-7(25)) Title: Change “CONN...\""
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Awareness and Training (AT) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the AU (Audit and Accountability) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"yed within a system or an organization to protect the confidentiality, integrity, and availability of the system and its information and to manage inf...\""
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-6 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control CA-6 in the Assessment, Authorization, and Monitoring family specifies standard security guidelines. It requires organizations to establish policy and procedures for assessment, authorization, and monitoring and implement specific safeguards. Here is a relevant excerpt from the source document: \"privacy controls5 are important tasks that have significant implications for the operations6 and assets of organizations as well as the welfare of ind...\""
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Configuration Management (CM) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"hedule, performance, and supply chain issues associated with the design, development, acquisition, deployment, operation, sustainment, and disposal of...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the CP (Contingency Planning) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"ure (e.g., a federal agency or, as appropriate, any of its operational elements). 3 The two terms information security and security are used synonymou...\""
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-6 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control IA-6 in the Identification and Authentication family specifies standard security guidelines. It requires organizations to establish policy and procedures for identification and authentication and implement specific safeguards. Here is a relevant excerpt from the source document: \"NIST SP 800-53, REV. 5 SECURITY AND P RIVACY C ONTROLS FOR I NFORMATION SYSTEMS AND ORGANIZATIONS ____________________________________________________...\""
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "The primary objective of the Incident Response (IR) control family under NIST 800-53 is to protect system resources. This includes establishing controls, performing assessments, and ensuring compliance. Refer to the standard text: \"ecurity and privacy risks. The controls are employed as part of a well-defined risk management process that supports organizational information securi...\""
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "NIST 800-53 outlines the implementation of the MA (Maintenance) control family by requiring formal documentation, system design reviews, and continuous monitoring. A sample control detail says: \"cation establishes controls for systems and organizations. The controls can be implemented within any organization or system that processes, stores, o...\""
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-6 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf",
+    "expectedAnswer": "Under NIST SP 800-53 Rev 5, control MP-6 in the Media Protection family specifies standard security guidelines. It requires organizations to establish policy and procedures for media protection and implement specific safeguards. Here is a relevant excerpt from the source document: \"and flexible catalog of security and privacy controls to meet current and future protection needs based on changing threats, vulnerabilities, requirem...\""
+  }
+]

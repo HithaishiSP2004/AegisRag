@@ -214,7 +214,7 @@ export default function WorkflowsPage() {
       </div>
 
       {/* Grid: Form (Left) & History (Right) */}
-      <div className="cockpit-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px', alignItems: 'start' }}>
+      <div className="cockpit-grid">
         {/* Launch Form Card */}
         <div style={{
           background: colors.bgCard,

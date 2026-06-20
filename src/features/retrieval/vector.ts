@@ -4,10 +4,19 @@
 // When embeddings are available this calls match_chunks() (migration 0008).
 // When they are not (embedding_failed state or no API key), it returns [].
 // The service layer detects the empty result and falls back to keyword search.
+//
+// Phase 4C.6: When ENABLE_PARENT_CHILD_RETRIEVAL=true, the 5-stage pipeline is:
+//   Stage 1 — Child vector retrieval   (match_chunks_parent_child RPC)
+//   Stage 2 — Parent resolution        (fetch parent content by parent_id)
+//   Stage 3 — Parent deduplication     (deduplicateByParent — collapse siblings)
+//   Stage 4 — BGE Reranker             (existing reranker, unchanged)
+//   Stage 5 — Final context            (top-K results to LLM)
 // =============================================================================
 
 import { createAdminClient } from '@/lib/supabase/server'
 import { embeddingService } from '@/features/embeddings/embeddingService'
+import { normalizeText, computeSHA256 } from '@/features/embeddings/cache/contentHash'
+import { cacheService } from '@/features/embeddings/cache/cacheService'
 import type { SearchQuery, SearchResult, ChunkMetadata, DocumentMeta } from './types'
 
 interface RawVectorRow {
@@ -35,9 +44,11 @@ interface RawDocRow {
 export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> {
   const { text, orgId, filters } = query
 
-  // ── Guard: no API key → skip silently ────────────────────────────────────
-  if (embeddingService.getProviderName() === 'gemini' && !process.env.GEMINI_API_KEY) {
-    console.warn('[retrieval/vector] GEMINI_API_KEY not set — skipping vector search')
+  // ── Guard: provider validation check ────────────────────────────────────
+  try {
+    embeddingService.validateConfiguration()
+  } catch (err: any) {
+    console.warn('[retrieval/vector] Configuration validation failed — skipping vector search:', err.message)
     return []
   }
 
@@ -56,29 +67,51 @@ export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> 
     return []
   }
 
-  // ── Embed the query ───────────────────────────────────────────────────────
+  // ── Embed the query (with query-cache check) ───────────────────────────────
   let queryEmbedding: number[]
   try {
-    queryEmbedding = await embeddingService.generateEmbedding(text)
-    if (queryEmbedding.length === 0) {
-      console.warn('[retrieval/vector] Empty embedding returned for query')
-      return []
+    const rawHash = computeSHA256(normalizeText(text))
+    const queryHash = `query:${rawHash}`
+
+    const provider = embeddingService.getProviderName()
+    const model = embeddingService.getModelName()
+    const dimensions = embeddingService.getDimensions()
+    const version = '2026-06'
+
+    const cached = await cacheService.getCachedEmbedding(queryHash, provider, model)
+    if (cached) {
+      console.log(`[query-cache] HIT hash=${queryHash}`)
+      queryEmbedding = cached
+      void cacheService.updateAccessStats(queryHash)
+    } else {
+      console.log(`[query-cache] MISS hash=${queryHash}`)
+      queryEmbedding = await embeddingService.generateEmbedding(text)
+      if (queryEmbedding.length === 0) {
+        console.warn('[retrieval/vector] Empty embedding returned for query')
+        return []
+      }
+      
+      await cacheService.storeEmbedding(queryHash, queryEmbedding, provider, model, dimensions, version)
+      console.log(`[query-cache] STORED hash=${queryHash}`)
     }
-    console.log('[retrieval/vector] generated query embedding')
   } catch (err) {
     console.error('[retrieval/vector] Embedding generation failed:', err)
     return []
   }
 
   // ── Run vector similarity search ──────────────────────────────────────────
+  const rpcName = process.env.ENABLE_PARENT_CHILD_RETRIEVAL === 'true'
+    ? 'match_chunks_parent_child'
+    : 'match_chunks'
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: rows, error } = await (admin as any).rpc('match_chunks', {
+  const { data: rows, error } = await (admin as any).rpc(rpcName, {
     query_embedding:       queryEmbedding,
     match_org_id:          orgId,
     match_user_id:         query.userId ?? null,
     match_user_role:       query.userRole ?? null,
     match_count:           filters.limit ?? 30,
-    match_threshold:       0.40,
+    match_threshold:       0.35,
     filter_department:     filters.department  ?? null,
     filter_doc_type:       filters.docType     ?? null,
     filter_sensitivity:    filters.sensitivity ?? null,
@@ -89,7 +122,7 @@ export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> 
   }) as { data: RawVectorRow[] | null; error: { message: string } | null }
 
   if (error || !rows || rows.length === 0) {
-    if (error) console.error('[retrieval/vector] match_chunks error:', error.message)
+    if (error) console.error(`[retrieval/vector] ${rpcName} error:`, error.message)
     return []
   }
 
@@ -111,7 +144,7 @@ export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> 
     })
   }
 
-  const results = rows.map((row): SearchResult => ({
+  const rawResults = rows.map((row): SearchResult => ({
     chunkId:    row.chunk_id,
     documentId: row.document_id,
     pageId:     row.page_id,
@@ -128,6 +161,32 @@ export async function vectorSearch(query: SearchQuery): Promise<SearchResult[]> 
       department:   row.metadata.department ?? null,
     },
   }))
-  console.log(`[retrieval/vector] returned ${results.length} results`)
-  return results
+
+  // ── Stage 3: Parent deduplication (parent-child mode only) ───────────────
+  // Multiple children from the same parent collapse into one candidate.
+  // The highest-scoring child's score is promoted; parent content is already resolved by the RPC.
+  if (process.env.ENABLE_PARENT_CHILD_RETRIEVAL === 'true') {
+    const deduped = deduplicateByParentId(rawResults)
+    console.log(`[retrieval/vector] parent-child dedup: ${rawResults.length} children → ${deduped.length} parents`)
+    return deduped
+  }
+
+  console.log(`[retrieval/vector] returned ${rawResults.length} results`)
+  return rawResults
+}
+
+// =============================================================================
+// Parent Deduplication (Phase 4C.6 — Stage 3)
+//
+// Collapses sibling child chunks that share a parent_id (already resolved to
+// chunk_id by the RPC) into a single result keeping the highest similarity.
+// =============================================================================
+
+function deduplicateByParentId(results: SearchResult[]): SearchResult[] {
+  const seen = new Set<string>()
+  return results.filter(r => {
+    if (seen.has(r.chunkId)) return false
+    seen.add(r.chunkId)
+    return true
+  })
 }

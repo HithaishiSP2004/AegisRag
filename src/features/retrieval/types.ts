@@ -29,9 +29,9 @@ export interface SearchFilters {
   classification?: string
   documentId?:  string
   organizationId?: string
+  retrievalMode?:  RetrievalMode
 }
 
-// ── Metadata attached to every chunk (mirrors chunk.metadata JSONB) ───────────
 export interface ChunkMetadata {
   page_number:          number
   document_id:          string
@@ -41,6 +41,7 @@ export interface ChunkMetadata {
   sensitivity:          string
   chunk_in_page:        number
   total_chunks_in_page: number
+  document_title?:      string
 }
 
 // ── Slim document info joined for citation rendering ──────────────────────────

@@ -37,10 +37,10 @@ export function ChamferedShard({
   const bgColors: Record<ShardVariant, string> = {
     default: colors.bgCard,
     flat: 'transparent',
-    nominal: 'rgba(16, 185, 129, 0.03)',
-    warning: 'rgba(245, 158, 11, 0.03)',
-    danger: 'rgba(244, 63, 94, 0.03)',
-    cognitive: 'rgba(99, 102, 241, 0.03)',
+    nominal: '#0E1719', // solid dark green-gray
+    warning: '#171410', // solid dark yellow-gray
+    danger: '#180E10',  // solid dark red-gray
+    cognitive: '#0E1122', // solid dark indigo-gray (perfect for input container)
   }
 
   const resolvedBorder = accentColor || borderColors[variant]

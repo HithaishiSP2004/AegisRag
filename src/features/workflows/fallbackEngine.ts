@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai'
 import { createAdminClient } from '@/lib/supabase/server'
+import { AI_MODELS_FALLBACK_CHAIN } from '@/config/ai'
 
 // Retry ceiling constraints
 const MAX_RETRIES = 3
@@ -26,6 +27,9 @@ export interface FallbackResult {
   cacheMiss?: boolean
 }
 
+const rateLimitedModels = new Map<string, number>()
+const RATE_LIMIT_COOLDOWN_MS = 60000 // 1 minute cooldown
+
 /**
  * Executes a Gemini content generation call with multi-model failover and retry logic.
  */
@@ -33,14 +37,11 @@ export async function executeWithFallback(options: FallbackOptions): Promise<Fal
   const { orgId, userId, promptText, evidenceContext = '', evidenceCitations = [], workflowStage = 'analyzing' } = options
   const start = Date.now()
 
-  const primaryModel = process.env.GEMINI_PRIMARY_MODEL || 'gemini-2.5-flash'
-  const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash'
-
   if (!process.env.GEMINI_API_KEY) {
     return {
       text: getEvidenceOnlyResponse(evidenceContext, evidenceCitations),
       modelUsed: 'none',
-      fallbackLevel: 2,
+      fallbackLevel: 4,
       success: false,
       errorCode: 'MISSING_API_KEY',
       errorMessage: 'GEMINI_API_KEY is not configured.',
@@ -69,155 +70,132 @@ export async function executeWithFallback(options: FallbackOptions): Promise<Fal
     return Promise.race([callPromise, timeoutPromise])
   }
 
-  // 1. Primary Model Execution
+  const models = AI_MODELS_FALLBACK_CHAIN
   let textResponse = ''
-  let primarySuccess = false
-  let primaryError = ''
-  let primaryRetries = 0
+  let success = false
+  let lastError = ''
+  let modelUsed = 'none'
+  let fallbackLevel = 0
+  let totalRetries = 0
 
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    const attemptStart = Date.now()
-    try {
-      textResponse = await callModelWithTimeout(primaryModel)
-      primarySuccess = true
-      break
-    } catch (err: any) {
-      primaryRetries = attempt
-      const errMsg = err?.message || String(err)
-      primaryError = errMsg
+  for (let i = 0; i < models.length; i++) {
+    const currentModel = models[i]
 
-      // Log retriable primary failure
+    // Skip model if it has recently hit a rate limit (429)
+    const rateLimitTime = rateLimitedModels.get(currentModel)
+    if (rateLimitTime && Date.now() - rateLimitTime < RATE_LIMIT_COOLDOWN_MS) {
+      console.info(`[FallbackEngine] Skipping rate-limited model ${currentModel} during failover.`)
+      continue
+    }
+
+    fallbackLevel = i
+    modelUsed = currentModel
+    let modelSuccess = false
+    let modelError = ''
+    let modelRetries = 0
+
+    // If we've switched model (i.e. i > 0), log transition
+    if (i > 0) {
+      const transitionType = i === 1 ? 'primary_to_secondary' : `fallback_${i - 1}_to_fallback_${i}`
       await logResilienceEvent({
         orgId,
         userId: userId || '00000000-0000-0000-0000-000000000000',
-        fallbackType: 'primary_retry',
-        failureReason: `Primary model ${primaryModel} failed on attempt ${attempt}: ${errMsg}`,
-        recoveryAction: attempt < MAX_RETRIES ? 'retry' : 'fallback_to_secondary',
-        retryCount: attempt,
+        fallbackType: transitionType,
+        failureReason: lastError,
+        recoveryAction: 'model_switch',
+        retryCount: 0,
         recoverySuccess: false,
         workflowStage,
-        durationMs: Date.now() - attemptStart,
+        durationMs: Date.now() - start,
         cacheHit: false,
         cacheMiss: true
       })
+    }
 
-      if (attempt < MAX_RETRIES) {
-        const backoffDelay = 500 * Math.pow(2, attempt - 1)
-        await new Promise(resolve => setTimeout(resolve, backoffDelay))
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      const attemptStart = Date.now()
+      try {
+        textResponse = await callModelWithTimeout(currentModel)
+        modelSuccess = true
+        modelRetries = attempt - 1
+        break
+      } catch (err: any) {
+        modelRetries = attempt
+        const errMsg = err?.message || String(err)
+        modelError = errMsg
+
+        const status = err?.status || err?.statusCode
+        if (status === 429 || errMsg.includes('429') || errMsg.toUpperCase().includes('RESOURCE_EXHAUSTED')) {
+          console.warn(`[FallbackEngine] Model ${currentModel} hit rate limit (429). Activating cooldown.`)
+          rateLimitedModels.set(currentModel, Date.now())
+        }
+
+        const isLastAttemptOfThisModel = attempt === MAX_RETRIES
+        const isLastModel = i === models.length - 1
+        const actionType = !isLastAttemptOfThisModel ? 'retry' : (!isLastModel ? 'model_switch' : 'fallback_to_evidence_only')
+        const logType = i === 0 ? 'primary_retry' : `fallback_${i}_retry`
+
+        await logResilienceEvent({
+          orgId,
+          userId: userId || '00000000-0000-0000-0000-000000000000',
+          fallbackType: logType,
+          failureReason: `${currentModel} failed on attempt ${attempt}: ${errMsg}`,
+          recoveryAction: actionType,
+          retryCount: attempt,
+          recoverySuccess: false,
+          workflowStage,
+          durationMs: Date.now() - attemptStart,
+          cacheHit: false,
+          cacheMiss: true
+        })
+
+        if (attempt < MAX_RETRIES) {
+          const backoffDelay = 500 * Math.pow(2, attempt - 1)
+          await new Promise(resolve => setTimeout(resolve, backoffDelay))
+        }
       }
+    }
+
+    totalRetries += modelRetries
+    lastError = modelError
+
+    if (modelSuccess) {
+      success = true
+      break
     }
   }
 
-  // If primary succeeded, log success telemetry and return
-  if (primarySuccess) {
+  // If succeeded, log success telemetry and return
+  if (success) {
     const durationMs = Date.now() - start
+    const isFallbackUsed = fallbackLevel > 0
     await logResilienceEvent({
       orgId,
       userId: userId || '00000000-0000-0000-0000-000000000000',
-      fallbackType: 'none',
-      failureReason: null,
-      recoveryAction: 'none',
-      retryCount: primaryRetries,
+      fallbackType: isFallbackUsed ? 'primary_to_secondary' : 'none',
+      failureReason: isFallbackUsed ? lastError : null,
+      recoveryAction: isFallbackUsed ? 'model_switch_success' : 'none',
+      retryCount: totalRetries,
       recoverySuccess: true,
       workflowStage,
       durationMs,
-      cacheHit: true,
-      cacheMiss: false
+      cacheHit: !isFallbackUsed,
+      cacheMiss: isFallbackUsed
     })
 
     return {
       text: textResponse,
-      modelUsed: primaryModel,
-      fallbackLevel: 0,
+      modelUsed,
+      fallbackLevel,
       success: true,
       evidenceOnlyUsed: false,
-      cacheHit: true,
-      cacheMiss: false
+      cacheHit: !isFallbackUsed,
+      cacheMiss: isFallbackUsed
     }
   }
 
-  // 2. Secondary/Fallback Model Execution
-  let secondarySuccess = false
-  let secondaryError = ''
-  let secondaryRetries = 0
-
-  // Log transition from primary to secondary model
-  await logResilienceEvent({
-    orgId,
-    userId: userId || '00000000-0000-0000-0000-000000000000',
-    fallbackType: 'primary_to_secondary',
-    failureReason: primaryError,
-    recoveryAction: 'model_switch',
-    retryCount: 0,
-    recoverySuccess: false,
-    workflowStage,
-    durationMs: Date.now() - start,
-    cacheHit: false,
-    cacheMiss: true
-  })
-
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    const attemptStart = Date.now()
-    try {
-      textResponse = await callModelWithTimeout(fallbackModel)
-      secondarySuccess = true
-      break
-    } catch (err: any) {
-      secondaryRetries = attempt
-      const errMsg = err?.message || String(err)
-      secondaryError = errMsg
-
-      // Log retriable secondary failure
-      await logResilienceEvent({
-        orgId,
-        userId: userId || '00000000-0000-0000-0000-000000000000',
-        fallbackType: 'secondary_retry',
-        failureReason: `Secondary model ${fallbackModel} failed on attempt ${attempt}: ${errMsg}`,
-        recoveryAction: attempt < MAX_RETRIES ? 'retry' : 'fallback_to_evidence_only',
-        retryCount: attempt,
-        recoverySuccess: false,
-        workflowStage,
-        durationMs: Date.now() - attemptStart,
-        cacheHit: false,
-        cacheMiss: true
-      })
-
-      if (attempt < MAX_RETRIES) {
-        const backoffDelay = 500 * Math.pow(2, attempt - 1)
-        await new Promise(resolve => setTimeout(resolve, backoffDelay))
-      }
-    }
-  }
-
-  if (secondarySuccess) {
-    const durationMs = Date.now() - start
-    await logResilienceEvent({
-      orgId,
-      userId: userId || '00000000-0000-0000-0000-000000000000',
-      fallbackType: 'primary_to_secondary',
-      failureReason: primaryError,
-      recoveryAction: 'model_switch_success',
-      retryCount: secondaryRetries,
-      recoverySuccess: true,
-      workflowStage,
-      durationMs,
-      cacheHit: false,
-      cacheMiss: true
-    })
-
-    return {
-      text: textResponse,
-      modelUsed: fallbackModel,
-      fallbackLevel: 1,
-      success: true,
-      evidenceOnlyUsed: false,
-      cacheHit: false,
-      cacheMiss: true
-    }
-  }
-
-  // 3. Final Fallback: Evidence-Only Response Mode
-  const finalError = `Both primary (${primaryModel}) and fallback (${fallbackModel}) failed. Primary error: ${primaryError}. Fallback error: ${secondaryError}`
+  // Final Fallback: Evidence-Only Response Mode
+  const finalError = `All models in fallback chain failed. Last error: ${lastError}`
   const durationMs = Date.now() - start
 
   await logResilienceEvent({
@@ -226,7 +204,7 @@ export async function executeWithFallback(options: FallbackOptions): Promise<Fal
     fallbackType: 'secondary_to_evidence_only',
     failureReason: finalError,
     recoveryAction: 'evidence_only',
-    retryCount: primaryRetries + secondaryRetries,
+    retryCount: totalRetries,
     recoverySuccess: true,
     workflowStage,
     durationMs,
@@ -237,7 +215,7 @@ export async function executeWithFallback(options: FallbackOptions): Promise<Fal
   return {
     text: getEvidenceOnlyResponse(evidenceContext, evidenceCitations),
     modelUsed: 'none',
-    fallbackLevel: 2,
+    fallbackLevel: models.length,
     success: false,
     errorCode: 'BOTH_MODELS_FAILED',
     errorMessage: finalError,

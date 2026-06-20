@@ -195,6 +195,11 @@ body {
               radial-gradient(ellipse at 85% 90%, rgba(16,185,129,0.03) 0%, transparent 50%),
               var(--bg-base);
 }
+.app-content:has(.app-content--flush) {
+  padding: 0;
+  overflow: hidden;
+}
+
 /* Full-bleed variant — used by /chat so the workspace owns its own scroll architecture */
 .app-content--flush {
   padding: 0;
@@ -379,9 +384,16 @@ body {
 .status-dot.neutral { background: var(--text-faint); }
 
 /* ── Cockpit Grid Responsive Layout ───────────────────────────────────────── */
+.cockpit-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
 @media (max-width: 1024px) {
   .cockpit-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -635,3 +647,64 @@ body {
     grid-template-columns: 1fr 220px !important;
   }
 }
+
+/* ── Workflow Run Details Responsive Layout ────────────────────────────── */
+.workflow-details-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .workflow-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.workflow-title-banner {
+  background: linear-gradient(135deg, rgba(13,17,28,0.9), rgba(8,12,20,0.9));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.workflow-title-banner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 320px;
+  flex: 1.5;
+}
+
+.workflow-title-banner-scores {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  justify-content: flex-end;
+  border-left: 1px solid var(--glass-border);
+  padding-left: 20px;
+}
+
+@media (max-width: 768px) {
+  .workflow-title-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .workflow-title-banner-info {
+    min-width: 100%;
+  }
+  .workflow-title-banner-scores {
+    justify-content: space-around;
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 20px;
+  }
+}
+

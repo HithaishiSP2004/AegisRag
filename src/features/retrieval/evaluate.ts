@@ -30,6 +30,13 @@ export interface EvalMeta {
   vector_candidates?:   number | null
   reranked_candidates?:  number | null
   context_tokens_saved?: number | null
+
+  // Reranker telemetry
+  reranker_enabled?:    boolean
+  reranker_model?:      string
+  pre_rerank_score?:    number | null
+  post_rerank_score?:   number | null
+  reranker_lift?:       number | null
 }
 
 interface GeminiEvalResponse {
@@ -159,6 +166,7 @@ export async function evaluateRetrieval(
   // ── 3. Persist to retrieval_evals and retrieval_events ───────────────────
   try {
     const admin = createAdminClient()
+
     const { error } = await admin.from('retrieval_evals').insert({
       org_id:              orgId,
       conversation_id:     meta.conversation_id ?? null,
@@ -177,6 +185,11 @@ export async function evaluateRetrieval(
       vector_candidates:   meta.vector_candidates ?? null,
       reranked_candidates:  meta.reranked_candidates ?? null,
       context_tokens_saved: meta.context_tokens_saved ?? null,
+      reranker_enabled:    meta.reranker_enabled ?? false,
+      reranker_model:      meta.reranker_model ?? null,
+      pre_rerank_score:    meta.pre_rerank_score ?? null,
+      post_rerank_score:   meta.post_rerank_score ?? null,
+      reranker_lift:       meta.reranker_lift ?? null,
     })
     if (error) {
       console.error('[eval] retrieval_evals insert error:', error.message)

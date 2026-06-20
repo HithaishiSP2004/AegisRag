@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Icon } from '@iconify/react'
 import { useToast } from '@/components/ui'
+import Interactive3DLogo from '@/components/ui/Interactive3DLogo'
 
 interface LoginFormProps {
   error?: string
@@ -28,23 +29,13 @@ export default function LoginForm({ error }: LoginFormProps) {
     >
       {/* Header with Brand and Subtitle */}
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <h1
-          style={{
-            fontSize: '2.3rem',
-            fontWeight: 800,
-            color: '#F8FAFC',
-            margin: '0 0 2px',
-            letterSpacing: '-0.04em',
-            background: 'linear-gradient(to bottom, #FFFFFF 60%, #CBD5E1)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          AegisRAG
-        </h1>
-        <p style={{ color: '#3B82F6', fontSize: '0.85rem', fontWeight: 600, margin: '0 0 4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-          Trust Every Decision
-        </p>
+        {/* 3D Interactive Logo — tracks cursor across the whole page */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+          <Interactive3DLogo size={88} variant="icon" isSubmitting={isSubmitting} />
+        </div>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#F8FAFC', margin: '12px 0 4px', letterSpacing: '-0.02em' }}>
+          Sign in to AegisRAG
+        </h3>
         <p style={{ color: '#64748B', fontSize: '0.8rem', margin: 0, lineHeight: '1.4' }}>
           Secure access to your governance workspace
         </p>
@@ -182,7 +173,7 @@ export default function LoginForm({ error }: LoginFormProps) {
           style={{
             width: '100%',
             padding: '13px 16px',
-            background: '#2563EB',
+            background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)',
             border: 'none',
             borderRadius: '6px',
             color: '#FFFFFF',
@@ -195,7 +186,7 @@ export default function LoginForm({ error }: LoginFormProps) {
             gap: '8px',
             marginTop: '18px',
             marginBottom: '12px',
-            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)',
+            boxShadow: '0 4px 14px rgba(79, 70, 229, 0.25)',
           }}
           className="btn-submit"
         >
@@ -267,17 +258,17 @@ export default function LoginForm({ error }: LoginFormProps) {
           box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
           background: rgba(9, 13, 22, 0.9) !important;
         }
-        
+
         /* Microinteractions: Buttons hover glow and scale */
         .btn-submit {
           transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
         .btn-submit:hover:not(:disabled) {
-          transform: scale(1.02);
-          background-color: #3B82F6 !important;
-          box-shadow: 0 0 20px rgba(59, 130, 246, 0.4) !important;
+          transform: scale(1.015);
+          background: linear-gradient(135deg, #5850ec 0%, #4893ff 100%) !important;
+          box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35) !important;
         }
-        
+
         .btn-sso {
           transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
@@ -287,7 +278,7 @@ export default function LoginForm({ error }: LoginFormProps) {
           border-color: rgba(255, 255, 255, 0.15) !important;
           box-shadow: 0 0 15px rgba(255, 255, 255, 0.03) !important;
         }
-        
+
         .hover-link:hover {
           text-decoration: underline !important;
           color: #60A5FA !important;

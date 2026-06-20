@@ -1,5 +1,7 @@
 import { jsPDF } from 'jspdf'
 import crypto from 'crypto'
+import fs from 'fs'
+import path from 'path'
 
 function sha256Sync(message: string): string {
   return crypto.createHash('sha256').update(message).digest('hex')
@@ -17,6 +19,18 @@ export async function generateComplianceWorkflowPDF(
     format: 'a4',
   })
 
+  // Load official logo-with-name for PDF branding
+  let logoBase64 = ''
+  try {
+    const logoPath = path.join(process.cwd(), 'public', 'logo-with-name.png')
+    if (fs.existsSync(logoPath)) {
+      const buffer = fs.readFileSync(logoPath)
+      logoBase64 = `data:image/png;base64,${buffer.toString('base64')}`
+    }
+  } catch (err) {
+    console.error('Failed to load logo-with-name in pdfGenerator:', err)
+  }
+
   const totalPages = 5
 
   // Helper to draw standard header/footer on pages 2 to 5
@@ -25,10 +39,18 @@ export async function generateComplianceWorkflowPDF(
     doc.setFillColor(8, 12, 20) // bgBase
     doc.rect(0, 0, 210, 20, 'F')
     
-    doc.setTextColor(248, 250, 252) // textPrimary
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
-    doc.text('AEGISRAG COMPLIANCE WORKFLOW SYSTEM', 15, 12)
+    if (logoBase64) {
+      try {
+        doc.addImage(logoBase64, 'PNG', 15, 6, 8, 8)
+      } catch (err) {
+        console.error('Failed to add header logo in pdfGenerator:', err)
+      }
+    } else {
+      doc.setTextColor(248, 250, 252) // textPrimary
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(10)
+      doc.text('AEGISRAG COMPLIANCE WORKFLOW SYSTEM', 15, 12)
+    }
     
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
@@ -67,6 +89,15 @@ export async function generateComplianceWorkflowPDF(
   doc.setFontSize(8.5)
   doc.text('CLASSIFICATION: STRICTLY CONFIDENTIAL // WORKFLOW COMPLIANCE REVIEW REPORT', 105, 10, { align: 'center' })
   doc.text('CLASSIFICATION: STRICTLY CONFIDENTIAL // WORKFLOW COMPLIANCE REVIEW REPORT', 105, 291, { align: 'center' })
+
+  // Draw official logo-with-name
+  if (logoBase64) {
+    try {
+      doc.addImage(logoBase64, 'PNG', 87, 35, 36, 36)
+    } catch (err) {
+      console.error('Failed to draw cover page logo in pdfGenerator:', err)
+    }
+  }
 
   // Decorative border / Shield logo simulation
   doc.setDrawColor(99, 102, 241) // Indigo

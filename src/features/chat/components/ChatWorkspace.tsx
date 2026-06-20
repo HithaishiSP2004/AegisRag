@@ -26,25 +26,28 @@ import { createClient } from '@/lib/supabase/client'
 
 export function ChatWorkspace() {
   const [documentCount, setDocumentCount] = useState<number | null>(null)
+  const [documents, setDocuments] = useState<{ id: string; originalName: string }[]>([])
 
   useEffect(() => {
-    async function fetchDocCount() {
+    async function fetchDocs() {
       try {
         const supabase = createClient()
-        const { count, error } = await supabase
+        const { data, error } = await supabase
           .from('documents')
-          .select('*', { count: 'exact', head: true })
-        if (!error && count !== null) {
-          setDocumentCount(count)
+          .select('id, original_name')
+          .order('original_name', { ascending: true })
+        if (!error && data) {
+          setDocuments(data.map(d => ({ id: d.id, originalName: d.original_name })))
+          setDocumentCount(data.length)
         } else {
           setDocumentCount(0)
         }
       } catch (err) {
-        console.error('Failed to fetch document count:', err)
+        console.error('Failed to fetch documents:', err)
         setDocumentCount(0)
       }
     }
-    fetchDocCount()
+    fetchDocs()
   }, [])
 
   const [retrieval,   setRetrieval]   = useState<RetrievalFiltersState>({})
@@ -100,6 +103,7 @@ export function ChatWorkspace() {
     department:  retrieval.department,
     docType:     retrieval.docType,
     sensitivity: retrieval.sensitivity,
+    documentId:  retrieval.documentId,
     dateFrom:    dateFilters.dateFrom,
     dateTo:      dateFilters.dateTo,
   }
@@ -274,7 +278,7 @@ export function ChatWorkspace() {
               <span style={{ color: colors.textPrimary, fontSize: '0.9rem', fontWeight: 700, letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>
                 Knowledge Workbench
               </span>
-              <span style={{ color: 'rgba(99,102,241,0.55)', fontSize: '0.6rem', fontFamily: font.mono, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+              <span style={{ color: colors.indigoLight, fontSize: '0.6rem', fontFamily: font.mono, letterSpacing: '0.08em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                 Hybrid Retrieval Intelligence
               </span>
             </div>
@@ -363,6 +367,7 @@ export function ChatWorkspace() {
             <div style={{ flexShrink: 0 }}>
               <ActiveFilterChips
                 filters={retrieval}
+                documents={documents}
                 onClear={(field) => setRetrieval((prev) => { const next = { ...prev }; delete next[field]; return next })}
               />
             </div>
@@ -432,7 +437,7 @@ export function ChatWorkspace() {
                   inputMode={inputMode}
                   setInputMode={setInputMode}
                   onToggleScope={() => setScopePanelOpen((o) => !o)}
-                  activeFiltersCount={[retrieval.department, retrieval.docType, retrieval.sensitivity].filter(Boolean).length}
+                  activeFiltersCount={[retrieval.department, retrieval.docType, retrieval.sensitivity, retrieval.documentId].filter(Boolean).length}
                 />
               </div>
             )}
@@ -469,6 +474,7 @@ export function ChatWorkspace() {
           onClose={() => setScopePanelOpen(false)}
           filters={retrieval}
           onChange={setRetrieval}
+          documents={documents}
         />
       </div>
     </div>

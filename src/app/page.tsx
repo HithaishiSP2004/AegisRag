@@ -26,7 +26,19 @@ export default async function Home() {
         fontFamily: 'var(--font-inter)',
       }}
     >
-      <h1 style={{ fontSize: '2.5rem', fontWeight: 700, letterSpacing: '-0.03em', color: '#F8FAFC' }}>
+      <h1
+        style={{
+          fontSize: '2.5rem',
+          fontWeight: 700,
+          letterSpacing: '-0.03em',
+          background: 'linear-gradient(135deg, #22D3EE 0%, #6366F1 50%, #8B5CF6 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          color: 'transparent',
+          filter: 'drop-shadow(0 0 16px rgba(99, 102, 241, 0.45))',
+        }}
+      >
         AegisRAG
       </h1>
       <p style={{ color: '#94A3B8', fontSize: '1.125rem' }}>Trust Every Decision</p>

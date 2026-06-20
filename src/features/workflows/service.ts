@@ -4,7 +4,6 @@
 
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { searchDocuments } from '@/features/retrieval/service'
-import { GoogleGenAI } from '@google/genai'
 import { AI_MODELS } from '@/config/ai'
 import { executePromptWorkflow, optimizeContext, getOrgBudgetProfile, BUDGET_LIMITS } from '@/features/prompts/manager'
 import { logAuditEvent } from '@/features/documents/audit'
@@ -224,11 +223,12 @@ export async function executeComplianceWorkflow(
           metadata
         )
 
+        const registryName = (framework === 'NIST' || framework === 'NIST_CSF' || framework === 'NIST-CSF') ? 'NIST-CSF' : framework
         const { data: cf } = await admin
           .from('compliance_frameworks')
           .select('id')
           .eq('org_id', orgId)
-          .eq('name', framework)
+          .eq('name', registryName)
           .single()
 
         let searchQuery = `compliance guidelines rules controls and policy requirements for ${framework}`
@@ -623,11 +623,8 @@ export async function executeComplianceWorkflow(
     )
 
     // Storage uploads
-    const now = new Date()
-    const year = now.getFullYear().toString()
-    const month = (now.getMonth() + 1).toString().padStart(2, '0')
-    const pdfStoragePath = `${orgId}/${year}/${month}/${workflowId}-pdf-${pdfFilename}`
-    const jsonStoragePath = `${orgId}/${year}/${month}/${workflowId}-json-${jsonFilename}`
+    const pdfStoragePath = `${orgId}/workflows/${workflowId}.pdf`
+    const jsonStoragePath = `${orgId}/workflows/${workflowId}.json`
 
     // 3. Storage Upload for PDF (ceiling limit max 5)
     await retryOperation(
@@ -645,31 +642,35 @@ export async function executeComplianceWorkflow(
     )
 
     // 4. Storage Register for PDF (ceiling limit max 5)
-    await retryOperation(
-      async () => {
-        const { error: dbErr } = await (admin as any)
-          .from('generated_reports')
-          .insert({
-            tenant_id: orgId,
-            org_id: orgId,
-            report_type: 'compliance',
-            format: 'PDF',
-            file_name: pdfFilename,
-            storage_path: pdfStoragePath,
-            file_size: pdfBuffer.length,
-            generated_by: userId,
-            status: 'completed',
-            metadata: {
-              workflow_id: workflowId,
-              report_id: reportId,
-              mime_type: 'application/pdf'
-            }
-          })
-        if (dbErr) throw dbErr
-      },
-      'pdf_register_retry',
-      5
-    )
+    try {
+      await retryOperation(
+        async () => {
+          const { error: dbErr } = await (admin as any)
+            .from('generated_reports')
+            .insert({
+              tenant_id: orgId,
+              org_id: orgId,
+              report_type: 'compliance',
+              format: 'PDF',
+              file_name: pdfFilename,
+              storage_path: pdfStoragePath,
+              file_size: pdfBuffer.length,
+              generated_by: userId,
+              status: 'completed',
+              metadata: {
+                workflow_id: workflowId,
+                report_id: reportId,
+                mime_type: 'application/pdf'
+              }
+            })
+          if (dbErr) throw dbErr
+        },
+        'pdf_register_retry',
+        5
+      )
+    } catch (err: any) {
+      console.warn('[WorkflowService] PDF registration in generated_reports failed (non-blocking):', err.message || err)
+    }
 
     // 5. Storage Upload for JSON (ceiling limit max 5)
     await retryOperation(
@@ -687,31 +688,35 @@ export async function executeComplianceWorkflow(
     )
 
     // 6. Storage Register for JSON (ceiling limit max 5)
-    await retryOperation(
-      async () => {
-        const { error: dbErr } = await (admin as any)
-          .from('generated_reports')
-          .insert({
-            tenant_id: orgId,
-            org_id: orgId,
-            report_type: 'compliance',
-            format: 'JSON',
-            file_name: jsonFilename,
-            storage_path: jsonStoragePath,
-            file_size: jsonBuffer.length,
-            generated_by: userId,
-            status: 'completed',
-            metadata: {
-              workflow_id: workflowId,
-              report_id: reportId,
-              mime_type: 'application/json'
-            }
-          })
-        if (dbErr) throw dbErr
-      },
-      'json_register_retry',
-      5
-    )
+    try {
+      await retryOperation(
+        async () => {
+          const { error: dbErr } = await (admin as any)
+            .from('generated_reports')
+            .insert({
+              tenant_id: orgId,
+              org_id: orgId,
+              report_type: 'compliance',
+              format: 'JSON',
+              file_name: jsonFilename,
+              storage_path: jsonStoragePath,
+              file_size: jsonBuffer.length,
+              generated_by: userId,
+              status: 'completed',
+              metadata: {
+                workflow_id: workflowId,
+                report_id: reportId,
+                mime_type: 'application/json'
+              }
+            })
+          if (dbErr) throw dbErr
+        },
+        'json_register_retry',
+        5
+      )
+    } catch (err: any) {
+      console.warn('[WorkflowService] JSON registration in generated_reports failed (non-blocking):', err.message || err)
+    }
 
     // Success telemetry logged
     const finalDurationMs = Date.now() - startTime

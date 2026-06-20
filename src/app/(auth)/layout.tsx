@@ -325,12 +325,6 @@ export default function AuthLayout({
           flex-shrink: 0 !important;
           box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(59, 130, 246, 0.08) !important;
           transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-          animation: float-card 8s ease-in-out infinite;
-        }
-
-        @keyframes float-card {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-5px); }
         }
 
         /* Height-based adjustments for short viewports */

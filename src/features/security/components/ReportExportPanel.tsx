@@ -99,6 +99,18 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
     URL.revokeObjectURL(url)
   }
 
+  // Helper to fetch client-side image and convert to base64 for jsPDF
+  const getBase64ImageFromUrl = async (url: string): Promise<string> => {
+    const res = await fetch(url)
+    const blob = await res.blob()
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    })
+  }
+
   // L1 FIX: Compute a real SHA-256 hash using the Web Crypto API.
   // Replaces Math.random() fake hex strings in audit stamps.
   const computeReportHash = async (payload: object): Promise<string> => {
@@ -251,6 +263,9 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
       pptx.defineSlideMaster({
         title: 'AEGIS_DARK',
         background: { color: '0A0E1A' },
+        objects: [
+          { image: { x: 10.8, y: 0.3, w: 1.8, h: 0.65, path: '/logo-with-name.png' } }
+        ],
         slideNumber: { x: '92%', y: '95%', color: '64748B', fontSize: 10 }
       })
 
@@ -265,7 +280,8 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
 
       // Slide 1: Title & Executive Summary
       const slide1 = pptx.addSlide({ masterName: 'AEGIS_DARK' })
-      slide1.addText('AEGISRAG SECURITY GOVERNANCE', { x: 0.8, y: 1.5, fontSize: 36, bold: true, color: 'E2E8F0', fontFace: 'Helvetica' })
+      slide1.addImage({ path: '/logo-with-name.png', x: 0.8, y: 0.5, w: 2.4, h: 0.86 })
+      slide1.addText('AEGISRAG SECURITY GOVERNANCE', { x: 0.8, y: 1.6, fontSize: 36, bold: true, color: 'E2E8F0', fontFace: 'Helvetica' })
       slide1.addText('Executive Boardroom Report & Intelligence Deck', { x: 0.8, y: 2.2, fontSize: 20, color: '6366F1', fontFace: 'Helvetica' })
       slide1.addText(`Target Horizon: Last ${days} Days | Generated: ${new Date().toLocaleDateString()}`, { x: 0.8, y: 3.0, fontSize: 12, color: '94A3B8', fontFace: 'Helvetica' })
       slide1.addText('This document represents the consolidated security compliance and AI model posture, ready for executive and boardroom-level auditing.', { x: 0.8, y: 4.5, w: 10, fontSize: 14, color: '64748B', fontFace: 'Helvetica', italic: true })
@@ -402,7 +418,7 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
       // Slide 9: Recommended Next Actions (Board Directives)
       const slide9 = pptx.addSlide({ masterName: 'AEGIS_DARK' })
       slide9.addText('RECOMMENDED BOARD DIRECTIVES', { x: 0.8, y: 0.6, fontSize: 24, bold: true, color: 'E2E8F0' })
-      slide9.addText('Directives Mimicking PwC and Deloitte Strategic Risk Frameworks', { x: 0.8, y: 1.1, fontSize: 14, color: '94A3B8' })
+      slide9.addText('Directives Aligned with Industry-Standard Strategic Risk Frameworks', { x: 0.8, y: 1.1, fontSize: 14, color: '94A3B8' })
       slide9.addText('• Action A: Initiate auto-quarantine for sensitivity mismatches to reduce compliance exposure.\n• Action B: Implement query token caching to further reduce retrieval costs.\n• Action C: Deploy database replicas to prevent API fallbacks during peak traffic loads.', { x: 0.8, y: 2.0, w: 11, fontSize: 14, color: 'E2E8F0', lineSpacing: 26 })
 
       // Slide 10: Appendix & Verification Trail
@@ -445,9 +461,26 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
       const retData = retRes || {}
       const govData = govRes || {}
 
+      // Fetch logo-with-name for PDF branding
+      let logoBase64 = ''
+      try {
+        logoBase64 = await getBase64ImageFromUrl('/logo-with-name.png')
+      } catch (err) {
+        console.error('Failed to pre-fetch logo-with-name:', err)
+      }
+
       // Page 1: Title and Header Cover Page
       doc.setFillColor(11, 15, 25)
       doc.rect(0, 0, 210, 297, 'F')
+
+      // Draw official logo-with-name
+      if (logoBase64) {
+        try {
+          doc.addImage(logoBase64, 'PNG', 20, 20, 48, 17)
+        } catch (err) {
+          console.error('Failed to draw cover logo:', err)
+        }
+      }
 
       doc.setTextColor(99, 102, 241)
       doc.setFont('helvetica', 'bold')
@@ -480,6 +513,15 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
       doc.addPage()
       doc.setFillColor(11, 15, 25)
       doc.rect(0, 0, 210, 297, 'F')
+
+      // Draw header logo
+      if (logoBase64) {
+        try {
+          doc.addImage(logoBase64, 'PNG', 20, 10, 24, 8)
+        } catch (err) {
+          console.error('Failed to draw header logo page 2:', err)
+        }
+      }
 
       doc.setTextColor(226, 232, 240)
       doc.setFont('helvetica', 'bold')
@@ -526,6 +568,15 @@ export function ReportExportPanel({ reportType, days, data, loading }: Props) {
       doc.addPage()
       doc.setFillColor(11, 15, 25)
       doc.rect(0, 0, 210, 297, 'F')
+
+      // Draw header logo
+      if (logoBase64) {
+        try {
+          doc.addImage(logoBase64, 'PNG', 20, 10, 24, 8)
+        } catch (err) {
+          console.error('Failed to draw header logo page 3:', err)
+        }
+      }
 
       doc.setTextColor(226, 232, 240)
       doc.setFont('helvetica', 'bold')

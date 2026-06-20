@@ -180,7 +180,7 @@ export function GovernanceScorecard({ data, loading }: Props) {
             padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '12px'
           }}>
             <span style={{ color: '#E2E8F0', fontWeight: 600, fontSize: '12px' }}>Governance Violation Alerts</span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '220px', overflowY: 'auto' }}>
               {governanceViolations.length === 0 ? (
                 <div style={{ padding: '20px 10px', textAlign: 'center', color: colors.textMuted, fontSize: '10px', fontFamily: font.mono }}>
                   No Governance Violations Logged
@@ -213,7 +213,7 @@ export function GovernanceScorecard({ data, loading }: Props) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h4 style={{ color: colors.textPrimary, fontSize: '13px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Sparkles size={14} style={{ color: '#A78BFA' }} />
-                PwC AI Governance Advisory
+                AI Governance Advisory
               </h4>
             </div>
 

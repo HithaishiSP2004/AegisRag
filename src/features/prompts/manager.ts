@@ -3,10 +3,11 @@
 // =============================================================================
 
 import { GoogleGenAI } from '@google/genai'
-import { AI_MODELS } from '@/config/ai'
+import { AI_MODELS, AI_MODELS_FALLBACK_CHAIN } from '@/config/ai'
 import { logAIRequest } from '@/features/retrieval/telemetry'
 import { getPromptTemplate, renderPrompt } from './registry'
 import { createAdminClient } from '@/lib/supabase/server'
+import { runWithGemini } from '@/lib/geminiClient'
 
 export type BudgetProfile = 'economy' | 'balanced' | 'accuracy'
 
@@ -45,6 +46,7 @@ export interface ExecResult {
   tokensSaved: number
   estimatedTokens: number
   confidenceScore: number
+  promptText?: string
 }
 
 /**
@@ -144,6 +146,9 @@ export function optimizeContext(
   }
 }
 
+const rateLimitedModels = new Map<string, number>()
+const RATE_LIMIT_COOLDOWN_MS = 60000 // 1 minute cooldown
+
 /**
  * Orchestrates rendering, token optimization, Gemini invocation with fallback, and logs telemetry.
  */
@@ -179,52 +184,33 @@ export async function executePromptWorkflow(options: PromptManagerOptions): Prom
   let errorCode: string | null = null
   let errorMessage: string | null = null
 
-  // 4. Invoke Gemini with failover
+  // 4. Invoke Gemini with dual-key failover (primary key → fallback models → secondary key)
   if (!process.env.GEMINI_API_KEY) {
     textResponse = 'GEMINI_API_KEY is not set.'
     success = false
     errorCode = 'MISSING_API_KEY'
     errorMessage = 'API Key is missing in workspace environment.'
   } else {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
     try {
-      const res = await ai.models.generateContent({
-        model: AI_MODELS.GENERATION_PRIMARY,
-        contents: promptText
+      const result = await runWithGemini({
+        modelChain: AI_MODELS_FALLBACK_CHAIN,
+        prompt: promptText,
+        label: workflowType || 'chat'
       })
-      textResponse = res.text ?? ''
-    } catch (err: any) {
-      const errMsg = err?.message || String(err)
-      const status = err?.status || err?.statusCode
-      const isFallbackTrigger =
-        status === 429 ||
-        status === 503 ||
-        errMsg.includes('429') ||
-        errMsg.includes('503') ||
-        errMsg.toUpperCase().includes('RESOURCE_EXHAUSTED') ||
-        errMsg.toUpperCase().includes('UNAVAILABLE')
+      textResponse = result.text
+      modelUsed = result.modelUsed
+      fallbackLevel = result.fallbackLevel
+      success = true
 
-      if (isFallbackTrigger) {
-        fallbackLevel = 1
-        modelUsed = AI_MODELS.GENERATION_FALLBACK
-        try {
-          const res = await ai.models.generateContent({
-            model: AI_MODELS.GENERATION_FALLBACK,
-            contents: promptText
-          })
-          textResponse = res.text ?? ''
-        } catch (fbErr: any) {
-          success = false
-          errorCode = fbErr?.status ? `HTTP_${fbErr.status}` : 'GENERATION_ERROR'
-          errorMessage = fbErr?.message || String(fbErr)
-          textResponse = 'AI models are currently unavailable.'
-        }
-      } else {
-        success = false
-        errorCode = err?.status ? `HTTP_${err.status}` : 'GENERATION_ERROR'
-        errorMessage = errMsg
-        textResponse = 'An error occurred during response generation.'
+      if (result.usedSecondaryKey) {
+        console.log(`[PromptManager] Secondary Gemini API key activated for ${workflowType || 'chat'}`)
       }
+    } catch (err: any) {
+      textResponse = 'AI models are currently unavailable.'
+      success = false
+      errorCode = 'ALL_MODELS_EXHAUSTED'
+      errorMessage = err?.message || 'All models and API keys failed.'
+      console.error('[PromptManager] All Gemini keys/models failed:', err)
     }
   }
 
@@ -279,6 +265,7 @@ export async function executePromptWorkflow(options: PromptManagerOptions): Prom
     tokensAfter,
     tokensSaved,
     estimatedTokens,
-    confidenceScore
+    confidenceScore,
+    promptText
   }
 }

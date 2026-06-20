@@ -165,39 +165,77 @@ export function Sidebar({ userEmail, userName, role }: Props) {
         }}
       >
         {!collapsed && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
+          <Link
+            href="/command-hub"
+            className="aegis-logo-link"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              textDecoration: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <img
+              src="/logo-icon.png"
+              alt="Aegis Logo"
+              className="logo-img"
               style={{
-                width: '28px', height: '28px', borderRadius: radius.md,
-                background: `linear-gradient(135deg, ${colors.indigo}, ${colors.violet})`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                boxShadow: '0 0 10px rgba(99, 102, 241, 0.3)',
+                height: '28px',
+                width: '28px',
+                objectFit: 'contain',
+                userSelect: 'none',
+                transition: 'transform 0.3s ease, filter 0.3s ease',
               }}
-            >
-              <Shield size={14} style={{ color: '#fff' }} aria-hidden="true" />
-            </div>
+              draggable={false}
+            />
             <span
+              className="logo-text"
               style={{
-                color: colors.textPrimary, fontSize: font.sizes.lg, fontWeight: 700,
-                letterSpacing: '-0.02em', whiteSpace: 'nowrap',
+                fontSize: '18px',
+                fontWeight: 800,
+                fontFamily: font.sans,
+                letterSpacing: '0.04em',
+                background: 'linear-gradient(135deg, #22D3EE 0%, #6366F1 50%, #8B5CF6 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                color: 'transparent',
+                transition: 'filter 0.3s ease',
               }}
             >
-              AegisRAG
+              Aegis
             </span>
-          </div>
+          </Link>
         )}
 
         {collapsed && (
-          <div
+          <Link
+            href="/command-hub"
+            className="aegis-logo-link collapsed"
             style={{
-              width: '28px', height: '28px', borderRadius: radius.md,
-              background: `linear-gradient(135deg, ${colors.indigo}, ${colors.violet})`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 10px rgba(99, 102, 241, 0.3)',
+              width: '28px',
+              height: '28px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              textDecoration: 'none',
             }}
           >
-            <Shield size={14} style={{ color: '#fff' }} aria-hidden="true" />
-          </div>
+            <img
+              src="/logo-icon.png"
+              alt="AegisRAG Logo"
+              className="logo-img"
+              style={{
+                width: '28px',
+                height: '28px',
+                objectFit: 'contain',
+                transition: 'transform 0.3s ease, filter 0.3s ease',
+              }}
+            />
+          </Link>
         )}
 
         {!collapsed && (

@@ -85,8 +85,18 @@ export async function GET(req: NextRequest) {
     const cacheMisses = logs.filter((l: any) => l.cache_miss).length
     const totalCache = cacheHits + cacheMisses
     const cacheHitRate = totalCache > 0 ? Math.round((cacheHits / totalCache) * 100) : 0
-    const fallbackCount = logs.filter((l: any) => l.fallback_type === 'primary_to_secondary' || l.fallback_type === 'secondary_retry').length
-    const evidenceOnlyCount = logs.filter((l: any) => l.fallback_type === 'secondary_to_evidence_only').length
+    const fallbackCount = logs.filter((l: any) => {
+      const type = l.fallback_type || ''
+      return type === 'primary_to_secondary' ||
+             type === 'secondary_retry' ||
+             (type.includes('_to_') && !type.includes('evidence_only')) ||
+             type.includes('fallback') ||
+             type.includes('retry')
+    }).length
+    const evidenceOnlyCount = logs.filter((l: any) => {
+      const type = l.fallback_type || ''
+      return type.includes('evidence_only') || type === 'secondary_to_evidence_only'
+    }).length
 
     return NextResponse.json({
       metrics: {

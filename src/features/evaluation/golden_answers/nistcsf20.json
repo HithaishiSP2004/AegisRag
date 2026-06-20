@@ -1,0 +1,914 @@
+[
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Organizational Context to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"agement; enterprise risk management; Profiles; Tiers. Audience Individuals responsible for developing and leading cybersecurity programs are the prima...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-1 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"National Institute of Standards and Technology This publication is available free of charge from: https://doi.org/10.6028/NIST.CSWP.29 February 26, 20...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"The NIST Cybersecurity Framework (CSF) 2.0 i NIST CSWP 29 February 26, 2024 Abstract The NIST Cybersecurity Framework (CSF) 2.0 provides guidance to i...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"blicly available on the NIST CSF website. Suggestions for additional resources to reference on the NIST CSF website can always be shared with NIST at ...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-1 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Incident Management must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 ii Acknowledgments The CSF is the result of a multi-year collaborative effor...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 iii Table of Contents 1. Cybersecurity Framework (CSF) Overview ...............\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Roles and Responsibilities to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \".....24 Appendix C. Glossary .......................................................................................................................26...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-2 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 iv Preface The Cybersecurity Framework (CSF) 2.0 is designed to help organiz...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"ribes desired outcomes that are intended to be understood by a broad audience, including executives, managers, and practitioners, regardless of their ...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"that choose to automate some of their processes. The QSGs suggest initial ways to use the CSF and invite the reader to explore the CSF and related res...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-2 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Mitigation must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"nizational Profiles helps organizations to compare where they are versus where they want or need to be and allows them to implement and assess securit...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 1 1. Cybersecurity Framework (CSF) Overview This document is version 2.0 of ...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Organizational Context to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"comes. • CSF Tiers, which can be applied to CSF Organizational Profiles to characterize the rigor of an organization’s cybersecurity risk governance a...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-3 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \". They include: • Informative References that point to sources of guidance on each outcome from existing global standards, guidelines, frameworks, reg...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 2 • Prioritize: Identify, organize, and prioritize actions for managing cybe...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"country-specific, and previous versions of the CSF have been leveraged successfully by many governments and other organizations both inside and outsid...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-3 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Incident Management must ensure specific cybersecurity goals are achieved. The core outcome describes that: \" structured as follows: • Section 2 explains the basics of the CSF Core: Functions, Categories, and Subcategories. • Section 3 defines the concepts of...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 3 2. Introduction to the CSF Core Appendix A is the CSF Core — a set of cybe...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Roles and Responsibilities to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"mes at their highest level. • G OVERN (GV) — The organization’s cybersecurity risk management strategy, expectations, and policy are established, comm...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-4 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \" and related cybersecurity risks enables an organization to prioritize its efforts consistent with its risk management strategy and the mission needs ...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 4 improvement opportunities for the organization’s policies, plans, processe...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"s of physical and virtual platforms); and the resilience of technology infrastructure. • D ETECT (DE) — Possible cybersecurity attacks and compromises...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-4 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Mitigation must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"curity incidents and enable appropriate communication during recovery efforts. Figure 2 shows the CSF Functions as a wheel because all of the Function...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 9 4. Introduction to Online Resources That Supplement the CSF NIST and other...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Organizational Context to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"ons. While many cybersecurity risk management activities focus on preventing negative events from occurring, they may also support taking advantage of...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-5 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 5 Fig. 2. CSF Functions The Functions should be addressed concurrently. Acti...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \" Categories, and Subcategories apply to all ICT used by an organization, including information technology (IT), the Internet of Things (IoT), and oper...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 6 3. Introduction to CSF Profiles and Tiers This section defines the concept...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-5 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Incident Management must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"ing achieved. 2. A Target Profile specifies the desired outcomes that an organization has selected and prioritized for achieving its cybersecurity ris...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"in Fig. 3 and summarized below illustrate one way that an organization could use an Organizational Profile to help inform continuous improvement of it...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Roles and Responsibilities to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 7 1. Scope the Organizational Profile. Document the high-level facts and ass...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-6 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"or the selected CSF outcomes, and document the needed information. Consider the risk implications of the Current Profile to inform Target Profile plan...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"r be ongoing. Given the importance of continual improvement, an organization can repeat these steps as often as needed. There are additional uses for ...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"ed in Appendix B, reflect an organization’s practices for managing cybersecurity risk as Partial (Tier 1), Risk Informed (Tier 2), Repeatable (Tier 3)...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-6 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Mitigation must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 8 continuously improving. Selecting Tiers helps set the overall tone for how...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"References can be sector- or technology-specific. They may be produced by NIST or another organization. Some Informative References are narrower in sc...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Organizational Context to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"of required actions to address cybersecurity risks. Quick-Start Guides (QSGs) are brief documents on specific CSF-related topics and are often tailore...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-7 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 10 5. Improving Cybersecurity Risk Communication and Integration The CSF’s u...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"zation may benefit from using the CSF as guidance to help it understand, assess, prioritize, and communicate cybersecurity risks and the actions that ...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"te the technologies. The left side of the figure indicates the importance of practitioners sharing their updates, insights, and concerns with managers...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-7 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Incident Management must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 11 Preparing to create and use Organizational Profiles involves gathering in...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"ion with executives. Executives’ discussions involve strategy, particularly how cybersecurity-related uncertainties might affect the achievement of or...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Roles and Responsibilities to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"managers. In a commercial entity, these may apply to a line-of-business or operating division. For government entities, these may be division- or bran...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-8 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"formation about other types of risk from across the organization. Updates to expectations and priorities are included in updated Organizational Profil...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 12 organizations by their nature may monitor risk at the enterprise level, w...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"ment and ERM include: • NIST Cybersecurity Framework 2.0 – Enterprise Risk Management Quick-Start Guide • NIST Interagency Report (IR) 8286, Integrati...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-8 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Mitigation must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"ams with the Enterprise Risk Portfolio An organization may also find the CSF beneficial for integrating cybersecurity risk management with individual ...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 13 Fig. 6. Cybersecurity and privacy risk relationship Cybersecurity risk ma...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Organizational Context to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"cts of cybersecurity and privacy risks. Additionally, NIST’s Privacy Risk Assessment Methodology (PRAM) has a catalog of example problems for use in p...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-9 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \" policies, procedures, and practices. Given the complex and interconnected relationships in this ecosystem, supply chain risk management (SCRM) is cri...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 14 on C-SCRM. SP 800-161r1 (Revision 1), Cybersecurity Supply Chain Risk Man...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 15 Appendix A. CSF Core This appendix describes the Functions, Categories, a...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-9 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Incident Management must ensure specific cybersecurity goals are achieved. The core outcome describes that: \", which allows users to explore them and export them in human- and machine-readable formats. The CSF 2.0 Core is also available in a legacy format sim...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 16 GOVERN (GV): The organization’s cybersecurity risk management strategy, e...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Roles and Responsibilities to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"y and civil liberties obligations — are understood and managed o GV.OC-04: Critical objectives, capabilities, and services that external stakeholders ...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-10 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 18 o GV.SC-05: Requirements to address cybersecurity risks in supply chains ...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"ncluded in enterprise risk management processes o GV.RM-04: Strategic direction that describes appropriate risk response options is established and co...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 17 • Roles, Responsibilities, and Authorities (GV.RR): Cybersecurity roles, ...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-10 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Mitigation must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"V.PO): Organizational cybersecurity policy is established, communicated, and enforced o GV.PO-01: Policy for managing cybersecurity risks is establish...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \" coverage of organizational requirements and risks o GV.OV-03: Organizational cybersecurity risk management performance is evaluated and reviewed for ...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Organizational Context to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"cybersecurity and enterprise risk management programs, and their performance is monitored throughout the technology product and service life cycle o G...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-11 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"ms managed by the organization are maintained o ID.AM-03: Representations of the organization’s authorized network communication and internal and exte...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 19 o ID.RA-02: Cyber threat intelligence is received from information sharin...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"nticity and integrity of hardware and software are assessed prior to acquisition and use o ID.RA-10: Critical suppliers are assessed prior to acquisit...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-11 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Incident Management must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"ation’s cybersecurity risks are used • Identity Management, Authentication, and Access Control (PR.AA): Access to physical and logical assets is limit...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 20 o PR.AA-05: Access permissions, entitlements, and authorizations are defi...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Roles and Responsibilities to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"e knowledge and skills to perform relevant tasks with cybersecurity risks in mind • Data Security (PR.DS): Data are managed consistent with the organi...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-12 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \" confidentiality, integrity, and availability o PR.PS-01: Configuration management practices are established and applied o PR.PS-02: Software is maint...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 21 o PR.IR-02: The organization’s technology assets are protected from envir...\""
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Detect (DE) function covers Adverse Event Analysis to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"ially adverse events o DE.CM-06: External service provider activities and services are monitored to find potentially adverse events o DE.CM-09: Comput...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-12 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the RS function under Mitigation must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 22 RESPOND (RS): Actions regarding a detected cybersecurity incident are tak...\""
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Recover (RC) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"d the root cause of the incident o RS.AN-06: Actions performed during an investigation are recorded, and the records’ integrity and provenance are pre...\""
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "In NIST CSF 2.0, the Govern (GV) function covers Organizational Context to establish cybersecurity risk management. It outlines subcategories that map to specific outcomes. Text reference: \"idents are eradicated RECOVER (RC): Assets and operations affected by a cybersecurity incident are restored • Incident Recovery Plan Execution (RC.RP)...\""
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-13 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "NIST CSF 2.0 specifies that the ID function under Risk Assessment must ensure specific cybersecurity goals are achieved. The core outcome describes that: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 23 o RC.RP-02: Recovery actions are selected, scoped, prioritized, and perfo...\""
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf",
+    "expectedAnswer": "The Protect (PR) function provides guidance on managing, identifying, or recovering from cybersecurity events. According to CSF 2.0: \"NIST CSWP 29 The NIST Cybersecurity Framework (CSF) 2.0 February 26, 2024 24 Appendix B. CSF Tiers Table 2 contains a notional illustration of the CSF...\""
+  }
+]

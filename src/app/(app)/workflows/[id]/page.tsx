@@ -104,7 +104,7 @@ export default function WorkflowDetailPage(props: { params: Promise<{ id: string
   // Fetch workflow details
   const fetchDetails = useCallback(async () => {
     try {
-      const res = await fetch(`/api/workflows/${id}`)
+      const res = await fetch(`/api/workflows/${id}?t=${Date.now()}`)
       if (!res.ok) {
         throw new Error('Failed to retrieve workflow detail')
       }
@@ -145,15 +145,10 @@ export default function WorkflowDetailPage(props: { params: Promise<{ id: string
 
   // Handle report downloads via pre-signed URL history endpoint
   const handleDownloadReport = async (format: 'PDF' | 'JSON') => {
-    const record = downloads.find(d => d.format === format)
-    if (!record) {
-      alert(`Download file not ready yet. Please wait.`)
-      return
-    }
-
     setDownloadingFormat(format)
     try {
-      const res = await fetch(`/api/reports/download?id=${record.id}`)
+      const downloadId = `${id}_${format.toLowerCase()}`
+      const res = await fetch(`/api/reports/download?id=${downloadId}`)
       if (!res.ok) {
         throw new Error('Failed to generate secure download link')
       }
@@ -636,22 +631,11 @@ export default function WorkflowDetailPage(props: { params: Promise<{ id: string
       </div>
 
       {/* Main Title Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(13,17,28,0.9), rgba(8,12,20,0.9))',
-        border: `1px solid ${colors.glassBorder}`,
-        borderRadius: radius.xl,
-        padding: '24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '24px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '320px', flex: 1.5 }}>
+      <div className="workflow-title-banner">
+        <div className="workflow-title-banner-info">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <ShieldCheck size={20} style={{ color: colors.emerald }} />
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', margin: 0 }}>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', margin: 0, wordBreak: 'break-all' }}>
               {workflow.name}
             </h1>
           </div>
@@ -659,8 +643,8 @@ export default function WorkflowDetailPage(props: { params: Promise<{ id: string
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Calendar size={12} /> Executed: {new Date(workflow.created_at).toLocaleDateString()}
             </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <FileText size={12} /> File: {workflow.documents?.original_name || 'Index File'}
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', wordBreak: 'break-all' }}>
+              <FileText size={12} style={{ flexShrink: 0 }} /> File: {workflow.documents?.original_name || 'Index File'}
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Clock size={12} /> Duration: {reportPayload.telemetry?.analysis_duration_ms || 0}ms
@@ -669,7 +653,7 @@ export default function WorkflowDetailPage(props: { params: Promise<{ id: string
         </div>
 
         {/* Ring HUD score panel */}
-        <div style={{ display: 'flex', gap: '20px', flex: 1, justifyContent: 'flex-end', borderLeft: `1px solid ${colors.glassBorder}`, paddingLeft: '20px' }}>
+        <div className="workflow-title-banner-scores">
           {renderScoreGauge(reportPayload.compliance_score ?? 0, 100, 'Compliance score', colors.emerald, 'rgba(16,185,129,0.4)')}
           {renderScoreGauge(reportPayload.risk_score ?? 0, 100, 'Risk exposure', colors.rose, 'rgba(244,63,94,0.4)')}
           {renderScoreGauge(reportPayload.confidence_score ?? 0, 100, 'Confidence Seal', colors.indigo, 'rgba(99,102,241,0.4)')}
@@ -677,7 +661,7 @@ export default function WorkflowDetailPage(props: { params: Promise<{ id: string
       </div>
 
       {/* Grid: Left Column (Summary + Findings List) & Right Column (Finding Detail / Citations) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '24px', alignItems: 'start' }}>
+      <div className="workflow-details-grid">
         {/* Left Side: Brief + Findings */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Executive Brief Card */}
@@ -752,7 +736,8 @@ export default function WorkflowDetailPage(props: { params: Promise<{ id: string
                         textAlign: 'left',
                         outline: 'none',
                         transition: transition.fast,
-                        width: '100%'
+                        width: '100%',
+                        minWidth: 0,
                       }}
                       onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.01)' }}
                       onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = 'transparent' }}
@@ -868,8 +853,8 @@ export default function WorkflowDetailPage(props: { params: Promise<{ id: string
                           padding: '10px'
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: colors.cyan, fontWeight: 700, marginBottom: '6px' }}>
-                          <span>[{idx + 1}] Source: {cit.source_doc} (Page {cit.page_number})</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', fontSize: '0.65rem', color: colors.cyan, fontWeight: 700, marginBottom: '6px' }}>
+                          <span style={{ wordBreak: 'break-all' }}>[{idx + 1}] Source: {cit.source_doc} (Page {cit.page_number})</span>
                           {cit.framework && <span style={{ color: colors.indigoLight }}>{cit.framework}</span>}
                         </div>
                         <p style={{ color: colors.textSecondary, fontSize: '0.72rem', lineHeight: 1.5, margin: 0, fontFamily: font.sans }}>

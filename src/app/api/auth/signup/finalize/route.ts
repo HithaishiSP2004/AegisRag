@@ -281,7 +281,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: 'Workspace created and authenticated successfully.',
-      redirectUrl: '/dashboard'
+      redirectUrl: '/command-hub'
     })
 
   } catch (error: any) {

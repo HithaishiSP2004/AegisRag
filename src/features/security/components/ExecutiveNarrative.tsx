@@ -100,7 +100,7 @@ export function ExecutiveNarrative({ data, loading }: Props) {
             AI-Generated Executive Narrative Suite
           </h3>
           <p style={{ color: colors.textSecondary, fontSize: '11px', margin: '4px 0 0 0' }}>
-            Deloitte, KPMG, PwC, and EY-style advisory briefs and operational compliance analyses.
+            Industry-standard professional advisory briefs and operational compliance analyses.
           </p>
         </div>
 
@@ -235,7 +235,7 @@ export function ExecutiveNarrative({ data, loading }: Props) {
                 "{active.summary}"
               </p>
 
-              {/* Deloitte/KPMG questions list */}
+              {/* Professional Advisory questions list */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',

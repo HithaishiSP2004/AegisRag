@@ -25,7 +25,8 @@ export interface OutputGuardResult {
 
 const STOPWORDS = new Set([
   'the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 'to', 'of', 'in', 'on', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'from', 'up', 'down', 'in', 'out', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'this', 'that', 'these', 'those', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now',
-  'according', 'context', 'provided', 'retrieved', 'document', 'documents', 'policy', 'policies', 'information', 'source', 'sources', 'based', 'stated', 'states', 'mention', 'mentions', 'find', 'found', 'says', 'say', 'reference', 'references', 'guidelines', 'guideline', 'requirements', 'requirement', 'section', 'sections', 'page', 'pages', 'paragraph'
+  'according', 'context', 'provided', 'retrieved', 'document', 'documents', 'policy', 'policies', 'information', 'source', 'sources', 'based', 'stated', 'states', 'mention', 'mentions', 'find', 'found', 'says', 'say', 'reference', 'references', 'guidelines', 'guideline', 'requirements', 'requirement', 'section', 'sections', 'page', 'pages', 'paragraph',
+  'pdf', 'file', 'filename', 'document_title', 'title', 'show', 'shows', 'shown', 'display', 'displayed', 'discuss', 'discusses', 'named', 'called'
 ])
 
 function tokenize(text: string): Set<string> {
@@ -176,7 +177,16 @@ export function scanOutputResponse(
   // 3. Groundedness Evaluation
   // Tokenize the full answer and overall sources
   const answerTokens = tokenize(answer)
-  const combinedSourcesText = sources.map(s => s.content).join(' ')
+  const combinedSourcesText = sources.map(s => {
+    return [
+      s.content,
+      s.source_doc || '',
+      (s as any).original_name || '',
+      (s as any).originalName || '',
+      (s as any).filename || '',
+      (s as any).document_title || ''
+    ].filter(Boolean).join(' ')
+  }).join(' ')
   const sourcesTokens = tokenize(combinedSourcesText)
 
   const keywordOverlap = calculateContainmentOverlap(answerTokens, sourcesTokens)
@@ -208,7 +218,15 @@ export function scanOutputResponse(
       // Calculate max overlap with any of the referenced sources in this sentence
       for (const citeIndex of sentenceCitations) {
         if (citeIndex >= 1 && citeIndex <= sources.length) {
-          const sourceText = sources[citeIndex - 1].content
+          const source = sources[citeIndex - 1]
+          const sourceText = [
+            source.content,
+            source.source_doc || '',
+            (source as any).original_name || '',
+            (source as any).originalName || '',
+            (source as any).filename || '',
+            (source as any).document_title || ''
+          ].filter(Boolean).join(' ')
           const sourceTokens = tokenize(sourceText)
           const overlap = calculateContainmentOverlap(sentenceTokens, sourceTokens)
           if (overlap > sentenceOverlapMax) {
@@ -262,13 +280,13 @@ export function scanOutputResponse(
 
   // 4. Action thresholds
   // Groundedness >= 80 -> ALLOW
-  // Groundedness 60-79 -> WARN
-  // Groundedness < 60 -> BLOCK
+  // Groundedness 50-79 -> WARN
+  // Groundedness < 50 -> BLOCK
   let severity: 'ALLOW' | 'WARN' | 'BLOCK' = 'ALLOW'
   let action: 'allowed' | 'warned' | 'blocked' = 'allowed'
   let riskScore = Math.round(100 - groundednessScore)
 
-  if (groundednessScore < 60) {
+  if (groundednessScore < 50) {
     severity = 'BLOCK'
     action = 'blocked'
     riskScore = Math.max(riskScore, 70) // Ensure clear block risk
@@ -280,7 +298,7 @@ export function scanOutputResponse(
 
   // Determine confidence
   let confidence: 'Low' | 'Medium' | 'High' = 'High'
-  if (groundednessScore < 60) {
+  if (groundednessScore < 50) {
     confidence = 'Low'
   } else if (groundednessScore < 80) {
     confidence = 'Medium'

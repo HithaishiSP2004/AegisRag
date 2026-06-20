@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from './Sidebar'
 import { GlobalIntelligenceBar } from './GlobalIntelligenceBar'
 import { colors } from '@/components/ui/tokens'
+import { AppContentWrapper } from './AppContentWrapper'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -41,9 +42,9 @@ export async function AppShell({ children }: AppShellProps) {
       />
       <div className="app-main">
         <GlobalIntelligenceBar />
-        <div className="app-content">
+        <AppContentWrapper>
           {children}
-        </div>
+        </AppContentWrapper>
       </div>
     </div>
   )

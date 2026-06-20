@@ -183,7 +183,7 @@ Format your output strictly as a JSON object:
       owner: 'Principal Consultant',
       lastModified: '2026-06-10',
       tokenBudget: 5000,
-      template: `You are a Senior Advisory Partner at PwC Security Advisory Services.
+      template: `You are a Senior Security Advisory Partner.
 You are writing a premium, professional advisory brief for the Board of Directors of an enterprise SaaS company.
 
 Format your output strictly as a raw JSON object with the following fields:
@@ -193,7 +193,7 @@ Format your output strictly as a raw JSON object with the following fields:
 - impact: The business, compliance, or security impact of this issue/state.
 - next: Clear, actionable recommended next steps (board directive).
 
-Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (Deloitte/PwC consulting style).
+Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (executive advisory consulting style).
 
 Generate the brief based on the following real telemetry metrics for the past {{period}} days:
 Report Type: Executive Summary
@@ -209,7 +209,7 @@ Metrics: {{metrics}}`
       owner: 'Principal Consultant',
       lastModified: '2026-06-10',
       tokenBudget: 5000,
-      template: `You are a Senior Advisory Partner at PwC AI Assurance Group.
+      template: `You are a Senior AI Assurance Partner.
 You are writing a premium, professional advisory brief for the Board of Directors of an enterprise SaaS company.
 
 Format your output strictly as a raw JSON object with the following fields:
@@ -219,7 +219,7 @@ Format your output strictly as a raw JSON object with the following fields:
 - impact: The business, compliance, or security impact of this issue/state.
 - next: Clear, actionable recommended next steps (board directive).
 
-Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (Deloitte/PwC consulting style).
+Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (executive advisory consulting style).
 
 Generate the brief based on the following real telemetry metrics for the past {{period}} days:
 Report Type: Boardroom Narrative
@@ -235,7 +235,7 @@ Metrics: {{metrics}}`
       owner: 'Security Lead Consultant',
       lastModified: '2026-06-10',
       tokenBudget: 5000,
-      template: `You are a Senior Advisory Partner at KPMG Cyber Security Services.
+      template: `You are a Senior Cyber Security Advisory Partner.
 You are writing a premium, professional advisory brief for the Board of Directors of an enterprise SaaS company.
 
 Format your output strictly as a raw JSON object with the following fields:
@@ -245,7 +245,7 @@ Format your output strictly as a raw JSON object with the following fields:
 - impact: The business, compliance, or security impact of this issue/state.
 - next: Clear, actionable recommended next steps (board directive).
 
-Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (Deloitte/PwC consulting style).
+Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (executive advisory consulting style).
 
 Generate the brief based on the following real telemetry metrics for the past {{period}} days:
 Report Type: Security Threat & Risk Narrative
@@ -261,7 +261,7 @@ Metrics: {{metrics}}`
       owner: 'Compliance Advisory Lead',
       lastModified: '2026-06-10',
       tokenBudget: 5000,
-      template: `You are a Senior Advisory Partner at Deloitte Risk Advisory Services.
+      template: `You are a Senior Risk and Compliance Advisory Partner.
 You are writing a premium, professional advisory brief for the Board of Directors of an enterprise SaaS company.
 
 Format your output strictly as a raw JSON object with the following fields:
@@ -271,7 +271,7 @@ Format your output strictly as a raw JSON object with the following fields:
 - impact: The business, compliance, or security impact of this issue/state.
 - next: Clear, actionable recommended next steps (board directive).
 
-Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (Deloitte/PwC consulting style).
+Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (executive advisory consulting style).
 
 Generate the brief based on the following real telemetry metrics for the past {{period}} days:
 Report Type: Compliance Coverage & Gap Narrative
@@ -287,7 +287,7 @@ Metrics: {{metrics}}`
       owner: 'Principal RAG Architect',
       lastModified: '2026-06-10',
       tokenBudget: 5000,
-      template: `You are a Senior Advisory Partner at EY Technology Consulting.
+      template: `You are a Senior Technology Advisory Partner.
 You are writing a premium, professional advisory brief for the Board of Directors of an enterprise SaaS company.
 
 Format your output strictly as a raw JSON object with the following fields:
@@ -297,7 +297,7 @@ Format your output strictly as a raw JSON object with the following fields:
 - impact: The business, compliance, or security impact of this issue/state.
 - next: Clear, actionable recommended next steps (board directive).
 
-Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (Deloitte/PwC consulting style).
+Avoid placeholders or generic text. Sound authoritative, analytical, and highly structured (executive advisory consulting style).
 
 Generate the brief based on the following real telemetry metrics for the past {{period}} days:
 Report Type: RAG Retrieval Performance & Quality Audit
@@ -326,7 +326,7 @@ export function renderPrompt(template: string, variables: Record<string, any>): 
   Object.entries(variables).forEach(([key, val]) => {
     const placeholder = new RegExp(`{{\\s*${key}\\s*}}`, 'g')
     const stringValue = typeof val === 'object' ? JSON.stringify(val) : String(val)
-    rendered = rendered.replace(placeholder, stringValue)
+    rendered = rendered.replace(placeholder, () => stringValue)
   })
   return rendered
 }

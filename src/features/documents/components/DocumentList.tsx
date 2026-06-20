@@ -4,7 +4,7 @@
 // RLS on the documents table ensures org isolation automatically.
 // =============================================================================
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { DocumentStatusBadge } from './DocumentStatusBadge'
 import { ReprocessButton } from './ReprocessButton'
 import { RetryEmbeddingButton } from './RetryEmbeddingButton'
@@ -69,6 +69,26 @@ export async function DocumentList({ department, docType, sensitivity, search }:
     )
   }
 
+  // Fetch queue jobs for loaded documents (using admin client to bypass RLS)
+  const docIds = documents?.map(d => d.id) || []
+  const jobsMap = new Map<string, any>()
+  if (docIds.length > 0) {
+    const admin = createAdminClient()
+    const { data: jobs } = await (admin as any)
+      .from('embedding_jobs')
+      .select('document_id, status, total_chunks, processed_chunks')
+      .in('document_id', docIds)
+      .order('created_at', { ascending: false })
+
+    if (jobs) {
+      for (const job of jobs) {
+        if (!jobsMap.has(job.document_id)) {
+          jobsMap.set(job.document_id, job)
+        }
+      }
+    }
+  }
+
   const isFiltered = !!(department || docType || sensitivity || search)
 
   if (!documents || documents.length === 0) {
@@ -92,13 +112,13 @@ export async function DocumentList({ department, docType, sensitivity, search }:
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '12px 16px 16px' }}>
       {/* Rows */}
       {(documents as DocumentRecord[]).map((doc) => (
-        <DocumentRow key={doc.id} doc={doc} />
+        <DocumentRow key={doc.id} doc={doc} job={jobsMap.get(doc.id)} />
       ))}
     </div>
   )
 }
 
-function DocumentRow({ doc }: { doc: DocumentRecord }) {
+function DocumentRow({ doc, job }: { doc: DocumentRecord; job?: any }) {
   const sensitivityColor = SENSITIVITY_COLOR[doc.sensitivity] ?? '#94A3B8'
   const createdDate = new Date(doc.created_at).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric'
@@ -138,7 +158,7 @@ function DocumentRow({ doc }: { doc: DocumentRecord }) {
           <Icon icon="solar:document-bold" width={14} style={{ color: '#3B82F6' }} />
         </div>
 
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
           <p style={{
             color: '#F8FAFC',
             fontWeight: 500,
@@ -154,6 +174,26 @@ function DocumentRow({ doc }: { doc: DocumentRecord }) {
           <p style={{ color: '#475569', fontSize: '0.7rem', margin: '2px 0 0 0', lineHeight: '1.2' }}>
             {metadataLine}
           </p>
+          {job && (doc.status === 'queued' || doc.status === 'processing' || doc.status === 'waiting_provider') && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+              <div style={{ width: '120px', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{
+                  width: `${Math.min(100, Math.round((job.processed_chunks / (job.total_chunks || 1)) * 100))}%`,
+                  height: '100%',
+                  background: doc.status === 'processing'
+                    ? 'linear-gradient(90deg, #A78BFA, #3B82F6)'
+                    : doc.status === 'waiting_provider'
+                    ? 'linear-gradient(90deg, #F59E0B, #D97706)'
+                    : 'rgba(148,163,184,0.3)',
+                  borderRadius: '2px',
+                  transition: 'width 0.3s ease'
+                }} />
+              </div>
+              <span style={{ fontSize: '0.62rem', color: '#64748B', fontFamily: 'var(--font-jetbrains-mono, monospace)' }}>
+                {job.processed_chunks}/{job.total_chunks} ({Math.round((job.processed_chunks / (job.total_chunks || 1)) * 100)}%)
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

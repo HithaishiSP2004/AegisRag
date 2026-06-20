@@ -8,7 +8,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Database, Upload, ShieldCheck, Loader2, Search, AlertCircle } from 'lucide-react'
 import { UploadModal } from '@/features/documents/components/UploadModal'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { ActiveFilterChips } from '@/features/chat/components/RetrievalFilters'
+import { ActiveFilterChips, RetrievalFiltersState } from '@/features/chat/components/RetrievalFilters'
 import { colors, font, radius, shadow } from '@/components/ui/tokens'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Button } from '@/components/ui/Button'
@@ -30,9 +30,12 @@ interface KnowledgeVaultShellProps {
     lastUpload: string
     storageBytes: number
   }
+  providerName: string
+  modelName: string
+  dimensions: number
 }
 
-const PROCESSING_STATUSES = ['parsing', 'chunking', 'embedding', 'uploading']
+const PROCESSING_STATUSES = ['parsing', 'chunking', 'embedding', 'uploading', 'queued', 'processing', 'waiting_provider']
 const REFRESH_INTERVAL_MS = 4000
 
 const DEPARTMENTS: [string, string][] = [
@@ -156,7 +159,15 @@ function intelValueStyle(): React.CSSProperties {
   }
 }
 
-export function KnowledgeVaultShell({ children, canUpload, userRole, stats }: KnowledgeVaultShellProps) {
+export function KnowledgeVaultShell({
+  children,
+  canUpload,
+  userRole,
+  stats,
+  providerName,
+  modelName,
+  dimensions
+}: KnowledgeVaultShellProps) {
   const [uploadOpen,       setUploadOpen]       = useState(false)
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false)
   const [targetTier, setTargetTier] = useState<'academic_user' | 'approved_user'>('academic_user')
@@ -168,6 +179,8 @@ export function KnowledgeVaultShell({ children, canUpload, userRole, stats }: Kn
 
   const [activeDocId,      setActiveDocId]      = useState<string | null>(null)
   const [processingStatus, setProcessingStatus] = useState<string | null>(null)
+  const [processedChunks,  setProcessedChunks]  = useState<number>(0)
+  const [totalChunks,      setTotalChunks]      = useState<number>(0)
   const router     = useRouter()
   const searchParams = useSearchParams()
   const pathname   = usePathname()
@@ -176,7 +189,7 @@ export function KnowledgeVaultShell({ children, canUpload, userRole, stats }: Kn
   const docType     = searchParams.get('docType')     || undefined
   const sensitivity = searchParams.get('sensitivity') || undefined
   const search      = searchParams.get('search')      || ''
-  const filters = { department, docType, sensitivity }
+  const filters: RetrievalFiltersState = { department, docType, sensitivity }
 
   const [searchInput, setSearchInput] = useState(search)
   const [isMac, setIsMac] = useState(false)
@@ -228,7 +241,7 @@ export function KnowledgeVaultShell({ children, canUpload, userRole, stats }: Kn
     router.push(`${pathname}?${params.toString()}`)
   }
 
-  const handleClearField = (field: keyof typeof filters) => {
+  const handleClearField = (field: keyof RetrievalFiltersState) => {
     const params = new URLSearchParams(searchParams.toString())
     params.delete(field)
     router.push(`${pathname}?${params.toString()}`)
@@ -246,11 +259,13 @@ export function KnowledgeVaultShell({ children, canUpload, userRole, stats }: Kn
       try {
         const res = await fetch(`/api/documents/${activeDocId}/status`, { cache: 'no-store' })
         if (!res.ok) return
-        const data = await res.json() as { status: string; page_count: number }
+        const data = await res.json() as { status: string; page_count: number; total_chunks?: number; processed_chunks?: number }
         setProcessingStatus(data.status)
+        if (data.total_chunks !== undefined) setTotalChunks(data.total_chunks)
+        if (data.processed_chunks !== undefined) setProcessedChunks(data.processed_chunks)
         router.refresh()
         if (!PROCESSING_STATUSES.includes(data.status)) {
-          stopPolling(); setActiveDocId(null); setProcessingStatus(null)
+          stopPolling(); setActiveDocId(null); setProcessingStatus(null); setTotalChunks(0); setProcessedChunks(0)
         }
       } catch { /* keep polling */ }
     }
@@ -265,12 +280,19 @@ export function KnowledgeVaultShell({ children, canUpload, userRole, stats }: Kn
 
   const isPolling = !!activeDocId
 
-  const statusLabel = {
+  const rawStatusLabel = {
     parsing:   'Parsing PDF…',
     chunking:  'Chunking text…',
+    queued:    'In queue…',
+    processing: 'Generating embeddings…',
     embedding: 'Generating embeddings…',
     uploading: 'Finishing upload…',
+    waiting_provider: 'Rate limit hit, waiting to resume…',
   }[processingStatus ?? ''] ?? 'Processing…'
+
+  const statusLabel = ((processingStatus === 'processing' || processingStatus === 'waiting_provider') && totalChunks > 0)
+    ? `Embedding: ${Math.round((processedChunks / totalChunks) * 100)}% (${processedChunks}/${totalChunks})`
+    : rawStatusLabel
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', animation: 'fadeInUp 0.3s ease forwards' }}>
@@ -581,16 +603,24 @@ export function KnowledgeVaultShell({ children, canUpload, userRole, stats }: Kn
               <span style={{ ...intelValueStyle(), fontSize: '0.72rem', color: '#E2E8F0' }}>{stats.lastUpload}</span>
             </div>
 
+            {/* Provider */}
+            <div style={intelMetricGroupStyle()}>
+              <span style={intelLabelStyle()}>Provider</span>
+              <span style={{ ...intelValueStyle(), fontSize: '0.72rem', color: '#E2E8F0', textTransform: 'capitalize' }}>
+                {providerName}
+              </span>
+            </div>
+
             {/* Ingestion Engine */}
             <div style={intelMetricGroupStyle()}>
               <span style={intelLabelStyle()}>Indexing Model</span>
-              <span style={{ ...intelValueStyle(), fontSize: '0.72rem', color: '#94A3B8' }}>{AI_MODELS.EMBEDDING}</span>
+              <span style={{ ...intelValueStyle(), fontSize: '0.72rem', color: '#94A3B8' }}>{modelName}</span>
             </div>
 
             {/* Vector Dimensions */}
             <div style={intelMetricGroupStyle()}>
               <span style={intelLabelStyle()}>Vector Dimensions</span>
-              <span style={{ ...intelValueStyle(), fontSize: '0.72rem', color: '#94A3B8' }}>768 Dimensions</span>
+              <span style={{ ...intelValueStyle(), fontSize: '0.72rem', color: '#94A3B8' }}>{dimensions} Dimensions</span>
             </div>
           </div>
         </div>

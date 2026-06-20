@@ -73,6 +73,13 @@ export default async function DiagnosticsPage(props: { searchParams: Promise<{ t
     documents_updated_today: 0,
     documents_deleted_today: 0,
   }
+  let queueMetrics = {
+    queued: 0,
+    processing: 0,
+    completed: 0,
+    failed: 0,
+    avgProcessingTimeMs: 0
+  }
 
   // Tab 2: Prompt Data Fetching
   let promptStats: any[] = []
@@ -92,6 +99,31 @@ export default async function DiagnosticsPage(props: { searchParams: Promise<{ t
     const { data: statsData } = await (admin as any).rpc('get_corpus_stats', { p_org_id: profile.org_id })
     if (statsData?.[0]) {
       orgStats = statsData[0]
+    }
+
+    // Fetch and aggregate queue metrics
+    const { data: jobs } = await (admin as any)
+      .from('embedding_jobs')
+      .select('status, started_at, completed_at')
+      .eq('org_id', profile.org_id)
+
+    if (jobs) {
+      const completedTimes: number[] = []
+      for (const job of jobs) {
+        if (job.status === 'queued') queueMetrics.queued++
+        else if (job.status === 'processing') queueMetrics.processing++
+        else if (job.status === 'completed') queueMetrics.completed++
+        else if (job.status === 'failed') queueMetrics.failed++
+
+        if (job.status === 'completed' && job.started_at && job.completed_at) {
+          const diff = new Date(job.completed_at).getTime() - new Date(job.started_at).getTime()
+          completedTimes.push(diff)
+        }
+      }
+      if (completedTimes.length > 0) {
+        const total = completedTimes.reduce((sum, t) => sum + t, 0)
+        queueMetrics.avgProcessingTimeMs = Math.round(total / completedTimes.length)
+      }
     }
   } else if (tab === 'prompts') {
     const { data: rawStats } = await admin
@@ -174,7 +206,7 @@ export default async function DiagnosticsPage(props: { searchParams: Promise<{ t
 
       {/* Dynamic Content view */}
       {tab === 'corpus' ? (
-        <DiagnosticsCockpit documents={documents} orgStats={orgStats} />
+        <DiagnosticsCockpit documents={documents} orgStats={orgStats} queueMetrics={queueMetrics} />
       ) : (
         <PromptDiagnostics
           orgId={profile.org_id}

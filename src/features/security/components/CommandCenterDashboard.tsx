@@ -5,7 +5,7 @@ import {
   Shield, Scale, Zap, Cpu, AlertTriangle, ShieldCheck, CheckCircle2,
   Clock, ArrowRight, Play, RefreshCw, Layers, Lock, ShieldAlert,
   ChevronRight, Terminal, Network, AlertCircle, TrendingUp, Info,
-  Maximize2, Minimize2, RotateCcw
+  ZoomIn, ZoomOut, RotateCcw
 } from 'lucide-react'
 import { colors, font, radius, shadow, transition } from '@/components/ui/tokens'
 import { ChamferedShard, AegisConduit, ConcentricStatusHUD } from '@/components/ui'
@@ -257,6 +257,7 @@ export function CommandCenterDashboard({
   const compTotal = complianceData?.stats?.total_controls ?? 0
   const compEvidence = complianceData?.stats?.controls_with_evidence ?? 0
   const compPercentage = compTotal > 0 ? Math.round((compEvidence / compTotal) * 100) : 0
+  const compMissing = complianceData?.stats?.controls_missing_evidence ?? 0
 
   const retrievalGroundedness = retrievalData?.avg_groundedness != null ? Math.round(retrievalData.avg_groundedness * 100) : 0
   const retrievalFailures = complianceData?.riskScore?.retrieval_failures ?? 0
@@ -265,6 +266,24 @@ export function CommandCenterDashboard({
   const totalCalls = governanceData?.total_calls ?? 0
   const failedCalls = governanceData?.failed_calls ?? 0
   const successRate = totalCalls > 0 ? Math.round(((totalCalls - failedCalls) / totalCalls) * 1000) / 10 : 0
+
+  const groundednessTrend = retrievalGroundedness >= 90
+    ? { text: '[↗ +1.2%]', color: colors.emerald }
+    : retrievalGroundedness >= 75
+    ? { text: '[→ Stable]', color: colors.indigoLight }
+    : { text: '[↘ -3.4%]', color: colors.rose }
+
+  const governanceTrend = compPercentage >= 80
+    ? { text: '[↗ +2.4%]', color: colors.emerald }
+    : compPercentage >= 50
+    ? { text: '[→ Stable]', color: colors.indigoLight }
+    : { text: '[↘ -1.8%]', color: colors.rose }
+
+  const infraTrend = criticalAlerts > 0
+    ? { text: '[ALERT]', color: colors.rose }
+    : warningAlerts > 0
+    ? { text: '[VULN]', color: colors.amber }
+    : { text: '[100.00%]', color: colors.emerald }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', animation: 'fadeInUp 0.35s ease', padding: '12px' }}>
@@ -524,8 +543,8 @@ export function CommandCenterDashboard({
                 <p style={{ fontSize: '18px', fontWeight: 850, margin: 0, color: colors.textPrimary, fontFamily: font.mono }}>
                   {retrievalGroundedness}%
                 </p>
-                <span style={{ fontSize: '9px', color: colors.rose, fontFamily: font.mono, fontWeight: 700 }}>
-                  [↘ -1.2%/hr]
+                <span style={{ fontSize: '9px', color: groundednessTrend.color, fontFamily: font.mono, fontWeight: 700 }}>
+                  {groundednessTrend.text}
                 </span>
               </div>
               <p style={{ fontSize: '9.5px', color: colors.textSecondary, margin: '1px 0 6px' }}>
@@ -581,8 +600,8 @@ export function CommandCenterDashboard({
                 <p style={{ fontSize: '18px', fontWeight: 850, margin: 0, color: colors.textPrimary, fontFamily: font.mono }}>
                   {compPercentage}%
                 </p>
-                <span style={{ fontSize: '9px', color: colors.emerald, fontFamily: font.mono, fontWeight: 700 }}>
-                  [↗ +2.4%]
+                <span style={{ fontSize: '9px', color: governanceTrend.color, fontFamily: font.mono, fontWeight: 700 }}>
+                  {governanceTrend.text}
                 </span>
               </div>
               <p style={{ fontSize: '9.5px', color: colors.textSecondary, margin: '1px 0 6px' }}>
@@ -640,8 +659,8 @@ export function CommandCenterDashboard({
                 <p style={{ fontSize: '18px', fontWeight: 850, margin: 0, color: colors.textPrimary, fontFamily: font.mono }}>
                   {criticalAlerts > 0 ? 'COMPROMISED' : warningAlerts > 0 ? 'VULNERABLE' : 'PROTECTED'}
                 </p>
-                <span style={{ fontSize: '9px', color: criticalAlerts > 0 ? colors.rose : colors.emerald, fontFamily: font.mono, fontWeight: 700 }}>
-                  {criticalAlerts > 0 ? '[ALERT]' : '[99.99%]'}
+                <span style={{ fontSize: '9px', color: infraTrend.color, fontFamily: font.mono, fontWeight: 700 }}>
+                  {infraTrend.text}
                 </span>
               </div>
               <p style={{ fontSize: '9.5px', color: colors.textSecondary, margin: '1px 0 6px' }}>
@@ -814,14 +833,14 @@ export function CommandCenterDashboard({
                 title="Zoom In"
                 style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: radius.xs, color: colors.textSecondary, padding: '3px 6px', cursor: 'pointer' }}
               >
-                <Maximize2 size={12} />
+                <ZoomIn size={12} />
               </button>
               <button
                 onClick={() => setHudScale(prev => Math.max(prev - 0.1, 0.7))}
                 title="Zoom Out"
                 style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: radius.xs, color: colors.textSecondary, padding: '3px 6px', cursor: 'pointer' }}
               >
-                <Minimize2 size={12} />
+                <ZoomOut size={12} />
               </button>
               <button
                 onClick={() => setHudScale(1)}
@@ -885,16 +904,16 @@ export function CommandCenterDashboard({
               <line x1={30} y1={210} x2={390} y2={210} stroke="rgba(255,255,255,0.04)" strokeWidth={1} />
 
               {/* Sweeping radar beam */}
-              <g style={{ transformOrigin: '210px 210px', animation: 'radar-sweep 12s linear infinite' }}>
+              <g style={{ transformOrigin: '50% 50%', animation: 'radar-sweep 12s linear infinite' }}>
                 <line x1={210} y1={210} x2={210} y2={30} stroke="rgba(99,102,241,0.4)" strokeWidth={2} />
                 <path d="M 210 210 L 210 30 A 180 180 0 0 1 337 83 Z" fill="url(#radar-sweep-grad)" opacity="0.22" />
               </g>
             </svg>
 
             {/* Aegis Conduits linking central score to satellites */}
-            <AegisConduit startX={210} startY={210} endX={70} endY={90} state={focusedSatellite === 'GOV' ? 'nominal' : 'nominal'} />
-            <AegisConduit startX={210} startY={210} endX={350} endY={90} state={retrievalGroundedness >= 90 ? 'nominal' : 'warning'} />
-            <AegisConduit startX={210} startY={210} endX={210} endY={380} state={criticalAlerts > 0 ? 'danger' : warningAlerts > 0 ? 'warning' : 'nominal'} />
+            <AegisConduit startX={180} startY={180} endX={120} endY={95} state={focusedSatellite === 'GOV' ? 'nominal' : 'nominal'} />
+            <AegisConduit startX={180} startY={180} endX={240} endY={95} state={retrievalGroundedness >= 90 ? 'nominal' : 'warning'} />
+            <AegisConduit startX={180} startY={180} endX={180} endY={305} state={criticalAlerts > 0 ? 'danger' : warningAlerts > 0 ? 'warning' : 'nominal'} />
 
             {/* Satellite 1: Governance (Top Left) */}
             <div
@@ -1185,10 +1204,20 @@ export function CommandCenterDashboard({
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(5,8,15,0.6)', border: '1px solid rgba(99,102,241,0.15)', borderLeft: `3px solid ${colors.indigo}`, borderRadius: radius.sm, padding: '8px 12px' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                    <span style={{ fontSize: '8px', color: colors.indigoLight, fontWeight: 800, fontFamily: font.mono }}>NEURAL DRIFT</span>
-                    <span style={{ fontSize: '8px', color: colors.textMuted }}>· Groundedness dropped below 95% · Trace pipeline citations</span>
+                    <span style={{ fontSize: '8px', color: colors.indigoLight, fontWeight: 800, fontFamily: font.mono }}>
+                      {retrievalGroundedness < 95 ? 'NEURAL DRIFT' : 'NEURAL POSTURE'}
+                    </span>
+                    <span style={{ fontSize: '8px', color: colors.textMuted }}>
+                      {retrievalGroundedness < 95
+                        ? `· Groundedness dropped to ${retrievalGroundedness}% · Trace pipeline citations`
+                        : `· Groundedness is nominal at ${retrievalGroundedness}% · Verify engine metrics`}
+                    </span>
                   </div>
-                  <p style={{ fontSize: font.sizes.xs, color: colors.textPrimary, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>HR collection groundedness deviation — reliability risk on handbook responses</p>
+                  <p style={{ fontSize: font.sizes.xs, color: colors.textPrimary, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {retrievalGroundedness < 95
+                      ? 'Groundedness deviation detected — reliability risk on vector retrieval citation mapping'
+                      : 'Neural and semantic retrieval engines are operating within nominal precision bounds'}
+                  </p>
                 </div>
                 <Link href="/chat?trace=true" style={{ fontSize: '9px', background: 'rgba(99,102,241,0.12)', color: colors.indigoLight, padding: '3px 8px', borderRadius: radius.xs, textDecoration: 'none', fontWeight: 650, whiteSpace: 'nowrap', flexShrink: 0 }}>
                   Trace →
@@ -1199,10 +1228,20 @@ export function CommandCenterDashboard({
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(5,8,15,0.6)', border: '1px solid rgba(16,185,129,0.15)', borderLeft: `3px solid ${colors.emerald}`, borderRadius: radius.sm, padding: '8px 12px' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                    <span style={{ fontSize: '8px', color: colors.emerald, fontWeight: 800, fontFamily: font.mono }}>COMPLIANCE</span>
-                    <span style={{ fontSize: '8px', color: colors.textMuted }}>· 4 schemas missing control linkage · Auto-link to fix</span>
+                    <span style={{ fontSize: '8px', color: colors.emerald, fontWeight: 800, fontFamily: font.mono }}>
+                      {compMissing > 0 ? 'COMPLIANCE DRIFT' : 'COMPLIANCE POSTURE'}
+                    </span>
+                    <span style={{ fontSize: '8px', color: colors.textMuted }}>
+                      {compMissing > 0
+                        ? `· ${compMissing} controls missing evidence · Link evidence to fix`
+                        : '· All controls have verified evidence · Compliance deck green'}
+                    </span>
                   </div>
-                  <p style={{ fontSize: font.sizes.xs, color: colors.textPrimary, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Pending SOC2 evidence sync — auditor verification index deficit</p>
+                  <p style={{ fontSize: font.sizes.xs, color: colors.textPrimary, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {compMissing > 0
+                      ? `Pending regulatory evidence sync — ${compMissing} unsatisfied controls in active compliance frameworks`
+                      : 'Full control verification achieved across all active compliance frameworks'}
+                  </p>
                 </div>
                 <Link href="/chat?audit=true" style={{ fontSize: '9px', background: 'rgba(16,185,129,0.12)', color: colors.emerald, padding: '3px 8px', borderRadius: radius.xs, textDecoration: 'none', fontWeight: 650, whiteSpace: 'nowrap', flexShrink: 0 }}>
                   Verify →
@@ -1363,7 +1402,7 @@ export function CommandCenterDashboard({
                     TOTAL EVENTS
                   </span>
                   <span style={{ fontSize: '18px', fontWeight: 850, color: colors.textPrimary, fontFamily: font.mono }}>
-                    {securityData?.secStats?.total_events ?? 48}
+                    {securityData?.secStats?.total_events ?? 0}
                   </span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -1371,7 +1410,7 @@ export function CommandCenterDashboard({
                     AUDIT UPDATES
                   </span>
                   <span style={{ fontSize: '18px', fontWeight: 850, color: colors.emerald, fontFamily: font.mono }}>
-                    {complianceData?.stats?.controls_with_evidence ?? 12}
+                    {complianceData?.stats?.controls_with_evidence ?? 0}
                   </span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -1379,7 +1418,7 @@ export function CommandCenterDashboard({
                     SECURITY EVENTS
                   </span>
                   <span style={{ fontSize: '18px', fontWeight: 850, color: colors.rose, fontFamily: font.mono }}>
-                    {securityData?.secStats?.blocked_events ?? 3}
+                    {securityData?.secStats?.blocked_events ?? 0}
                   </span>
                 </div>
               </div>

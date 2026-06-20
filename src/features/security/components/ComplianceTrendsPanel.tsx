@@ -19,8 +19,8 @@ import { useResizeObserver } from '../hooks/useResizeObserver'
 export function ComplianceTrendsPanel() {
   const { stats, loading } = useComplianceDashboard()
   const [mounted, setMounted] = useState(false)
-  const [coverageRef, coverageSize] = useResizeObserver()
-  const [evidenceRef, evidenceSize] = useResizeObserver()
+  const [coverageRef, coverageSize] = useResizeObserver(600, 240)
+  const [evidenceRef, evidenceSize] = useResizeObserver(600, 240)
 
   useEffect(() => {
     setMounted(true)
@@ -140,47 +140,41 @@ export function ComplianceTrendsPanel() {
           </span>
         </div>
 
-        <div ref={coverageRef} style={{ width: '100%', height: '240px', minWidth: 0 }}>
-          {coverageSize.width > 0 && coverageSize.height > 0 ? (
-            <AreaChart width={coverageSize.width} height={coverageSize.height} data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorCoverage" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={colors.indigo} stopOpacity={0.25} />
-                  <stop offset="95%" stopColor={colors.indigo} stopOpacity={0.0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-              <XAxis
-                dataKey="name"
-                stroke="rgba(255,255,255,0.3)"
-                fontSize={9}
-                tickLine={false}
-                axisLine={false}
-                dy={8}
-              />
-              <YAxis
-                stroke="rgba(255,255,255,0.3)"
-                fontSize={9}
-                tickLine={false}
-                axisLine={false}
-                domain={[0, 100]}
-                tickFormatter={(val) => `${val}%`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="coverage"
-                stroke={colors.indigoLight}
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorCoverage)"
-              />
-            </AreaChart>
-          ) : (
-            <div style={{ height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.textSecondary, fontSize: 11 }}>
-              Recalculating layout...
-            </div>
-          )}
+        <div ref={coverageRef} style={{ width: '100%', height: '240px', minWidth: 0, overflow: 'hidden' }}>
+          <AreaChart width={coverageSize.width} height={coverageSize.height} data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorCoverage" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={colors.indigo} stopOpacity={0.25} />
+                <stop offset="95%" stopColor={colors.indigo} stopOpacity={0.0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+            <XAxis
+              dataKey="name"
+              stroke="rgba(255,255,255,0.3)"
+              fontSize={9}
+              tickLine={false}
+              axisLine={false}
+              dy={8}
+            />
+            <YAxis
+              stroke="rgba(255,255,255,0.3)"
+              fontSize={9}
+              tickLine={false}
+              axisLine={false}
+              domain={[0, 100]}
+              tickFormatter={(val) => `${val}%`}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              type="monotone"
+              dataKey="coverage"
+              stroke={colors.indigoLight}
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorCoverage)"
+            />
+          </AreaChart>
         </div>
       </div>
 
@@ -219,38 +213,32 @@ export function ComplianceTrendsPanel() {
           </span>
         </div>
 
-        <div ref={evidenceRef} style={{ width: '100%', height: '240px', minWidth: 0 }}>
-          {evidenceSize.width > 0 && evidenceSize.height > 0 ? (
-            <BarChart width={evidenceSize.width} height={evidenceSize.height} data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-              <XAxis
-                dataKey="name"
-                stroke="rgba(255,255,255,0.3)"
-                fontSize={9}
-                tickLine={false}
-                axisLine={false}
-                dy={8}
-              />
-              <YAxis
-                stroke="rgba(255,255,255,0.3)"
-                fontSize={9}
-                tickLine={false}
-                axisLine={false}
-                allowDecimals={false}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar
-                dataKey="evidence"
-                fill={colors.cyan}
-                radius={[4, 4, 0, 0]}
-                maxBarSize={12}
-              />
-            </BarChart>
-          ) : (
-            <div style={{ height: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.textSecondary, fontSize: 11 }}>
-              Recalculating layout...
-            </div>
-          )}
+        <div ref={evidenceRef} style={{ width: '100%', height: '240px', minWidth: 0, overflow: 'hidden' }}>
+          <BarChart width={evidenceSize.width} height={evidenceSize.height} data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+            <XAxis
+              dataKey="name"
+              stroke="rgba(255,255,255,0.3)"
+              fontSize={9}
+              tickLine={false}
+              axisLine={false}
+              dy={8}
+            />
+            <YAxis
+              stroke="rgba(255,255,255,0.3)"
+              fontSize={9}
+              tickLine={false}
+              axisLine={false}
+              allowDecimals={false}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar
+              dataKey="evidence"
+              fill={colors.cyan}
+              radius={[4, 4, 0, 0]}
+              maxBarSize={12}
+            />
+          </BarChart>
         </div>
       </div>
     </div>

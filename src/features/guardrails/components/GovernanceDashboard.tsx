@@ -349,7 +349,7 @@ export function GovernanceDashboard({ initialLogs }: Props) {
         </div>
 
         {/* Log table */}
-        <div style={{ overflowX: 'auto', border: `1px solid ${colors.glassBorder}`, borderRadius: radius.lg }}>
+        <div style={{ overflowX: 'auto', border: `1px solid ${colors.glassBorder}`, borderRadius: radius.lg, maxHeight: '400px', overflowY: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: font.sizes.base }}>
             <thead>
               <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: `1px solid ${colors.glassBorder}` }}>

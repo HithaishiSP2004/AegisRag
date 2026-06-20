@@ -16,7 +16,7 @@ export interface DocumentStatusState {
   isProcessing:  boolean
 }
 
-const PROCESSING_STATUSES: DocumentStatus[] = ['parsing', 'chunking', 'embedding']
+const PROCESSING_STATUSES: DocumentStatus[] = ['parsing', 'chunking', 'embedding', 'uploading', 'queued', 'processing', 'waiting_provider']
 const TERMINAL_STATUSES:   DocumentStatus[] = ['indexed', 'embedding_failed', 'failed', 'deleted']
 
 const POLL_INTERVAL_MS = 3000  // poll every 3 seconds while processing

@@ -1,0 +1,839 @@
+[
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-1 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-1 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-2 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-2 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-3 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-3 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-4 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-4 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-5 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-5 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-6 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-6 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-7 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-7 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-8 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-8 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-9 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-9 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-10 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-10 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-11 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-11 under Incident Management?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "incident",
+      "management"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Roles and Responsibilities?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "roles",
+      "and",
+      "responsibilities"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-12 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "identity",
+      "management",
+      "and",
+      "access"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Detect (DE) function in NIST CSF 2.0 address Adverse Event Analysis?",
+    "expectedKeywords": [
+      "de",
+      "detect",
+      "adverse",
+      "event",
+      "analysis"
+    ],
+    "expectedControlFamily": "DE",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 RS-12 under Mitigation?",
+    "expectedKeywords": [
+      "rs",
+      "respond",
+      "mitigation"
+    ],
+    "expectedControlFamily": "RS",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Recover function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "rc",
+      "recover",
+      "execution"
+    ],
+    "expectedControlFamily": "RC",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "How does the Govern (GV) function in NIST CSF 2.0 address Organizational Context?",
+    "expectedKeywords": [
+      "gv",
+      "govern",
+      "organizational",
+      "context"
+    ],
+    "expectedControlFamily": "GV",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "What are the subcategory outcomes for NIST CSF 2.0 ID-13 under Risk Assessment?",
+    "expectedKeywords": [
+      "id",
+      "identify",
+      "risk",
+      "assessment"
+    ],
+    "expectedControlFamily": "ID",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  },
+  {
+    "question": "Explain the purpose of the Protect function within the NIST Cybersecurity Framework 2.0.",
+    "expectedKeywords": [
+      "pr",
+      "protect",
+      "data",
+      "security"
+    ],
+    "expectedControlFamily": "PR",
+    "expectedSourceDocument": "NIST CSF 2.0.pdf"
+  }
+]

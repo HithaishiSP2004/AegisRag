@@ -11,15 +11,38 @@
 
 // Real Google AI API model identifiers
 export const AI_MODELS = {
-  GENERATION_PRIMARY: 'gemini-2.5-flash',
-  GENERATION_FALLBACK: 'gemini-3.5-flash',
+  // Chat models
+  GENERATION_PRIMARY: 'gemini-3.5-flash',
+  GENERATION_FALLBACK: 'gemini-3.1-flash-lite', // kept for general fallback compatibility
+  GENERATION_FALLBACK_1: 'gemini-3.1-flash-lite',
+  GENERATION_FALLBACK_2: 'gemini-2.5-flash',
+  GENERATION_FALLBACK_3: 'gemini-2.5-flash-lite',
   EMBEDDING: 'gemini-embedding-2',
+
+  // Report / summary / narrative models (Analytics & Reports, PDF/PPTX exports)
+  REPORT_PRIMARY: 'gemini-2.5-flash',
+  REPORT_FALLBACK: 'gemini-2.5-flash-lite',
 } as const
+
+// Chat fallback chain (3.5-flash → 3.1-flash-lite → 2.5-flash → 2.5-flash-lite)
+export const AI_MODELS_FALLBACK_CHAIN = [
+  AI_MODELS.GENERATION_PRIMARY,
+  AI_MODELS.GENERATION_FALLBACK_1,
+  AI_MODELS.GENERATION_FALLBACK_2,
+  AI_MODELS.GENERATION_FALLBACK_3,
+] as const
+
+// Report/summary fallback chain — 2.5-flash → 2.5-flash-lite ONLY (not chat models)
+export const REPORT_MODEL_CHAIN = [
+  AI_MODELS.REPORT_PRIMARY,
+  AI_MODELS.REPORT_FALLBACK,
+] as const
 
 console.log('[AI CONFIG]', {
   generation: AI_MODELS.GENERATION_PRIMARY,
   fallback: AI_MODELS.GENERATION_FALLBACK,
   embedding: AI_MODELS.EMBEDDING,
+  fallbackChain: AI_MODELS_FALLBACK_CHAIN,
 })
 
 export type AIModelKey = keyof typeof AI_MODELS

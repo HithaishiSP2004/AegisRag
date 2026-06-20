@@ -63,7 +63,7 @@ export function ChatInput({ value, onChange, onSubmit, disabled, placeholder, in
       border: `1px solid ${active ? activeBorder : colors.glassBorder}`,
       borderRadius: radius.md,
       padding: '4px 10px',
-      color: active ? activeColor : colors.textMuted,
+      color: active ? activeColor : colors.textSecondary,
       fontSize: font.sizes.xs,
       fontWeight: 600,
       cursor: 'pointer',
@@ -138,7 +138,7 @@ export function ChatInput({ value, onChange, onSubmit, disabled, placeholder, in
                 border: `1px solid ${activeFiltersCount > 0 ? 'rgba(34,211,238,0.25)' : colors.glassBorder}`,
                 borderRadius: radius.md,
                 padding: '4px 10px',
-                color: activeFiltersCount > 0 ? colors.cyan : colors.textMuted,
+                color: activeFiltersCount > 0 ? colors.cyan : colors.textSecondary,
                 fontSize: font.sizes.xs,
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -253,7 +253,7 @@ export function ChatInput({ value, onChange, onSubmit, disabled, placeholder, in
       <p
         id="chat-input-hint"
         style={{
-          color: colors.textFaint, fontSize: font.sizes.xs,
+          color: colors.textSecondary, fontSize: font.sizes.xs,
           textAlign: 'center', marginTop: '6px',
         }}
       >

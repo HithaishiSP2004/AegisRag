@@ -14,7 +14,18 @@ interface ExportParams {
   isAuditReport?: boolean // if true, render a executive style report, else a clean raw table ledger
 }
 
-export function generateAuditPdf({ logs, filters, orgName = 'AegisRAG Enterprise Tenant', isAuditReport = false }: ExportParams) {
+async function getBase64ImageFromUrl(url: string): Promise<string> {
+  const response = await fetch(url)
+  const blob = await response.blob()
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+}
+
+export async function generateAuditPdf({ logs, filters, orgName = 'AegisRAG Enterprise Tenant', isAuditReport = false }: ExportParams) {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -37,6 +48,14 @@ export function generateAuditPdf({ logs, filters, orgName = 'AegisRAG Enterprise
     info: [71, 85, 105],    // Slate 600
   }
 
+  // Pre-fetch logo
+  let logoBase64 = ''
+  try {
+    logoBase64 = await getBase64ImageFromUrl('/logo-with-name.png')
+  } catch (err) {
+    console.error('Failed to load logo-with-name for audit PDF:', err)
+  }
+
   // Header helper
   const drawHeaderFooter = (pageNum: number, titleText: string) => {
     // Header line
@@ -44,11 +63,19 @@ export function generateAuditPdf({ logs, filters, orgName = 'AegisRAG Enterprise
     doc.setLineWidth(0.3)
     doc.line(15, 15, 195, 15)
 
-    // Header Title
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(8)
-    doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-    doc.text('AEGISRAG SECURITY OPERATIONS CENTER', 15, 11)
+    // Header Title Logo / Text
+    if (logoBase64) {
+      try {
+        doc.addImage(logoBase64, 'PNG', 15, 6, 24, 8)
+      } catch (err) {
+        console.error('Failed to add header logo:', err)
+      }
+    } else {
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8)
+      doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
+      doc.text('AEGISRAG SECURITY OPERATIONS CENTER', 15, 11)
+    }
 
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2])

@@ -66,16 +66,23 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
         violations = viols || []
       }
 
-      // 3. Retrieve signed download records from generated_reports
-      const { data: genReports } = await (supabase as any)
-        .from('generated_reports')
-        .select('*')
-        .eq('tenant_id', profile.org_id)
-        .eq('status', 'completed')
-
-      if (genReports) {
-        downloads = genReports.filter((r: any) => (r.metadata as any)?.workflow_id === id)
-      }
+      // Return predictable downloads
+      downloads = [
+        {
+          id: `${id}_pdf`,
+          format: 'PDF',
+          file_name: `aegisrag-compliance-review-${id}.pdf`,
+          storage_path: `${profile.org_id}/workflows/${id}.pdf`,
+          status: 'completed'
+        },
+        {
+          id: `${id}_json`,
+          format: 'JSON',
+          file_name: `aegisrag-compliance-review-${id}.json`,
+          storage_path: `${profile.org_id}/workflows/${id}.json`,
+          status: 'completed'
+        }
+      ]
     }
 
     return NextResponse.json({

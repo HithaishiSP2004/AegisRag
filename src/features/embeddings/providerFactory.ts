@@ -1,4 +1,5 @@
 import { GeminiEmbeddingProvider } from './providers/GeminiEmbeddingProvider';
+import { BGEEmbeddingProvider } from './providers/BGEEmbeddingProvider';
 import type { EmbeddingProvider } from './types';
 
 export class ProviderFactory {
@@ -10,6 +11,9 @@ export class ProviderFactory {
     switch (providerEnv.toLowerCase()) {
       case 'gemini':
         this.provider = new GeminiEmbeddingProvider();
+        break;
+      case 'bge':
+        this.provider = new BGEEmbeddingProvider();
         break;
       default:
         throw new Error(`Unsupported embedding provider: ${providerEnv}`);

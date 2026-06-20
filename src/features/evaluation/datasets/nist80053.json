@@ -1,0 +1,1274 @@
+[
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-1 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-2 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-3 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-4 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Physical and Environmental Protection (PE) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "pe",
+      "physical",
+      "and",
+      "environmental",
+      "protection",
+      "facility"
+    ],
+    "expectedControlFamily": "PE",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of PL controls?",
+    "expectedKeywords": [
+      "pl",
+      "planning",
+      "policy",
+      "privacy",
+      "rules"
+    ],
+    "expectedControlFamily": "PL",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Personnel Security (PS) family control PS-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "ps",
+      "personnel",
+      "security",
+      "screening",
+      "termination",
+      "transfer"
+    ],
+    "expectedControlFamily": "PS",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Risk Assessment (RA) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ra",
+      "risk",
+      "assessment",
+      "vulnerability",
+      "scans"
+    ],
+    "expectedControlFamily": "RA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SA controls?",
+    "expectedKeywords": [
+      "sa",
+      "system",
+      "and",
+      "services",
+      "acquisition",
+      "development"
+    ],
+    "expectedControlFamily": "SA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the System and Communications Protection (SC) family control SC-5 in NIST 800-53.",
+    "expectedKeywords": [
+      "sc",
+      "system",
+      "and",
+      "communications",
+      "protection",
+      "encryption"
+    ],
+    "expectedControlFamily": "SC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for System and Information Integrity (SI) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "si",
+      "system",
+      "and",
+      "information",
+      "integrity",
+      "malware"
+    ],
+    "expectedControlFamily": "SI",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of SR controls?",
+    "expectedKeywords": [
+      "sr",
+      "supply",
+      "chain",
+      "risk",
+      "management",
+      "supply chain"
+    ],
+    "expectedControlFamily": "SR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Access Control (AC) family control AC-6 in NIST 800-53.",
+    "expectedKeywords": [
+      "ac",
+      "access",
+      "control",
+      "authorization",
+      "account",
+      "privilege"
+    ],
+    "expectedControlFamily": "AC",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Awareness and Training (AT) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "at",
+      "awareness",
+      "and",
+      "training",
+      "literacy",
+      "education"
+    ],
+    "expectedControlFamily": "AT",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of AU controls?",
+    "expectedKeywords": [
+      "au",
+      "audit",
+      "and",
+      "accountability",
+      "logging",
+      "records"
+    ],
+    "expectedControlFamily": "AU",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Assessment, Authorization, and Monitoring (CA) family control CA-6 in NIST 800-53.",
+    "expectedKeywords": [
+      "ca",
+      "assessment,",
+      "authorization,",
+      "and",
+      "monitoring",
+      "assessment"
+    ],
+    "expectedControlFamily": "CA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Configuration Management (CM) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "cm",
+      "configuration",
+      "management",
+      "baseline",
+      "inventory",
+      "changes"
+    ],
+    "expectedControlFamily": "CM",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of CP controls?",
+    "expectedKeywords": [
+      "cp",
+      "contingency",
+      "planning",
+      "backup",
+      "disaster",
+      "recovery"
+    ],
+    "expectedControlFamily": "CP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Identification and Authentication (IA) family control IA-6 in NIST 800-53.",
+    "expectedKeywords": [
+      "ia",
+      "identification",
+      "and",
+      "authentication",
+      "mfa",
+      "credentials"
+    ],
+    "expectedControlFamily": "IA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "What is the security objective for Incident Response (IR) control family under NIST 800-53?",
+    "expectedKeywords": [
+      "ir",
+      "incident",
+      "response",
+      "handling",
+      "reporting"
+    ],
+    "expectedControlFamily": "IR",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "How does NIST 800-53 define the management and implementation of MA controls?",
+    "expectedKeywords": [
+      "ma",
+      "maintenance",
+      "tools",
+      "inspections",
+      "logs"
+    ],
+    "expectedControlFamily": "MA",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  },
+  {
+    "question": "Explain the requirements of the Media Protection (MP) family control MP-6 in NIST 800-53.",
+    "expectedKeywords": [
+      "mp",
+      "media",
+      "protection",
+      "sanitization",
+      "storage"
+    ],
+    "expectedControlFamily": "MP",
+    "expectedSourceDocument": "NIST.SP.800-53r5.pdf"
+  }
+]

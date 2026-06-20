@@ -130,7 +130,7 @@ const HORIZON_CHART_LABELS: Record<TimeHorizon, string[]> = {
 
 export function PredictiveAnalytics({ data, loading }: Props) {
   const [horizon, setHorizon] = useState<TimeHorizon>('30d')
-  const [containerRef, containerSize] = useResizeObserver()
+  const [containerRef, containerSize] = useResizeObserver(600, 240)
 
   const forecast = useMemo(() => {
     if (!data) return null
@@ -341,32 +341,26 @@ export function PredictiveAnalytics({ data, loading }: Props) {
         {/* Right: Line Chart Projection */}
         <div ref={containerRef} style={{
           background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)',
-          borderRadius: radius.lg, padding: '20px', height: '240px', minWidth: 0
+          borderRadius: radius.lg, padding: '20px', height: '240px', minWidth: 0, overflow: 'hidden'
         }}>
-          {containerSize.width > 0 && containerSize.height > 0 ? (
-            <LineChart width={containerSize.width} height={containerSize.height} data={forecast?.timeline ?? []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" />
-              <XAxis dataKey="name" stroke={colors.textMuted} fontSize={10} />
-              <YAxis stroke={colors.textMuted} fontSize={10} domain={[0, 100]} />
-              <Tooltip
-                contentStyle={{
-                  background: 'rgba(9,13,22,0.92)', border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: radius.md, fontSize: '11px', color: colors.textPrimary
-                }}
-              />
-              <ReferenceLine
-                x={HORIZON_CHART_LABELS[horizon][HORIZON_CHART_LABELS[horizon].length - 1]}
-                stroke="rgba(99,102,241,0.3)" strokeDasharray="4 4"
-              />
-              <Line type="monotone" dataKey="coverage"  stroke="#A5B4FC" strokeWidth={2} name="Coverage (%)" dot />
-              <Line type="monotone" dataKey="risk"      stroke="#F43F5E" strokeWidth={2} name="Risk Score"   dot />
-              <Line type="monotone" dataKey="readiness" stroke="#10B981" strokeWidth={2} name="Readiness (%) " dot />
-            </LineChart>
-          ) : (
-            <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: colors.textSecondary, fontSize: 11 }}>
-              Recalculating layout...
-            </div>
-          )}
+          <LineChart width={containerSize.width} height={containerSize.height} data={forecast?.timeline ?? []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" />
+            <XAxis dataKey="name" stroke={colors.textMuted} fontSize={10} />
+            <YAxis stroke={colors.textMuted} fontSize={10} domain={[0, 100]} />
+            <Tooltip
+              contentStyle={{
+                background: 'rgba(9,13,22,0.92)', border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: radius.md, fontSize: '11px', color: colors.textPrimary
+              }}
+            />
+            <ReferenceLine
+              x={HORIZON_CHART_LABELS[horizon][HORIZON_CHART_LABELS[horizon].length - 1]}
+              stroke="rgba(99,102,241,0.3)" strokeDasharray="4 4"
+            />
+            <Line type="monotone" dataKey="coverage"  stroke="#A5B4FC" strokeWidth={2} name="Coverage (%)" dot />
+            <Line type="monotone" dataKey="risk"      stroke="#F43F5E" strokeWidth={2} name="Risk Score"   dot />
+            <Line type="monotone" dataKey="readiness" stroke="#10B981" strokeWidth={2} name="Readiness (%) " dot />
+          </LineChart>
         </div>
       </div>
     </div>

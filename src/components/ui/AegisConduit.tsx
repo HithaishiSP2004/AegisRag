@@ -47,17 +47,29 @@ export function AegisConduit({
     ...style
   }
 
+  // Generate a unique ID for the gradient based on coordinates and state
+  const cleanCoord = (val: number | string) => String(val).replace(/[^a-zA-Z0-9]/g, '_')
+  const gradId = `conduit-grad-${state}-${cleanCoord(startX)}-${cleanCoord(startY)}-${cleanCoord(endX)}-${cleanCoord(endY)}`
+
   return (
     <svg className={className} style={containerStyle}>
       <defs>
-        <linearGradient id={`conduit-grad-${state}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={strokeColor} stopOpacity={0.8} />
-          <stop offset="100%" stopColor={strokeColor} stopOpacity={0.2} />
+        <linearGradient
+          id={gradId}
+          gradientUnits="userSpaceOnUse"
+          x1={startX}
+          y1={startY}
+          x2={endX}
+          y2={endY}
+        >
+          {/* Fade out near the center (startX, startY) and remain clear at the satellite (endX, endY) */}
+          <stop offset="0%" stopColor={strokeColor} stopOpacity={0.15} />
+          <stop offset="100%" stopColor={strokeColor} stopOpacity={0.95} />
         </linearGradient>
       </defs>
 
-      {/* Start Terminal */}
-      <circle cx={startX} cy={startY} r={3} fill={strokeColor} />
+      {/* Start Terminal (Center) - lower opacity */}
+      <circle cx={startX} cy={startY} r={3} fill={strokeColor} opacity={0.25} />
 
       {/* Connection Path */}
       <line
@@ -65,13 +77,14 @@ export function AegisConduit({
         y1={startY}
         x2={endX}
         y2={endY}
-        stroke={`url(#conduit-grad-${state})`}
+        stroke={`url(#${gradId})`}
         strokeWidth={1.2}
         strokeDasharray={isBroken ? '4 4' : undefined}
       />
 
-      {/* End Terminal */}
-      <circle cx={endX} cy={endY} r={3} fill={strokeColor} />
+      {/* End Terminal (Satellite Card) - high opacity */}
+      <circle cx={endX} cy={endY} r={3} fill={strokeColor} opacity={0.95} />
     </svg>
   )
 }
+

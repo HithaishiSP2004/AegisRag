@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/server'
-import { executePromptWorkflow } from '@/features/prompts/manager'
 import { createHash } from 'crypto'
+import { runWithGemini } from '@/lib/geminiClient'
+import { REPORT_MODEL_CHAIN } from '@/config/ai'
 
 export interface NarrativeData {
   title: string
@@ -14,11 +15,11 @@ export interface NarrativeData {
 
 // Firms mapped to report types
 const REPORT_FIRMS: Record<string, string> = {
-  executive: 'PwC Security Advisory Services',
-  compliance: 'Deloitte Risk Advisory Services',
-  security: 'KPMG Cyber Security Services',
-  retrieval: 'EY Technology Consulting',
-  governance: 'PwC AI Assurance Group',
+  executive: 'Executive Security Advisory Services',
+  compliance: 'Enterprise Risk Advisory Services',
+  security: 'Cyber Security Advisory Services',
+  retrieval: 'Information Technology Consulting',
+  governance: 'AI Governance Assurance Group',
 }
 
 const REPORT_TITLES: Record<string, string> = {
@@ -76,37 +77,35 @@ export async function getOrGenerateNarrative(
     }
   }
 
-  // 2. Generate with Gemini using Prompt Manager
-  console.log(`[narrative] Cache miss or forced refresh for ${reportType} (${period}d). Generating with Gemini...`)
-  
+  // 2. Generate with Gemini 2.5-flash → 2.5-flash-lite, with dual-key failover
+  console.log(`[narrative] Cache miss or forced refresh for ${reportType} (${period}d). Generating with Gemini 2.5-flash...`)
+
   const firm = REPORT_FIRMS[reportType]
   const title = REPORT_TITLES[reportType]
 
-  const REPORT_PROMPT_TEMPLATES: Record<string, string> = {
-    executive: 'executive_summary',
-    compliance: 'compliance_narrative',
-    security: 'risk_narrative',
-    retrieval: 'retrieval_narrative',
-    governance: 'boardroom_narrative',
-  }
+  // Prompt is built from live metrics — never hardcoded
+  const prompt = buildNarrativePrompt(reportType, period, metrics)
 
-  const templateId = REPORT_PROMPT_TEMPLATES[reportType] || 'executive_summary'
+  let responseText = ''
+  let modelUsed = ''
 
   try {
-    const result = await executePromptWorkflow({
-      orgId,
-      templateId,
-      version: 'v1',
-      variables: {
-        period: String(period),
-        metrics: JSON.stringify(metrics, null, 2)
-      },
-      reasoningMode: 'direct',
-      workflowType: 'executive_reporting'
+    const result = await runWithGemini({
+      modelChain: REPORT_MODEL_CHAIN,
+      prompt,
+      label: `narrative:${reportType}`
     })
+    responseText = result.text
+    modelUsed = result.modelUsed
+    if (result.usedSecondaryKey) {
+      console.log(`[narrative] Secondary Gemini API key was used for ${reportType}`)
+    }
+  } catch (err) {
+    console.error('[narrative] All Gemini keys and models exhausted — using baseline narrative:', err)
+    return getBaselineNarrative(reportType, metrics)
+  }
 
-    const responseText = result.text ?? ''
-    // Parse JSON safely
+  try {
     const jsonMatch = responseText.match(/\{[\s\S]*\}/)
     const parsedJson = jsonMatch ? JSON.parse(jsonMatch[0]) : null
 
@@ -121,7 +120,7 @@ export async function getOrGenerateNarrative(
         next: parsedJson.next ?? 'Continue normal threshold monitoring.',
       }
 
-      // Store in Cache
+      // Store in cache (24h TTL)
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       const { error: insertErr } = await admin.from('analytics_narratives').insert({
         org_id: orgId,
@@ -139,19 +138,18 @@ export async function getOrGenerateNarrative(
         console.error('[narrative] Failed to cache generated narrative:', insertErr.message)
       }
 
-      // Log to audit events
       await admin.from('audit_events').insert({
         org_id: orgId,
         tenant_id: orgId,
         event_type: 'narrative_regenerated',
         actor: 'system',
-        description: `Regenerated AI narrative brief for ${reportType} (${period}d)`
+        description: `Regenerated AI narrative brief for ${reportType} (${period}d) using ${modelUsed}`
       })
 
       return narrativeResult
     }
   } catch (err) {
-    console.error('[narrative] Gemini generation failed:', err)
+    console.error('[narrative] Failed to parse Gemini JSON response:', err)
   }
 
   // Fallback to baseline
@@ -159,10 +157,45 @@ export async function getOrGenerateNarrative(
 }
 
 /**
+ * Builds a concise structured prompt from live telemetry metrics for Gemini.
+ * The prompt instructs the model to return a JSON object with summary/what/why/impact/next fields.
+ */
+function buildNarrativePrompt(reportType: string, period: string | number, metrics: any): string {
+  const metricsText = JSON.stringify(metrics, null, 2)
+
+  const sectionDescriptions: Record<string, string> = {
+    executive: `an executive GRC and RAG posture summary covering overall risk score, compliance coverage, open security alerts, AI groundedness, and hallucination rate`,
+    compliance: `a compliance framework alignment and control health analysis covering total controls, evidence coverage percentage, and pending review backlog`,
+    security: `a threat landscape and security operations analysis covering open alert count, critical/high severity breakdown, and document sensitivity mismatches`,
+    retrieval: `a RAG retrieval intelligence analysis covering groundedness score, citation hit rate, hallucination rate, and average retrieval latency`,
+    governance: `an AI system governance audit covering total token usage, model uptime percentage, fallback execution rate, and failure count`,
+  }
+
+  const description = sectionDescriptions[reportType] || 'an operational status summary'
+
+  return `You are an enterprise AI governance analyst writing ${description} for the past ${period} days.
+
+The following live telemetry metrics were recorded from the AegisRAG platform:
+
+${metricsText}
+
+Based ONLY on the above metrics, generate a concise advisory brief. Do NOT fabricate numbers. Return ONLY a valid JSON object with these exact fields:
+{
+  "summary": "2-3 sentence executive summary citing the specific metric values above",
+  "what": "1-2 sentences describing what the metrics show happened",
+  "why": "1-2 sentences explaining the likely technical cause",
+  "impact": "1-2 sentences on the business or compliance impact",
+  "next": "1-2 sentences with the most important recommended action"
+}
+
+Return only the JSON object. No markdown, no extra text.`
+}
+
+/**
  * Returns a high-quality static baseline narrative in case Gemini fails or is disabled.
  */
 function getBaselineNarrative(reportType: string, metrics: any): NarrativeData {
-  const firm = REPORT_FIRMS[reportType] || 'PwC Security Advisory Services'
+  const firm = REPORT_FIRMS[reportType] || 'Executive Security Advisory Services'
   const title = REPORT_TITLES[reportType] || 'Global GRC & RAG Posture Executive Report'
 
   if (reportType === 'executive') {

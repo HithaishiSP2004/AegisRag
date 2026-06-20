@@ -144,7 +144,7 @@ export function ConversationSidebar({
             aria-hidden="true"
             style={{
               position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)',
-              color: colors.textFaint, pointerEvents: 'none',
+              color: colors.textMuted, pointerEvents: 'none',
             }}
           />
           <input
@@ -271,7 +271,7 @@ export function ConversationSidebar({
                     >
                       {conv.title}
                     </p>
-                    <p style={{ color: colors.textFaint, fontSize: font.sizes.xs, margin: 0 }}>
+                    <p style={{ color: colors.textMuted, fontSize: font.sizes.xs, margin: 0 }}>
                       {formatDate(conv.updated_at)}
                     </p>
                   </>
@@ -317,15 +317,18 @@ export function ConversationSidebar({
                   onClick={(e) => e.stopPropagation()}
                   style={{
                     position:     'absolute',
-                    right:        '6px',
-                    top:          'calc(100% + 4px)',
+                    right:        '34px', // Position next to the three-dot button
+                    top:          '50%',
+                    transform:    'translateY(-50%)',
                     zIndex:       50000,
                     background:   colors.bgElevated,
                     border:       `1px solid ${colors.glassBorderStrong}`,
-                    borderRadius: radius.lg,
-                    padding:      '4px',
-                    minWidth:     '140px',
-                    boxShadow:    '0 8px 24px rgba(0,0,0,0.5)',
+                    borderRadius: radius.md,
+                    padding:      '3px',
+                    display:      'flex',
+                    flexDirection: 'row',
+                    gap:          '3px',
+                    boxShadow:    '0 4px 12px rgba(0,0,0,0.5)',
                     animation:    'scaleIn 0.12s ease forwards',
                   }}
                 >
@@ -364,16 +367,15 @@ export function ConversationSidebar({
 const menuBtnStyle: React.CSSProperties = {
   display:      'flex',
   alignItems:   'center',
-  gap:          '7px',
-  width:        '100%',
-  padding:      '7px 10px',
+  gap:          '5px',
+  padding:      '5px 8px',
   background:   'transparent',
   border:       'none',
   borderRadius: radius.sm,
   color:        colors.textSecondary,
-  fontSize:     font.sizes.base,
+  fontSize:     font.sizes.sm,
   cursor:       'pointer',
-  textAlign:    'left',
   transition:   transition.fast,
   fontFamily:   font.sans,
+  whiteSpace:   'nowrap',
 }

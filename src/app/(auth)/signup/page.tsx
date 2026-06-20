@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui'
 import { FEATURES } from '@/config/features'
+import Interactive3DLogo from '@/components/ui/Interactive3DLogo'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -18,6 +19,8 @@ export default function SignupPage() {
 
   // Universal Loading state
   const [isSubmitting, setIsSubmitting] = useState(false)
+  // Track focused input (kept for potential future use; inputs still call these)
+  const [, setFocusedInput] = useState<string | null>(null)
 
   // Step 1: Domain Check State
   const [email, setEmail] = useState('')
@@ -310,7 +313,7 @@ export default function SignupPage() {
         toast.error(data.error || 'Failed to provision account.')
       } else {
         toast.success('Account created successfully!')
-        router.push(data.redirectUrl || '/dashboard')
+        router.push(data.redirectUrl || '/command-hub')
       }
     } catch (err) {
       console.error(err)
@@ -352,22 +355,15 @@ export default function SignupPage() {
       <div style={{ background: 'transparent', padding: '0 4px 8px' }}>
         {/* Header */}
         <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-          <h1
-            style={{
-              fontSize: '1.75rem',
-              fontWeight: 800,
-              color: '#F8FAFC',
-              margin: '0 0 4px',
-              letterSpacing: '-0.04em',
-              background: 'linear-gradient(to bottom, #FFFFFF 60%, #94A3B8)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            Create Account
-          </h1>
-          <p style={{ color: '#3B82F6', fontSize: '0.7rem', fontWeight: 600, margin: 0, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            Start Trial Workspace
+          {/* 3D Interactive Logo — tracks cursor across the whole page */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+            <Interactive3DLogo size={82} variant="icon" isSubmitting={isSubmitting} />
+          </div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#F8FAFC', margin: '12px 0 4px', letterSpacing: '-0.02em' }}>
+            Create Your Account
+          </h3>
+          <p style={{ color: '#64748B', fontSize: '0.8rem', margin: 0, lineHeight: '1.4' }}>
+            Start your AegisRAG developer workspace
           </p>
         </div>
 
@@ -407,6 +403,8 @@ export default function SignupPage() {
                 placeholder="sarah@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setFocusedInput('email')}
+                onBlur={() => setFocusedInput(null)}
                 style={{
                   width: '100%',
                   padding: '10px 12px',
@@ -435,6 +433,8 @@ export default function SignupPage() {
                   placeholder="Min 8 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setFocusedInput('password')}
+                  onBlur={() => setFocusedInput(null)}
                   style={{
                     width: '100%',
                     padding: '10px 40px 10px 12px',
@@ -620,7 +620,7 @@ export default function SignupPage() {
             style={{
               width: '100%',
               padding: '12px 16px',
-              background: '#10B981',
+              background: 'linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)',
               border: 'none',
               borderRadius: '6px',
               color: '#FFFFFF',
@@ -631,8 +631,9 @@ export default function SignupPage() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px',
-              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
+              boxShadow: '0 4px 14px rgba(79, 70, 229, 0.25)',
               marginTop: '8px',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             className="btn-finish"
           >
@@ -680,13 +681,10 @@ export default function SignupPage() {
             background: rgba(9, 13, 22, 0.9) !important;
           }
 
-          .btn-finish {
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-          }
           .btn-finish:hover:not(:disabled) {
-            transform: scale(1.02);
-            background-color: #059669 !important;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
+            transform: scale(1.015);
+            background: linear-gradient(135deg, #5850ec 0%, #4893ff 100%) !important;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35) !important;
           }
 
           .hover-link:hover {
@@ -703,21 +701,22 @@ export default function SignupPage() {
 
       {/* Header */}
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <h1
+        {/* 3D Interactive Logo — tracks cursor across the whole page */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+          <Interactive3DLogo size={82} variant="icon" isSubmitting={isSubmitting} />
+        </div>
+        <h3
           style={{
-            fontSize: '1.75rem',
-            fontWeight: 800,
+            fontSize: '1.25rem',
+            fontWeight: 700,
             color: '#F8FAFC',
-            margin: '0 0 4px',
-            letterSpacing: '-0.04em',
-            background: 'linear-gradient(to bottom, #FFFFFF 60%, #94A3B8)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            margin: '12px 0 4px',
+            letterSpacing: '-0.02em',
           }}
         >
           {step === 4 ? 'Request Sent' : 'Create Workspace'}
-        </h1>
-        <p style={{ color: '#3B82F6', fontSize: '0.7rem', fontWeight: 600, margin: 0, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+        </h3>
+        <p style={{ color: '#64748B', fontSize: '0.8rem', margin: 0, lineHeight: '1.4' }}>
           {step === 4 ? 'Awaiting Security Approval' : 'AegisRAG Onboarding Suite'}
         </p>
       </div>
@@ -771,6 +770,8 @@ export default function SignupPage() {
                 placeholder="sjenkins@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setFocusedInput('email')}
+                onBlur={() => setFocusedInput(null)}
                 style={{
                   width: '100%',
                   padding: '11px 13px 11px 40px',
@@ -1090,6 +1091,8 @@ export default function SignupPage() {
                   placeholder="Min 8 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setFocusedInput('password')}
+                  onBlur={() => setFocusedInput(null)}
                   style={{
                     width: '100%',
                     padding: '10px 40px 10px 12px',
@@ -1618,6 +1621,16 @@ export default function SignupPage() {
         .hover-link:hover {
           text-decoration: underline !important;
           color: #60A5FA !important;
+        }
+
+        /* 3D Logo Animations */
+        @keyframes logo-float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-4px) rotate(1deg); }
+        }
+        @keyframes logo-spinY {
+          from { transform: perspective(1000px) rotateY(0deg); }
+          to { transform: perspective(1000px) rotateY(360deg); }
         }
 
         @keyframes scaleUp {

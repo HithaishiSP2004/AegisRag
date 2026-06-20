@@ -3,7 +3,7 @@
 // =============================================================================
 'use server'
 
-import { createAdminClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { executePromptWorkflow } from './manager'
 import type { BudgetProfile } from './manager'
 import { searchDocuments } from '@/features/retrieval/service'
@@ -15,6 +15,30 @@ import { scanOutputResponse, cleanCitations } from '@/features/guardrails/output
  */
 export async function updateBudgetProfileAction(orgId: string, profile: BudgetProfile) {
   try {
+    const supabase = await createClient()
+    const { data: { user }, error: authErr } = await supabase.auth.getUser()
+    if (authErr || !user) {
+      throw new Error('Not authenticated')
+    }
+
+    const { data: userProfile, error: profileErr } = await supabase
+      .from('user_profiles')
+      .select('org_id, role')
+      .eq('id', user.id)
+      .single()
+
+    if (profileErr || !userProfile) {
+      throw new Error('User profile not found')
+    }
+
+    if (userProfile.role !== 'super_admin') {
+      throw new Error('Forbidden: Only super admins can update budget profiles')
+    }
+
+    if (userProfile.org_id !== orgId) {
+      throw new Error('Forbidden: Unauthorized organization update')
+    }
+
     const admin = createAdminClient()
     const { data: org } = await admin
       .from('organizations')
@@ -42,6 +66,30 @@ export async function updateBudgetProfileAction(orgId: string, profile: BudgetPr
  */
 export async function runPromptTestSuiteAction(orgId: string, userId: string) {
   try {
+    const supabase = await createClient()
+    const { data: { user }, error: authErr } = await supabase.auth.getUser()
+    if (authErr || !user) {
+      throw new Error('Not authenticated')
+    }
+
+    const { data: userProfile, error: profileErr } = await supabase
+      .from('user_profiles')
+      .select('org_id, role')
+      .eq('id', user.id)
+      .single()
+
+    if (profileErr || !userProfile) {
+      throw new Error('User profile not found')
+    }
+
+    if (!['super_admin', 'compliance_officer'].includes(userProfile.role)) {
+      throw new Error('Insufficient permissions: admin access required')
+    }
+
+    if (userProfile.org_id !== orgId || user.id !== userId) {
+      throw new Error('Forbidden: Unauthorized test suite execution')
+    }
+
     const admin = createAdminClient()
 
     // Test cases containing query and custom validations
@@ -208,7 +256,17 @@ export async function runPromptTestSuiteAction(orgId: string, userId: string) {
       )
 
       let actualText = parsedAnswer
+      const avgRetrievalScore = sources.length > 0
+        ? Math.round(sources.reduce((acc, s) => acc + (s.score || 0.85), 0) / sources.length * 100)
+        : 0
+
       if (outputGuard.severity === 'BLOCK') {
+        console.warn(`[governance] RESPONSE BLOCKED in test suite due to low groundedness or high hallucination risk.
+          Groundedness Score: ${outputGuard.groundedness_score}
+          Hallucination Score: ${outputGuard.risk_score}
+          Retrieval Confidence: ${avgRetrievalScore}%
+          Citation Count: ${outputGuard.metadata.total_citations}
+          Source Count: ${sources.length}`);
         actualText = "Response blocked by AegisRAG AI Governance Engine due to low groundedness or high hallucination risk."
       }
 
@@ -225,7 +283,11 @@ export async function runPromptTestSuiteAction(orgId: string, userId: string) {
         metadata: {
           ...outputGuard.metadata,
           groundedness_score: outputGuard.groundedness_score,
-          confidence: outputGuard.confidence
+          confidence: outputGuard.confidence,
+          retrieval_confidence: avgRetrievalScore,
+          source_count: sources.length,
+          retrievalMode: process.env.ENABLE_PARENT_CHILD_RETRIEVAL === 'true' ? 'parent_child' : (sources[0]?.mode ?? 'keyword'),
+          queryType: classifyQueryType(tc.question)
         }
       })
 
@@ -265,3 +327,18 @@ export async function runPromptTestSuiteAction(orgId: string, userId: string) {
     return { success: false, error: err.message || String(err) }
   }
 }
+
+function classifyQueryType(question: string): 'title_query' | 'fact_query' | 'compliance_query' | 'citation_query' {
+  const normalized = question.toLowerCase().trim();
+  if (/title|filename|document\s+name|pdf|what\s+is\s+this\s+document\s+called|what\s+is\s+the\s+name\s+of\s+the\s+document|what\s+document/i.test(normalized)) {
+    return 'title_query';
+  }
+  if (/cite|citation|source|reference|page|paragraph|where\s+does\s+it\s+say|according\s+to/i.test(normalized)) {
+    return 'citation_query';
+  }
+  if (/soc|nist|iso|hipaa|gdpr|pci|comply|compliance|framework|audit|regulation|policy|policies/i.test(normalized)) {
+    return 'compliance_query';
+  }
+  return 'fact_query';
+}
+

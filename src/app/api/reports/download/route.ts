@@ -27,27 +27,71 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 403 })
     }
 
-    // Get report path from DB, scoped to tenant
-    const { data: report, error: dbErr } = await (supabase as any)
-      .from('generated_reports')
-      .select('*')
-      .eq('id', id)
-      .eq('tenant_id', profile.org_id)
-      .single()
+    let storagePath = ''
+    let isPredictive = false
+    const isPdf = id.endsWith('_pdf')
+    const isJson = id.endsWith('_json')
+    const workflowId = id.replace('_pdf', '').replace('_json', '')
 
-    if (dbErr || !report) {
-      return NextResponse.json({ error: 'Report not found' }, { status: 404 })
-    }
+    if (isPdf) {
+      storagePath = `${profile.org_id}/workflows/${workflowId}.pdf`
+      isPredictive = true
+    } else if (isJson) {
+      storagePath = `${profile.org_id}/workflows/${workflowId}.json`
+      isPredictive = true
+    } else {
+      // Get report path from DB, scoped to tenant
+      const { data: report, error: dbErr } = await (supabase as any)
+        .from('generated_reports')
+        .select('*')
+        .eq('id', id)
+        .eq('tenant_id', profile.org_id)
+        .single()
 
-    if (report.status !== 'completed' || !report.storage_path) {
-      return NextResponse.json({ error: 'Report file is not ready' }, { status: 400 })
+      if (dbErr || !report) {
+        return NextResponse.json({ error: 'Report not found' }, { status: 404 })
+      }
+
+      if (report.status !== 'completed' || !report.storage_path) {
+        return NextResponse.json({ error: 'Report file is not ready' }, { status: 400 })
+      }
+      storagePath = report.storage_path
     }
 
     // Generate signed download URL from reports bucket
     const admin = createAdminClient()
-    const { data, error: storageErr } = await admin.storage
+    let { data, error: storageErr } = await admin.storage
       .from('reports')
-      .createSignedUrl(report.storage_path, 3600)
+      .createSignedUrl(storagePath, 3600)
+
+    // Fallback: If predictive URL failed (e.g. legacy workflow runs uploaded to old paths),
+    // try to construct the legacy storage path using the workflow's creation date.
+    if (isPredictive && (storageErr || !data?.signedUrl)) {
+      const { data: workflow } = await supabase
+        .from('workflows')
+        .select('created_at, completed_at')
+        .eq('id', workflowId)
+        .single()
+
+      if (workflow) {
+        const date = new Date(workflow.completed_at || workflow.created_at)
+        const year = date.getFullYear().toString()
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const dateStr = date.toISOString().slice(0, 10)
+        const oldPath = isPdf
+          ? `${profile.org_id}/${year}/${month}/${workflowId}-pdf-aegisrag-compliance-review-${workflowId}-${dateStr}.pdf`
+          : `${profile.org_id}/${year}/${month}/${workflowId}-json-aegisrag-compliance-review-${workflowId}-${dateStr}.json`
+
+        const fallbackResult = await admin.storage
+          .from('reports')
+          .createSignedUrl(oldPath, 3600)
+
+        if (fallbackResult.data?.signedUrl) {
+          data = fallbackResult.data
+          storageErr = null
+        }
+      }
+    }
 
     if (storageErr || !data?.signedUrl) {
       return NextResponse.json({ error: storageErr?.message || 'Failed to generate download URL' }, { status: 500 })

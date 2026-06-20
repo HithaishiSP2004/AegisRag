@@ -25,7 +25,7 @@
 import { keywordSearch }  from './keyword'
 import { vectorSearch }   from './vector'
 import { fuseResults }    from './rrf'
-import { rerankResults, isRerankDegraded }  from './rerank'
+import { rerankerProviderFactory } from './reranker/providerFactory'
 import { compressContext } from './compression'
 import type { SearchQuery, SearchResult, SearchFilters } from './types'
 
@@ -39,18 +39,30 @@ const FINAL_TOP_K = 6
 
 export function documentAwareRetrievalStrategy(
   question: string,
-  baseLimit: number
+  baseLimit: number,
+  intent?: 'toc' | 'summary' | 'metadata' | 'compliance' | 'general'
 ): { limit: number; searchType: 'broad' | 'narrow' | 'standard' } {
   const q = question.toLowerCase().trim()
-  
+
+  // If the query guardrail has already classified the intent, honour it directly.
+  // This prevents keyword mismatch (e.g. "table" in ToC query triggering narrow mode).
+  if (intent === 'toc' || intent === 'summary') {
+    return { limit: Math.max(baseLimit, 15), searchType: 'broad' }
+  }
+  if (intent === 'metadata') {
+    return { limit: Math.min(baseLimit, 3), searchType: 'narrow' }
+  }
+
+  // Fallback: heuristic classification when no guardrail intent is supplied
   const broadKeywords = [
     'summarize', 'summary', 'overview', 'abstract', 'conclusion', 'conclusions',
-    'key takeaways', 'takeaways', 'findings', 'results', 'discussion'
+    'key takeaways', 'takeaways', 'findings', 'results', 'discussion',
+    'table of contents', 'toc', 'list of sections', 'list of chapters', 'chapters', 'contents'
   ]
   const isBroad = broadKeywords.some(kw => new RegExp(`\\b${kw}\\b`, 'i').test(q))
-  
+
   const narrowKeywords = [
-    'title', 'author', 'authors', 'publish', 'published', 'publisher', 'doi',
+    'author', 'authors', 'publish', 'published', 'publisher', 'doi',
     'journal', 'conference', 'year', 'volume', 'issue', 'citation'
   ]
   const isNarrow = narrowKeywords.some(kw => new RegExp(`\\b${kw}s?\\b`, 'i').test(q))
@@ -93,50 +105,98 @@ export async function searchDocuments(
     return emptyRes
   }
 
-  const searchStart = Date.now()
-  const strategy = documentAwareRetrievalStrategy(text, filters.limit ?? FINAL_TOP_K)
-  const targetTopK = strategy.limit
+  // Normalize query text for typo tolerance and framework consistency
+  let processedText = text.trim()
+  processedText = processedText.replace(/\b(tile|titel|tilte|titl)\b/gi, 'title')
+  processedText = processedText.replace(/\b(auther|authur)\b/gi, 'author')
+  processedText = processedText.replace(/\b(cite|citate)\b/gi, 'citation')
+  processedText = processedText.replace(/\bsoc[- ]?2\b/gi, 'soc 2')
+  processedText = processedText.replace(/\bnist[- ]?800[- ]?53\b/gi, 'nist 800-53')
 
-  // Increase pool before fusion: fetch more candidates for better RRF coverage
-  const poolFilters: SearchFilters = {
-    ...filters,
-    limit: Math.max(targetTopK, strategy.searchType === 'broad' ? 40 : FUSION_POOL),
+  const searchStart = Date.now()
+  const strategy = documentAwareRetrievalStrategy(processedText, filters.limit ?? FINAL_TOP_K)
+  const targetTopK = strategy.limit
+  const retrievalMode = filters.retrievalMode ?? 'hybrid'
+  const candidateLimit = 20
+
+  const vectorQuery: SearchQuery = {
+    text: processedText,
+    orgId,
+    filters: {
+      ...filters,
+      limit: candidateLimit,
+    },
+    userId,
+    userRole,
   }
-  const query: SearchQuery = { text, orgId, filters: poolFilters, userId, userRole }
+
+  const keywordQuery: SearchQuery = {
+    text: processedText,
+    orgId,
+    filters: {
+      ...filters,
+      limit: candidateLimit,
+    },
+    userId,
+    userRole,
+  }
+
+  let vectorResults: SearchResult[] = []
+  let keywordResults: SearchResult[] = []
 
   let vectorLatencyMs: number | null = null
   let keywordLatencyMs: number | null = null
 
-  // ── 1. Parallel retrieval ─────────────────────────────────────────────────
-  const [vectorResult, keywordResult] = await Promise.all([
-    (async () => {
-      const t0 = Date.now()
-      try {
-        const results = await vectorSearch(query)
-        vectorLatencyMs = Date.now() - t0
-        console.log(`[retrieval/vector] vector_latency_ms=${vectorLatencyMs} results=${results.length}`)
-        return results
-      } catch (err) {
-        console.error('[retrieval/vector] leg threw — isolated, continuing with keyword only:', err)
-        return [] as SearchResult[]
-      }
-    })(),
-    (async () => {
-      const t0 = Date.now()
-      try {
-        const results = await keywordSearch(query)
-        keywordLatencyMs = Date.now() - t0
-        console.log(`[retrieval/keyword] keyword_latency_ms=${keywordLatencyMs} results=${results.length}`)
-        return results
-      } catch (err) {
-        console.error('[retrieval/keyword] leg threw — isolated, continuing with vector only:', err)
-        return [] as SearchResult[]
-      }
-    })(),
-  ])
-
-  const vectorResults  = vectorResult
-  const keywordResults = keywordResult
+  // ── 1. Retrieval execution ────────────────────────────────────────────────
+  if (retrievalMode === 'vector') {
+    const t0 = Date.now()
+    try {
+      vectorResults = await vectorSearch(vectorQuery)
+      vectorLatencyMs = Date.now() - t0
+      console.log(`[retrieval/vector] vector_latency_ms=${vectorLatencyMs} results=${vectorResults.length}`)
+    } catch (err) {
+      console.error('[retrieval/vector] leg threw:', err)
+    }
+  } else if (retrievalMode === 'keyword') {
+    const t0 = Date.now()
+    try {
+      keywordResults = await keywordSearch(keywordQuery)
+      keywordLatencyMs = Date.now() - t0
+      console.log(`[retrieval/keyword] keyword_latency_ms=${keywordLatencyMs} results=${keywordResults.length}`)
+    } catch (err) {
+      console.error('[retrieval/keyword] leg threw:', err)
+    }
+  } else {
+    // default/hybrid: parallel execution
+    const [vRes, kRes] = await Promise.all([
+      (async () => {
+        const t0 = Date.now()
+        try {
+          const results = await vectorSearch(vectorQuery)
+          vectorLatencyMs = Date.now() - t0
+          console.log(`[retrieval/vector] vector_latency_ms=${vectorLatencyMs} results=${results.length}`)
+          return results
+        } catch (err) {
+          console.error('[retrieval/vector] leg threw — isolated, continuing with keyword only:', err)
+          return [] as SearchResult[]
+        }
+      })(),
+      (async () => {
+        const t0 = Date.now()
+        try {
+          const results = await keywordSearch(keywordQuery)
+          keywordLatencyMs = Date.now() - t0
+          console.log(`[retrieval/keyword] keyword_latency_ms=${keywordLatencyMs} results=${results.length}`)
+          return results
+        } catch (err) {
+          console.error('[retrieval/keyword] leg threw — isolated, continuing with vector only:', err)
+          return [] as SearchResult[]
+        }
+      })(),
+    ])
+    vectorResults = vRes
+    keywordResults = kRes
+  }
 
   console.log(`[hybrid] vector results: ${vectorResults.length}`)
   console.log(`[hybrid] keyword results: ${keywordResults.length}`)
@@ -165,16 +225,124 @@ export async function searchDocuments(
   console.log(`[hybrid] fusion_latency_ms=${fusionLatencyMs}`)
   console.log(`[rrf] fused results: ${fused.length}`)
 
-  // ── 4. Gemini Reranking ───────────────────────────────────────────────────
+  // ── 3B. Title-Oriented Retrieval Boosting ──────────────────────────────────
+  const isTitleQuery = /title|filename|document\s+name|pdf|what\s+is\s+this\s+document\s+called|what\s+is\s+the\s+name\s+of\s+the\s+document|what\s+document/i.test(processedText)
+  if (isTitleQuery) {
+    const titleStopWords = new Set(['title', 'filename', 'document', 'name', 'pdf', 'what', 'is', 'called', 'show', 'the', 'of', 'from', 'page', 'to', 'a', 'in', 'on', 'with', 'for']);
+    const queryTerms = processedText.toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .split(/\s+/)
+      .filter(w => w.length >= 2 && !titleStopWords.has(w));
+
+    if (queryTerms.length > 0) {
+      console.log(`[retrieval/boost] Title query: "${processedText}". Terms:`, queryTerms);
+      fused.forEach(cand => {
+        const docTitle = (cand.document?.originalName || cand.metadata?.document_title || '').toLowerCase();
+        const matches = queryTerms.filter(term => docTitle.includes(term));
+        let boost = 0;
+        if (matches.length > 0) {
+          boost += 0.15 * matches.length;
+        }
+        const pageNum = cand.metadata?.page_number;
+        if (pageNum === 1) {
+          boost += 0.10;
+        }
+        if (cand.document?.originalName) {
+          boost += 0.05;
+        }
+
+        if (boost > 0) {
+          const originalScore = cand.score;
+          cand.score += boost;
+          console.log(`[retrieval/boost] Boosted chunk ${cand.chunkId} from "${cand.document?.originalName}" (page ${pageNum}): ${originalScore} -> ${cand.score}`);
+        }
+      });
+      fused.sort((a, b) => b.score - a.score);
+    }
+  }
+
+  // ── 3C. Bibliography Penalty & Executive Summary Boosting ──────────────────
+  const adjustScores = (candidates: SearchResult[], stageLabel: string) => {
+    const isBroadQuery = /\b(summarize|summary|overview|abstract|introduction|what is)\b/i.test(processedText);
+
+    candidates.forEach(cand => {
+      const content = cand.content || '';
+      const pageNum = cand.metadata?.page_number;
+
+      // 1. Detect individual bibliography and citation signatures
+      const hasDOI = /doi\.org/i.test(content);
+      const hasReferences = /\b(references|bibliography|appendix)\b/i.test(content);
+      const hasSPCitations = /\[SP\s+800-\d+[a-z]?\]/i.test(content);
+      const hasFIPSCitations = /\[FIPS\s+\d+\]/i.test(content);
+      const isLatePage = pageNum !== undefined && pageNum > 400;
+
+      // Apply score penalty only if at least 2 bibliography indicators are present
+      const bibliographyScore =
+        Number(hasDOI) +
+        Number(hasReferences) +
+        Number(hasSPCitations) +
+        Number(hasFIPSCitations) +
+        Number(isLatePage);
+
+      if (bibliographyScore >= 2) {
+        const penalty = 0.35;
+        cand.score -= penalty;
+        console.log(`[retrieval/penalty] [${stageLabel}] Applied penalty to bibliography chunk ${cand.chunkId} (page ${pageNum}) with score ${bibliographyScore}: -${penalty}`);
+      }
+
+      // 2. Apply executive summary / introduction boost for broad queries
+      if (isBroadQuery) {
+        let boost = 0;
+        if (pageNum === 1) {
+          boost += 0.25;
+        } else if (pageNum !== undefined && pageNum >= 2 && pageNum <= 15) {
+          const isIntroSection = /\b(executive summary|foreword|introduction|about this publication|overview|purpose|scope|intended audience)\b/i.test(content.toLowerCase());
+          boost += isIntroSection ? 0.15 : 0.10;
+        }
+
+        if (boost > 0) {
+          cand.score += boost;
+          console.log(`[retrieval/boost] [${stageLabel}] Applied executive summary boost to chunk ${cand.chunkId} (page ${pageNum}): +${boost}`);
+        }
+      }
+
+      // 3. Apply metadata/author boost for narrow queries looking for authors/writers
+      const isAuthorQuery = /\b(author|authors|published|publisher|who wrote|by|correspondence)\b/i.test(processedText);
+      if (isAuthorQuery) {
+        let authorBoost = 0;
+        if (pageNum === 1) {
+          authorBoost += 0.35; // Strong boost for page 1 on author queries
+        }
+        if (content.toLowerCase().includes('author') || content.toLowerCase().includes('correspondence')) {
+          authorBoost += 0.15;
+        }
+        if (authorBoost > 0) {
+          cand.score += authorBoost;
+          console.log(`[retrieval/boost] [${stageLabel}] Applied author query boost to chunk ${cand.chunkId} (page ${pageNum}): +${authorBoost}`);
+        }
+      }
+    });
+
+    candidates.sort((a, b) => b.score - a.score);
+  };
+
+  // Adjust scores and sort fused list before reranking to keep the fusion pool clean
+  adjustScores(fused, 'fused');
+
+  // ── 4. Reranker Provider Execution ─────────────────────────────────────────
   const rerankStart = Date.now()
   let reranked: SearchResult[]
   let rerankLatencyMs = 0
+  let rerankTelemetry: any = null
+
+  const provider = rerankerProviderFactory.getProvider()
+  let activeProvider = provider
+  let rerankerModel = provider.getModelName()
 
   const skipRerank =
     process.env.ENABLE_GEMINI_RERANKER === 'false' ||
     strategy.searchType === 'narrow' ||
-    fused.length <= 5 ||
-    isRerankDegraded()
+    fused.length <= 5
 
   if (skipRerank) {
     let reason = ''
@@ -184,16 +352,51 @@ export async function searchDocuments(
       reason = 'narrow metadata query'
     } else if (fused.length <= 5) {
       reason = 'candidate count <= 5'
-    } else if (isRerankDegraded()) {
-      reason = 'degraded mode active'
     }
-    console.log(`[rerank] skipping Gemini reranker — reason: ${reason}`)
+    console.log(`[rerank] skipping reranker — reason: ${reason}`)
     reranked = fused.slice(0, targetTopK)
+    rerankerModel = 'none'
   } else {
-    reranked = await rerankResults(text, fused.slice(0, FUSION_POOL), targetTopK)
-    rerankLatencyMs = Date.now() - rerankStart
-    console.log(`[rerank] selected results: ${reranked.length} (${rerankLatencyMs}ms)`)
+    // Perform health-check and dynamic fallback to Gemini if BGE is chosen but offline
+    if (provider.getProviderName() === 'bge') {
+      try {
+        const health = await provider.getHealth()
+        if (!health.healthy) {
+          console.warn(`[rerank] BGE reranker sidecar is unhealthy (${health.error}). Falling back to Gemini.`)
+          activeProvider = rerankerProviderFactory.getFallbackProvider()
+          rerankerModel = activeProvider.getModelName()
+        }
+      } catch (err) {
+        console.warn(`[rerank] Error checking BGE health: ${err}. Falling back to Gemini.`)
+        activeProvider = rerankerProviderFactory.getFallbackProvider()
+        rerankerModel = activeProvider.getModelName()
+      }
+    }
+
+    try {
+      const rerankedRes = await activeProvider.rerank(text, fused.slice(0, FUSION_POOL), targetTopK)
+      reranked = rerankedRes
+      
+      // Re-apply penalty and boost post-reranking to guarantee correct final ordering
+      adjustScores(reranked, 'reranked');
+
+      rerankTelemetry = (rerankedRes as any).telemetry || null
+      rerankLatencyMs = Date.now() - rerankStart
+      console.log(`[rerank] selected results: ${reranked.length} (${rerankLatencyMs}ms) via ${activeProvider.getProviderName()}`)
+    } catch (err) {
+      console.error(`[rerank] Reranking with provider ${activeProvider.getProviderName()} failed, using fused order fallback:`, err)
+      reranked = fused.slice(0, targetTopK)
+      // Make sure the fallback also has the scoring applied
+      adjustScores(reranked, 'fallback');
+      rerankLatencyMs = Date.now() - rerankStart
+    }
   }
+
+  const rerankerInputCount = skipRerank ? 0 : Math.min(fused.length, FUSION_POOL)
+  const rerankerOutputCount = reranked.length
+  console.log(
+    `[hybrid-telemetry] vector_hits=${vectorResults.length} keyword_hits=${keywordResults.length} fused_hits=${fused.length} reranker_input_count=${rerankerInputCount} reranker_output_count=${rerankerOutputCount}`
+  )
 
   // ── 5. Context Compression ────────────────────────────────────────────────
   const { compressedChunks, tokensSaved } = compressContext(reranked)
@@ -224,6 +427,12 @@ export async function searchDocuments(
       vector_candidates:   fused.length,
       reranked_candidates: compressedChunks.length,
       context_tokens_saved: tokensSaved,
+      // Add the new telemetry/diagnostics fields here
+      reranker_enabled:     !skipRerank,
+      reranker_model:       rerankerModel,
+      pre_rerank_score:     rerankTelemetry?.preRerankScore ?? null,
+      post_rerank_score:    rerankTelemetry?.postRerankScore ?? null,
+      reranker_lift:        rerankTelemetry?.rerankerLift ?? null,
     },
     enumerable: false,
     writable: true,

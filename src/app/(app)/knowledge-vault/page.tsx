@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/server'
 import { UPLOAD_ALLOWED_ROLES, DocumentType, SensitivityLevel } from '@/features/documents/types'
 import { DocumentList } from '@/features/documents/components/DocumentList'
 import { KnowledgeVaultShell } from './KnowledgeVaultShell'
+import { embeddingService } from '@/features/embeddings/embeddingService'
 
 export const metadata: Metadata = {
   title: 'Knowledge Vault',
@@ -76,7 +77,7 @@ export default async function KnowledgeVaultPage({
     if (allDocs) {
       stats.total = allDocs.length
       stats.indexed = allDocs.filter(d => d.status === 'indexed').length
-      stats.processing = allDocs.filter(d => ['parsing', 'chunking', 'embedding', 'uploading'].includes(d.status)).length
+      stats.processing = allDocs.filter(d => ['parsing', 'chunking', 'embedding', 'uploading', 'queued', 'processing', 'waiting_provider'].includes(d.status)).length
       stats.failed = allDocs.filter(d => d.status === 'failed' || d.status === 'embedding_failed').length
 
       // Compute total storage
@@ -95,9 +96,20 @@ export default async function KnowledgeVaultPage({
     }
   }
 
+  const providerName = embeddingService.getProviderName()
+  const modelName = embeddingService.getModelName()
+  const dimensions = embeddingService.getDimensions()
+
   return (
     <Suspense fallback={<div style={{ padding: '24px', color: '#475569', fontSize: '0.875rem' }}>Loading Vault...</div>}>
-      <KnowledgeVaultShell canUpload={canUpload} userRole={userRole} stats={stats}>
+      <KnowledgeVaultShell
+        canUpload={canUpload}
+        userRole={userRole}
+        stats={stats}
+        providerName={providerName}
+        modelName={modelName}
+        dimensions={dimensions}
+      >
         <Suspense fallback={<DocumentListSkeleton />}>
           <DocumentList
             department={resolvedParams.department}

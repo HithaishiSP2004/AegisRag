@@ -29,7 +29,7 @@ import {
 } from './service'
 import { logAuditEvent } from './audit'
 import { UPLOAD_ALLOWED_ROLES } from './types'
-import type { DocumentUploadInput } from './types'
+import type { DocumentUploadInput, DocumentRecord } from './types'
 import { checkLimit, incrementUsage } from '@/features/trial/limits.server'
 
 
@@ -331,6 +331,32 @@ export async function initiateDocumentUpload(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// REUSABLE HELPER: validateDocumentOwnership
+// Scopes verification using user client and verifies organization matching.
+// ─────────────────────────────────────────────────────────────────────────────
+export async function validateDocumentOwnership(
+  documentId: string,
+  profileOrgId: string
+): Promise<{ success: boolean; document?: DocumentRecord; error?: string }> {
+  const supabase = await createClient()
+  const { data: document, error } = await supabase
+    .from('documents')
+    .select('*')
+    .eq('id', documentId)
+    .single()
+
+  if (error || !document) {
+    return { success: false, error: 'Document not found or access denied' }
+  }
+
+  if (document.org_id !== profileOrgId) {
+    return { success: false, error: 'Access denied: document belongs to another organization' }
+  }
+
+  return { success: true, document: document as DocumentRecord }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // STEP B: confirmUpload — called after the browser successfully uploads to Storage
 // Advances status from 'uploading' → 'parsing'
 // ─────────────────────────────────────────────────────────────────────────────
@@ -349,6 +375,14 @@ export async function confirmDocumentUpload(
     .select('org_id, role')
     .eq('id', user.id)
     .single()
+
+  if (!profile) return { success: false, error: 'Profile not found' }
+
+  // Validate document ownership using user-scoped client before any admin client calls
+  const validation = await validateDocumentOwnership(documentId, profile.org_id)
+  if (!validation.success) {
+    return { success: false, error: validation.error ?? 'Validation failed' }
+  }
 
   // Find the latest version from document_versions to sync metadata
   const admin = createAdminClient()
@@ -387,7 +421,7 @@ export async function confirmDocumentUpload(
 
   // Audit log: upload complete
   await logAuditEvent({
-    orgId: profile?.org_id ?? '',
+    orgId: profile.org_id,
     userId: user.id,
     action: 'document.upload_complete',
     resourceType: 'document',
@@ -420,10 +454,18 @@ export async function failDocumentUpload(
     .eq('id', user.id)
     .single()
 
+  if (!profile) return { success: false, error: 'Profile not found' }
+
+  // Validate document ownership using user-scoped client before any admin client calls
+  const validation = await validateDocumentOwnership(documentId, profile.org_id)
+  if (!validation.success) {
+    return { success: false, error: validation.error ?? 'Validation failed' }
+  }
+
   await markDocumentFailed(documentId, reason)
 
   await logAuditEvent({
-    orgId: profile?.org_id ?? '',
+    orgId: profile.org_id,
     userId: user.id,
     action: 'document.upload_failed',
     resourceType: 'document',
@@ -471,6 +513,12 @@ export async function initiateVersionUpload(
     return { success: false, signedUrl: null, storagePath: null, documentId: null, error: 'Insufficient permissions' }
   }
 
+  // Validate document ownership using user-scoped client before any admin client calls
+  const validation = await validateDocumentOwnership(existingDocumentId, profile.org_id)
+  if (!validation.success) {
+    return { success: false, signedUrl: null, storagePath: null, documentId: null, error: validation.error ?? 'Validation failed' }
+  }
+
   // Check trial/tier limits
   const uploadLimitCheck = await checkLimit(user.id, profile.role, 'document_upload')
   if (!uploadLimitCheck.allowed) {
@@ -484,9 +532,9 @@ export async function initiateVersionUpload(
 
 
   const fakeFile = { type: input.fileMimeType, size: input.fileSize, name: input.fileName } as File
-  const validation = validateUploadFile(fakeFile)
-  if (!validation.valid) {
-    return { success: false, signedUrl: null, storagePath: null, documentId: null, error: validation.error }
+  const validationFile = validateUploadFile(fakeFile)
+  if (!validationFile.valid) {
+    return { success: false, signedUrl: null, storagePath: null, documentId: null, error: validationFile.error }
   }
 
   // New storage path uses the existing doc ID (keeps files grouped under same document)

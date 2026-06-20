@@ -12,6 +12,9 @@ export type DocumentStatus =
   | 'embedding_failed'
   | 'failed'
   | 'deleted'
+  | 'queued'
+  | 'processing'
+  | 'waiting_provider'
 
 export type DocumentType =
   | 'hr_policy'
@@ -24,7 +27,13 @@ export type DocumentType =
 
 export type SensitivityLevel = 'public' | 'internal' | 'confidential' | 'restricted'
 
-export type DocumentClassification = 'global' | 'organization' | 'user'
+export type DocumentClassification =
+  | 'global'
+  | 'organization'
+  | 'user'
+  | 'department'
+  | 'team'
+  | 'personal'
 
 export type DocumentFramework =
   | 'GDPR'
@@ -36,6 +45,12 @@ export type DocumentFramework =
   | 'EU_AI_ACT'
   | 'SECURITY_FRAMEWORKS'
   | 'RESEARCH_PAPERS'
+  | 'NIST_CSF'
+  | 'OWASP'
+  | 'PCI_DSS'
+  | 'RESEARCH'
+  | 'SECURITY'
+  | 'CUSTOM'
 
 // ── Upload form payload (from the UI) ────────────────────────────────────────
 export interface DocumentUploadInput {
@@ -146,6 +161,9 @@ export const STATUS_LABELS: Record<DocumentStatus, string> = {
   embedding_failed: 'Embedding Failed',
   failed:           'Failed',
   deleted:          'Deleted',
+  queued:           'Queued',
+  processing:       'Processing',
+  waiting_provider: 'Waiting on Provider',
 }
 
 // ── Roles allowed to upload documents (mirrors DB policy) ───────────────────

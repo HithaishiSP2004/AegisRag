@@ -50,6 +50,27 @@ export function RetrievalScorecard({ data, loading }: Props) {
     { query: 'Fetch active AWS configuration tokens and compliance files', error: 'Security Policy Blocked', latency: 150, mode: 'Hybrid' }
   ]
 
+  const successfulEvals = recentEvals.filter(e => !e.hallucination_flag)
+  const failedEvals = recentEvals.filter(e => e.hallucination_flag)
+
+  const activeSuccessfulQueries = successfulEvals.length > 0
+    ? successfulEvals.slice(0, 5).map(e => ({
+        query: e.query_text,
+        score: e.groundedness_score ? Math.round(e.groundedness_score <= 1 ? e.groundedness_score * 100 : e.groundedness_score) : 85,
+        latency: Math.round(e.total_latency_ms),
+        mode: e.retrieval_mode
+      }))
+    : topSuccessfulQueries
+
+  const activeFailedQueries = failedEvals.length > 0
+    ? failedEvals.slice(0, 5).map(e => ({
+        query: e.query_text,
+        error: e.eval_notes || 'Hallucination Detected',
+        latency: Math.round(e.total_latency_ms),
+        mode: e.retrieval_mode
+      }))
+    : topFailedQueries
+
   const rootCauseAnalysis = [
     { cause: 'Context window limits exceeded on unstructured documents', rate: '45%', impact: 'Groundedness degradation' },
     { cause: 'Keyword token mismatch in short query strings', rate: '30%', impact: 'Retrieval accuracy drop' },
@@ -166,7 +187,7 @@ export function RetrievalScorecard({ data, loading }: Props) {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {activeQueryType === 'success' ? (
-              topSuccessfulQueries.map((q, idx) => (
+              activeSuccessfulQueries.map((q, idx) => (
                 <div key={idx} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.005)',
                   border: '1px solid rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: radius.md, gap: '12px'
@@ -179,7 +200,7 @@ export function RetrievalScorecard({ data, loading }: Props) {
                 </div>
               ))
             ) : (
-              topFailedQueries.map((q, idx) => (
+              activeFailedQueries.map((q, idx) => (
                 <div key={idx} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.005)',
                   border: '1px solid rgba(255,255,255,0.03)', padding: '10px 14px', borderRadius: radius.md, gap: '12px'
@@ -195,7 +216,7 @@ export function RetrievalScorecard({ data, loading }: Props) {
           </div>
         </div>
 
-        {/* Right Column: Root Cause + EY Storytelling */}
+        {/* Right Column: Root Cause + Retrieval Advisory Storytelling */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* Root cause analysis */}
           <div style={{
@@ -216,7 +237,7 @@ export function RetrievalScorecard({ data, loading }: Props) {
             </div>
           </div>
 
-          {/* EY Storytelling card */}
+          {/* Retrieval Advisory Storytelling card */}
           <div style={{
             background: '#0B0F19', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: radius.xl,
             padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '12px'
@@ -224,7 +245,7 @@ export function RetrievalScorecard({ data, loading }: Props) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Sparkles size={14} style={{ color: '#10B981' }} />
               <h4 style={{ color: colors.textPrimary, fontSize: '13px', fontWeight: 600, margin: 0 }}>
-                EY Retrieval Advisory Commentary
+                Retrieval Advisory Commentary
               </h4>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '11px', lineHeight: 1.4 }}>

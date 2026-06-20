@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Search, RefreshCw, Server, Shield, CheckCircle2, Zap, HelpCircle } from 'lucide-react'
+import { RefreshCw, Server, Shield, CheckCircle2, Zap, HelpCircle } from 'lucide-react'
 import { colors, font, radius, shadow, transition } from '@/components/ui/tokens'
 
 export function GlobalIntelligenceBar() {
@@ -73,8 +73,8 @@ export function GlobalIntelligenceBar() {
         boxShadow: shadow.sm,
       }}
     >
-      {/* Search Input & Environment */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, maxWidth: '480px' }}>
+      {/* Environment Badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         {/* Environment Badge with Pulse */}
         <div
           style={{
@@ -104,43 +104,6 @@ export function GlobalIntelligenceBar() {
           />
           <Server size={10} style={{ color: colors.indigoLight }} />
           <span>PROD-US-EAST</span>
-        </div>
-
-        {/* Global Command Search Box */}
-        <div style={{ position: 'relative', flex: 1 }}>
-          <Search
-            size={12}
-            style={{
-              position: 'absolute',
-              left: '10px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: colors.textMuted,
-            }}
-          />
-          <input
-            type="text"
-            placeholder="Search telemetry, active alerts, compliance frameworks... ⌘K"
-            style={{
-              width: '100%',
-              background: 'rgba(255, 255, 255, 0.01)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              borderRadius: radius.sm,
-              padding: '4px 10px 4px 28px',
-              fontSize: '11px',
-              color: colors.textPrimary,
-              outline: 'none',
-              transition: transition.fast,
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = 'rgba(99, 102, 241, 0.4)'
-              e.target.style.background = 'rgba(255, 255, 255, 0.02)'
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(255, 255, 255, 0.05)'
-              e.target.style.background = 'rgba(255, 255, 255, 0.01)'
-            }}
-          />
         </div>
       </div>
 

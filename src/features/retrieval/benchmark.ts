@@ -56,7 +56,10 @@ export interface BenchmarkResult {
 /**
  * Runs the benchmark test suite for a given organization ID.
  */
-export async function runBenchmarkSuite(orgId: string): Promise<BenchmarkResult[]> {
+export async function runBenchmarkSuite(
+  orgId: string,
+  retrievalMode?: 'vector' | 'keyword' | 'hybrid'
+): Promise<BenchmarkResult[]> {
   const results: BenchmarkResult[] = []
 
   // Ensure we have at least one message/conversation context
@@ -95,14 +98,16 @@ export async function runBenchmarkSuite(orgId: string): Promise<BenchmarkResult[
 
   const conversationId = conv?.id ?? null
 
-  // We test all golden queries under 'hybrid' mode (which is our production target)
   for (const testCase of GOLDEN_TEST_SUITE) {
-    console.log(`[benchmark] Running query: "${testCase.question}"`)
+    console.log(`[benchmark] Running query: "${testCase.question}" in mode ${retrievalMode ?? 'hybrid'}`)
     const start = Date.now()
 
     try {
       // 1. Run retrieval
-      const sources = await searchDocuments(testCase.question, orgId, { limit: 5 })
+      const sources = await searchDocuments(testCase.question, orgId, {
+        limit: 5,
+        retrievalMode: retrievalMode ?? 'hybrid',
+      })
       const latencyMs = Date.now() - start
 
       // Extract details
@@ -123,13 +128,26 @@ export async function runBenchmarkSuite(orgId: string): Promise<BenchmarkResult[
       // 3. Evaluate & persist to retrieval_evals
       // This will call Gemini and log it to retrieval_evals table
       const evalStart = Date.now()
+      const metrics = (sources as any).metrics
       
       // Let's get the evaluated scores by running evaluateRetrieval
       // (it runs asynchronously, but we can temporarily intercept or query the latest evaluation row)
       await evaluateRetrieval(orgId, testCase.question, mockAnswer, sources, {
-        retrieval_mode: mode,
-        total_latency_ms: latencyMs,
-        conversation_id: conversationId,
+        retrieval_mode:       mode,
+        total_latency_ms:     latencyMs,
+        conversation_id:      conversationId,
+        vector_latency_ms:    metrics?.vector_latency_ms,
+        keyword_latency_ms:   metrics?.keyword_latency_ms,
+        fusion_latency_ms:    metrics?.fusion_latency_ms,
+        rerank_latency_ms:    metrics?.rerank_latency_ms,
+        vector_candidates:    metrics?.vector_candidates,
+        reranked_candidates:   metrics?.reranked_candidates,
+        context_tokens_saved: metrics?.context_tokens_saved,
+        reranker_enabled:     metrics?.reranker_enabled,
+        reranker_model:       metrics?.reranker_model,
+        pre_rerank_score:     metrics?.pre_rerank_score,
+        post_rerank_score:    metrics?.post_rerank_score,
+        reranker_lift:        metrics?.reranker_lift,
       })
 
       // Fetch the last inserted evaluation to display accurate scores
@@ -170,12 +188,54 @@ if (require.main === module) {
     process.exit(1)
   }
   console.log(`[benchmark] Starting benchmark suite for Org: ${orgId}...`)
-  runBenchmarkSuite(orgId).then(res => {
-    console.log("\n=================== BENCHMARK REPORT ===================")
-    console.table(res)
-    console.log("========================================================\n")
-  }).catch(err => {
-    console.error("[benchmark] CLI runner failed:", err)
-    process.exit(1)
-  })
+
+  ;(async () => {
+    try {
+      console.log("\n>>> RUNNING VECTOR-ONLY RETRIEVAL BENCHMARK <<<")
+      const vectorRes = await runBenchmarkSuite(orgId, 'vector')
+
+      console.log("\n>>> RUNNING HYBRID + RRF RETRIEVAL BENCHMARK <<<")
+      const hybridRes = await runBenchmarkSuite(orgId, 'hybrid')
+
+      console.log("\n==========================================================================================")
+      console.log("===                            RETRIEVAL BENCHMARK COMPARISON                          ===")
+      console.log("==========================================================================================")
+      
+      const comparisonTable = vectorRes.map((v, idx) => {
+        const h = hybridRes[idx]
+        return {
+          Question: v.question.slice(0, 45) + (v.question.length > 45 ? '...' : ''),
+          'Vec Latency (ms)': v.latencyMs,
+          'Hyb Latency (ms)': h.latencyMs,
+          'Vec Chunks': v.chunksFound,
+          'Hyb Chunks': h.chunksFound,
+          'Vec Grounded': v.groundedness,
+          'Hyb Grounded': h.groundedness,
+          'Vec Halluc': v.hallucination,
+          'Hyb Halluc': h.hallucination,
+          'Vec Keywords': `${v.matchedKeywords.length}/${GOLDEN_TEST_SUITE[idx].expectedKeywords.length}`,
+          'Hyb Keywords': `${h.matchedKeywords.length}/${GOLDEN_TEST_SUITE[idx].expectedKeywords.length}`
+        }
+      })
+
+      console.table(comparisonTable)
+      
+      // Compute averages
+      const avgVecLat = vectorRes.reduce((acc, r) => acc + r.latencyMs, 0) / vectorRes.length
+      const avgHybLat = hybridRes.reduce((acc, r) => acc + r.latencyMs, 0) / hybridRes.length
+      const avgVecGrounded = vectorRes.reduce((acc, r) => acc + r.groundedness, 0) / vectorRes.length
+      const avgHybGrounded = hybridRes.reduce((acc, r) => acc + r.groundedness, 0) / hybridRes.length
+      const vecHallucRate = (vectorRes.filter(r => r.hallucination).length / vectorRes.length) * 100
+      const hybHallucRate = (hybridRes.filter(r => r.hallucination).length / hybridRes.length) * 100
+
+      console.log("\n=== METRIC SUMMARY COMPARISON ===")
+      console.log(`Average Latency:      Vector-Only = ${avgVecLat.toFixed(1)}ms | Hybrid + RRF = ${avgHybLat.toFixed(1)}ms`)
+      console.log(`Average Groundedness: Vector-Only = ${avgVecGrounded.toFixed(3)} | Hybrid + RRF = ${avgHybGrounded.toFixed(3)}`)
+      console.log(`Hallucination Rate:   Vector-Only = ${vecHallucRate.toFixed(1)}% | Hybrid + RRF = ${hybHallucRate.toFixed(1)}%`)
+      console.log("==========================================================================================\n")
+    } catch (err) {
+      console.error("[benchmark] CLI runner failed:", err)
+      process.exit(1)
+    }
+  })()
 }

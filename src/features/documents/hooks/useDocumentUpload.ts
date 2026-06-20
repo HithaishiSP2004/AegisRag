@@ -44,7 +44,7 @@ export function useDocumentUpload(options: UseDocumentUploadOptions = {}): UseDo
 
   const upload = useCallback(
     async (input: DocumentUploadInput) => {
-      const { file, doc_type, sensitivity, department, tags } = input
+      const { file, doc_type, sensitivity, department, classification, framework, tags } = input
 
       // ── Phase: validating ───────────────────────────────────────────────
       setProgress({ storageProgress: 0, phase: 'validating', documentId: null, error: null })
@@ -66,6 +66,8 @@ export function useDocumentUpload(options: UseDocumentUploadOptions = {}): UseDo
         doc_type,
         sensitivity,
         department,
+        classification,
+        framework,
         tags,
       })
 

@@ -1,0 +1,11 @@
+-- =============================================================================
+-- Migration 0048: Phase 3C.1 — SUPERSEDED
+--
+-- This file has been split into two parts due to PostgreSQL's requirement
+-- that ALTER TYPE ADD VALUE must be committed before the new value can be used:
+--
+--   Step 1: Run 0048a_add_cancelled_enum.sql
+--   Step 2: Run 0048b_document_deletion_cascade.sql
+--
+-- Do NOT run this file directly.
+-- =============================================================================

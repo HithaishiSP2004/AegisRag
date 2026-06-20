@@ -30,6 +30,17 @@ export class GeminiEmbeddingProvider implements EmbeddingProvider {
     return this.dimensions;
   }
 
+  validateConfiguration(): void {
+    if (!this.ai) {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (apiKey) {
+        this.ai = new GoogleGenAI({ apiKey });
+      } else {
+        throw new Error('Gemini provider requires GEMINI_API_KEY');
+      }
+    }
+  }
+
   async generateEmbedding(text: string): Promise<number[]> {
     if (!this.ai) {
       throw new Error('Gemini API key is missing');
@@ -112,9 +123,19 @@ export class GeminiEmbeddingProvider implements EmbeddingProvider {
         await Promise.all(promises);
       } catch (batchErr: unknown) {
         const batchMsg = batchErr instanceof Error ? batchErr.message : String(batchErr);
+        const isRateLimit =
+          batchMsg.includes('429') ||
+          batchMsg.toLowerCase().includes('resource_exhausted') ||
+          batchMsg.toLowerCase().includes('rate limit') ||
+          batchMsg.toLowerCase().includes('quota');
+
+        if (isRateLimit) {
+          throw batchErr;
+        }
+
         console.warn(
           `[GeminiEmbeddingProvider] Batch embedding failed, falling back to individual chunk processing. Error: ${batchMsg}`
-        )
+        );
 
         // Fallback: process chunks in this batch individually
         for (const index of batchIndices) {
@@ -136,12 +157,13 @@ export class GeminiEmbeddingProvider implements EmbeddingProvider {
                 break;
               } catch (err: unknown) {
                 const msg = err instanceof Error ? err.message : String(err);
-                const isRateLimit =
+                const isRateLimitAttempt =
                   msg.includes('429') ||
                   msg.toLowerCase().includes('resource_exhausted') ||
-                  msg.toLowerCase().includes('rate limit');
+                  msg.toLowerCase().includes('rate limit') ||
+                  msg.toLowerCase().includes('quota');
 
-                if (isRateLimit && attempt < 3) {
+                if (isRateLimitAttempt && attempt < 3) {
                   const backoff = 1000 * Math.pow(2, attempt - 1) + Math.random() * 500;
                   console.warn(
                     `[GeminiEmbeddingProvider] Gemini rate limit hit during fallback retry in ${Math.round(
@@ -163,9 +185,19 @@ export class GeminiEmbeddingProvider implements EmbeddingProvider {
           } catch (individualErr: unknown) {
             const individualMsg =
               individualErr instanceof Error ? individualErr.message : String(individualErr);
+            const isRateLimitIndiv =
+              individualMsg.includes('429') ||
+              individualMsg.toLowerCase().includes('resource_exhausted') ||
+              individualMsg.toLowerCase().includes('rate limit') ||
+              individualMsg.toLowerCase().includes('quota');
+
+            if (isRateLimitIndiv) {
+              throw individualErr;
+            }
+
             console.error(
               `[GeminiEmbeddingProvider] Fallback embedding failed for index ${index}: ${individualMsg}`
-            );
+);
           }
         }
       }

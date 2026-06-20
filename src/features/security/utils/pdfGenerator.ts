@@ -546,8 +546,8 @@ export async function generateCompliancePDF(data: any): Promise<Buffer> {
   const fallbackTimeline = gov.fallbackTimeline ?? []
   const recentFailures = gov.recentFailures ?? []
 
-  let primary = 'gemini-2.5-flash'
-  let fallback = 'gemini-3.5-flash'
+  let primary = 'gemini-3.5-flash'
+  let fallback = 'gemini-3.1-flash-lite'
 
   if (modelBreakdown.length > 0) {
     const sortedByCalls = [...modelBreakdown].sort((a: any, b: any) => b.calls - a.calls)
@@ -682,11 +682,11 @@ export async function generateCompliancePDF(data: any): Promise<Buffer> {
   doc.text('ROUTING LOGICAL PIPELINE', 105, flowY + 6, { align: 'center' })
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7.5)
-  doc.text('[Client Query] --> (Gating Checks) --> [gemini-2.5-flash] (OK? Response Delivered)', 105, flowY + 16, { align: 'center' })
+  doc.text('[Client Query] --> (Gating Checks) --> [gemini-3.5-flash] (OK? Response Delivered)', 105, flowY + 16, { align: 'center' })
   doc.setTextColor(239, 68, 68)
   doc.text('SLA Breach / 429 Rate Limit Triggered --> Failover Event Initiated', 105, flowY + 24, { align: 'center' })
   doc.setTextColor(16, 185, 129)
-  doc.text('Routing Switch --> [gemini-3.5-flash] (Audit Logged, Recovered, Handed Back)', 105, flowY + 32, { align: 'center' })
+  doc.text('Routing Switch --> [gemini-3.1-flash-lite] (Audit Logged, Recovered, Handed Back)', 105, flowY + 32, { align: 'center' })
 
   // ==========================================
   // PAGE 7: DOCUMENT RISK ANALYSIS

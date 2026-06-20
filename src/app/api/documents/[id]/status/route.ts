@@ -6,7 +6,7 @@
 // =============================================================================
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 
 export async function GET(
   _request: NextRequest,
@@ -40,11 +40,23 @@ export async function GET(
     )
   }
 
+  // Fetch latest job details (using admin client to bypass RLS)
+  const admin = createAdminClient()
+  const { data: job } = await (admin as any)
+    .from('embedding_jobs')
+    .select('total_chunks, processed_chunks')
+    .eq('document_id', id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
   return NextResponse.json({
     id: data.id,
     status: data.status,
     page_count: data.page_count,
     error_message: data.error_message,
     updated_at: data.updated_at,
+    total_chunks: job?.total_chunks ?? 0,
+    processed_chunks: job?.processed_chunks ?? 0,
   })
 }

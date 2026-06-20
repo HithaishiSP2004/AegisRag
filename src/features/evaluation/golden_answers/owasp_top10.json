@@ -1,0 +1,1052 @@
+[
+  {
+    "question": "What is A01 (Broken Access Control) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A01 as Broken Access Control. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Security Misconfiguration Prevention 20 • Development, QA, and production environments should all be configured identically, with different credential...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Cryptographic Failures (A02) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Cryptographic Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Injection Vulnerabilities 14 • User-supplied data is not validated, filtered, or sanitized by the application. • Dynamic queries or non-parameterized ...\""
+  },
+  {
+    "question": "Explain the security risks associated with A03: Injection.",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Injection poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Server-Side Request Forgery (SSRF) Prevention 33 • From network layer:  Segment remote resource access functionality in separate networks to reduce t...\""
+  },
+  {
+    "question": "What is A04 (Insecure Design) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A04 as Insecure Design. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"A04:2021 – Insecure Design 16 Example Scenario: A movie theater chain that allows group booking discounts requires a deposit for groups of more than f...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Security Misconfiguration (A05) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Security Misconfiguration involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"A08:2021 – Software and Data Integrity Failures 27 Example Scenario: The SolarWinds malicious update. Nation-states have been known to attack update m...\""
+  },
+  {
+    "question": "Explain the security risks associated with A06: Vulnerable and Outdated Components.",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Vulnerable and Outdated Components poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"The OWASP Top 10: 2021 6...\""
+  },
+  {
+    "question": "What is A07 (Identification and Authentication Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A07 as Identification and Authentication Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Security Logging and Monitoring Failures Vulnerabilities 30 • Insufficient logging, detection, monitoring, and active response occurs any time:  Audi...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Software and Data Integrity Failures (A08) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Software and Data Integrity Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"A05:2021 – Security Misconfiguration 18 Example Scenario: The application server comes with sample applications not removed from the production server...\""
+  },
+  {
+    "question": "Explain the security risks associated with A09: Security Logging and Monitoring Failures.",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Security Logging and Monitoring Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Broken Access Control Prevention 9 • Access control is only effective in trusted server-side code or server-less application programming interface (AP...\""
+  },
+  {
+    "question": "What is A10 (Server-Side Request Forgery) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A10 as Server-Side Request Forgery. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"References • “Security Logging and Monitoring Failures,” OWASP. N.d. https://owasp.org/Top10/A09_2021- Security_Logging_and_Monitoring_Failures/ • “Se...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Broken Access Control (A01) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Broken Access Control involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Contacts HHS.GOV/HC3 HC3@HHS.GOV 41...\""
+  },
+  {
+    "question": "Explain the security risks associated with A02: Cryptographic Failures.",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Cryptographic Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"The OWASP Top 10 as a Standard • Also use: • OWASP Application Security Verification Standard 34 Use Case OWASP Top 10 2021 OWASP Application Security...\""
+  },
+  {
+    "question": "What is A03 (Injection) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A03 as Injection. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"FAQ Upcoming Briefing • 8/18 – The Impact of Social Engineering in Healthcare Product Evaluations Recipients of this and other Healthcare Sector Cyber...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Insecure Design (A04) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Insecure Design involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Prevention of Identification and Authentication Failures 26 • Where possible, implement multi-factor authentication to prevent automated credential st...\""
+  },
+  {
+    "question": "Explain the security risks associated with A05: Security Misconfiguration.",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Security Misconfiguration poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"ffing, brute force, or other attacks are detected. • Use a server-side, secure, built-in session manager that generates a new random session ID with h...\""
+  },
+  {
+    "question": "What is A06 (Vulnerable and Outdated Components) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A06 as Vulnerable and Outdated Components. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"A10:2021 – Server-Side Request Forgery (SSRF) 32 Example Scenario: If a network architecture is unsegmented, attackers can use connection results or e...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Identification and Authentication Failures (A07) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Identification and Authentication Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"OWASP and the OWASP Top 10 3 Source: OWASP • Threat Brief: Web Application Attacks in Healthcare • Open Web Application Security Project (OWASP)  Non...\""
+  },
+  {
+    "question": "Explain the security risks associated with A08: Software and Data Integrity Failures.",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Software and Data Integrity Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"A06:2021 – Vulnerable and Outdated Components 21 Example Scenario: Due to the volume of components used in development, a development team might not k...\""
+  },
+  {
+    "question": "What is A09 (Security Logging and Monitoring Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A09 as Security Logging and Monitoring Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Vulnerable and Outdated Components Vulnerabilities 22 • Versions of components you use (both client-side and server-side) are unknown. This includes c...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Server-Side Request Forgery (A10) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Server-Side Request Forgery involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"A03:2021-Injection 13 Notable Common Weakness Enumerations (CWEs): • CWE-79: Cross-site Scripting • CWE-89: SQL Injection • CWE-73: External Control o...\""
+  },
+  {
+    "question": "Explain the security risks associated with A01: Broken Access Control.",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Broken Access Control poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"A09:2021 – Security Logging and Monitoring Failures 29 Example Scenario: A children's health plan provider's website operator couldn't detect a breach...\""
+  },
+  {
+    "question": "What is A02 (Cryptographic Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A02 as Cryptographic Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Identification and Authentication Failures and Vulnerabilities 25 • Permits automated attacks such as credential stuffing, where the attacker has a li...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Injection (A03) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Injection involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"The OWASP Top 10 August 4, 2022 TLP: WHITE, ID# 202208041300 1...\""
+  },
+  {
+    "question": "Explain the security risks associated with A04: Insecure Design.",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Insecure Design poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"About HC3 The Health Sector Cybersecurity Coordination Center (HC3) works with private and public sector partners to improve cybersecurity throughout ...\""
+  },
+  {
+    "question": "What is A05 (Security Misconfiguration) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A05 as Security Misconfiguration. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Injection Prevention 15 • The preferred option is to use a safe API, which avoids using the interpreter entirely, provides a parameterized interface, ...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Vulnerable and Outdated Components (A06) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Vulnerable and Outdated Components involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Agenda • OWASP and the OWASP Top 10 • Understanding the Top 10 • Data Factors • The OWASP Top 10: 2021 • The OWASP Top 10 as a Standard Non-Technical:...\""
+  },
+  {
+    "question": "Explain the security risks associated with A07: Identification and Authentication Failures.",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Identification and Authentication Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Secure Misconfiguration Vulnerabilities 19 • Missing appropriate security hardening across any part of the application stack or improperly configured ...\""
+  },
+  {
+    "question": "What is A08 (Software and Data Integrity Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A08 as Software and Data Integrity Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"A07:2021 – Identification and Authentication Failures 24 Example Scenario: Most authentication attacks occur due to the continued use of passwords as ...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Security Logging and Monitoring Failures (A09) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Security Logging and Monitoring Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Insecure Design Prevention 17 • Establish and use a secure development lifecycle with AppSec professionals to help evaluate and design security and pr...\""
+  },
+  {
+    "question": "Explain the security risks associated with A10: Server-Side Request Forgery.",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Server-Side Request Forgery poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"References • “Broken Access Control,” OWASP. N.d. https://owasp.org/Top10/A01_2021-Broken_Access_Control/ • “Cryptographic Failures,” OWASP. N.d. http...\""
+  },
+  {
+    "question": "What is A01 (Broken Access Control) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A01 as Broken Access Control. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Understanding the Top 10 4 • The 10 Categories  8 of 10 categories are contributed data  2 of the categories come from the Top 10 community survey •...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Cryptographic Failures (A02) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Cryptographic Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Data Factors 5 Data factors are listed for each of the Top 10 categories: • CWEs Mapped: The number of CWEs mapped to a category by the Top 10 team • ...\""
+  },
+  {
+    "question": "Explain the security risks associated with A03: Injection.",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Injection poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Reference Materials 35...\""
+  },
+  {
+    "question": "What is A04 (Insecure Design) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A04 as Insecure Design. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Broken Access Control Vulnerabilities 8 • Violation of the principle of least privilege or deny by default, where access should only be granted for pa...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Security Misconfiguration (A05) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Security Misconfiguration involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Security Logging and Monitoring Failures Prevention 31 • Ensure all login, access control, and server-side input validation failures can be logged wit...\""
+  },
+  {
+    "question": "Explain the security risks associated with A06: Vulnerable and Outdated Components.",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Vulnerable and Outdated Components poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Cryptographic Failure Vulnerabilities 11 • Data is transmitted in clear text. • Old or weak cryptographic algorithms or protocols are used either by d...\""
+  },
+  {
+    "question": "What is A07 (Identification and Authentication Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A07 as Identification and Authentication Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Software and Data Integrity Failures Prevention 28 • Use digital signatures or similar mechanisms to verify the software or data is from the expected ...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Software and Data Integrity Failures (A08) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Software and Data Integrity Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Cryptographic Failure Prevention 12 • Classify data processed, stored, or transmitted by an application. Identify which data is sensitive according to...\""
+  },
+  {
+    "question": "Explain the security risks associated with A09: Security Logging and Monitoring Failures.",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Security Logging and Monitoring Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"ing strong adaptive and salted hashing functions with a work factor (delay factor). • Keys should be generated randomly with cryptography and stored i...\""
+  },
+  {
+    "question": "What is A10 (Server-Side Request Forgery) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A10 as Server-Side Request Forgery. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"A02:2021 – Cryptographic Failures 10 CWEs Mapped Max Incidence Rate Avg Incidence Rate Avg Weighted Exploit Avg Weighted Impact Total Occurrences Tota...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Broken Access Control (A01) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Broken Access Control involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Vulnerable and Outdated Components Prevention 23 • Remove unused dependencies, unnecessary features, components, files, and documentation. • Continuou...\""
+  },
+  {
+    "question": "Explain the security risks associated with A02: Cryptographic Failures.",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Cryptographic Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Questions ? 38...\""
+  },
+  {
+    "question": "What is A03 (Injection) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A03 as Injection. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"A01:2021 – Broken Access Control 7 Example Scenario: An application uses unverified data in a structured query language (SQL) call that is accessing a...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Insecure Design (A04) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Insecure Design involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Security Misconfiguration Prevention 20 • Development, QA, and production environments should all be configured identically, with different credential...\""
+  },
+  {
+    "question": "Explain the security risks associated with A05: Security Misconfiguration.",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Security Misconfiguration poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Injection Vulnerabilities 14 • User-supplied data is not validated, filtered, or sanitized by the application. • Dynamic queries or non-parameterized ...\""
+  },
+  {
+    "question": "What is A06 (Vulnerable and Outdated Components) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A06 as Vulnerable and Outdated Components. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Server-Side Request Forgery (SSRF) Prevention 33 • From network layer:  Segment remote resource access functionality in separate networks to reduce t...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Identification and Authentication Failures (A07) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Identification and Authentication Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"A04:2021 – Insecure Design 16 Example Scenario: A movie theater chain that allows group booking discounts requires a deposit for groups of more than f...\""
+  },
+  {
+    "question": "Explain the security risks associated with A08: Software and Data Integrity Failures.",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Software and Data Integrity Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"A08:2021 – Software and Data Integrity Failures 27 Example Scenario: The SolarWinds malicious update. Nation-states have been known to attack update m...\""
+  },
+  {
+    "question": "What is A09 (Security Logging and Monitoring Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A09 as Security Logging and Monitoring Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"The OWASP Top 10: 2021 6...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Server-Side Request Forgery (A10) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Server-Side Request Forgery involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Security Logging and Monitoring Failures Vulnerabilities 30 • Insufficient logging, detection, monitoring, and active response occurs any time:  Audi...\""
+  },
+  {
+    "question": "Explain the security risks associated with A01: Broken Access Control.",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Broken Access Control poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"A05:2021 – Security Misconfiguration 18 Example Scenario: The application server comes with sample applications not removed from the production server...\""
+  },
+  {
+    "question": "What is A02 (Cryptographic Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A02 as Cryptographic Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Broken Access Control Prevention 9 • Access control is only effective in trusted server-side code or server-less application programming interface (AP...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Injection (A03) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Injection involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"References • “Security Logging and Monitoring Failures,” OWASP. N.d. https://owasp.org/Top10/A09_2021- Security_Logging_and_Monitoring_Failures/ • “Se...\""
+  },
+  {
+    "question": "Explain the security risks associated with A04: Insecure Design.",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Insecure Design poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Contacts HHS.GOV/HC3 HC3@HHS.GOV 41...\""
+  },
+  {
+    "question": "What is A05 (Security Misconfiguration) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A05 as Security Misconfiguration. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"The OWASP Top 10 as a Standard • Also use: • OWASP Application Security Verification Standard 34 Use Case OWASP Top 10 2021 OWASP Application Security...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Vulnerable and Outdated Components (A06) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Vulnerable and Outdated Components involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"FAQ Upcoming Briefing • 8/18 – The Impact of Social Engineering in Healthcare Product Evaluations Recipients of this and other Healthcare Sector Cyber...\""
+  },
+  {
+    "question": "Explain the security risks associated with A07: Identification and Authentication Failures.",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Identification and Authentication Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Prevention of Identification and Authentication Failures 26 • Where possible, implement multi-factor authentication to prevent automated credential st...\""
+  },
+  {
+    "question": "What is A08 (Software and Data Integrity Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A08 as Software and Data Integrity Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"ffing, brute force, or other attacks are detected. • Use a server-side, secure, built-in session manager that generates a new random session ID with h...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Security Logging and Monitoring Failures (A09) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Security Logging and Monitoring Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"A10:2021 – Server-Side Request Forgery (SSRF) 32 Example Scenario: If a network architecture is unsegmented, attackers can use connection results or e...\""
+  },
+  {
+    "question": "Explain the security risks associated with A10: Server-Side Request Forgery.",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Server-Side Request Forgery poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"OWASP and the OWASP Top 10 3 Source: OWASP • Threat Brief: Web Application Attacks in Healthcare • Open Web Application Security Project (OWASP)  Non...\""
+  },
+  {
+    "question": "What is A01 (Broken Access Control) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A01 as Broken Access Control. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"A06:2021 – Vulnerable and Outdated Components 21 Example Scenario: Due to the volume of components used in development, a development team might not k...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Cryptographic Failures (A02) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Cryptographic Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Vulnerable and Outdated Components Vulnerabilities 22 • Versions of components you use (both client-side and server-side) are unknown. This includes c...\""
+  },
+  {
+    "question": "Explain the security risks associated with A03: Injection.",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Injection poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"A03:2021-Injection 13 Notable Common Weakness Enumerations (CWEs): • CWE-79: Cross-site Scripting • CWE-89: SQL Injection • CWE-73: External Control o...\""
+  },
+  {
+    "question": "What is A04 (Insecure Design) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A04 as Insecure Design. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"A09:2021 – Security Logging and Monitoring Failures 29 Example Scenario: A children's health plan provider's website operator couldn't detect a breach...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Security Misconfiguration (A05) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Security Misconfiguration involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Identification and Authentication Failures and Vulnerabilities 25 • Permits automated attacks such as credential stuffing, where the attacker has a li...\""
+  },
+  {
+    "question": "Explain the security risks associated with A06: Vulnerable and Outdated Components.",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Vulnerable and Outdated Components poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"The OWASP Top 10 August 4, 2022 TLP: WHITE, ID# 202208041300 1...\""
+  },
+  {
+    "question": "What is A07 (Identification and Authentication Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A07 as Identification and Authentication Failures. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"About HC3 The Health Sector Cybersecurity Coordination Center (HC3) works with private and public sector partners to improve cybersecurity throughout ...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Software and Data Integrity Failures (A08) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Software and Data Integrity Failures involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Injection Prevention 15 • The preferred option is to use a safe API, which avoids using the interpreter entirely, provides a parameterized interface, ...\""
+  },
+  {
+    "question": "Explain the security risks associated with A09: Security Logging and Monitoring Failures.",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Security Logging and Monitoring Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Agenda • OWASP and the OWASP Top 10 • Understanding the Top 10 • Data Factors • The OWASP Top 10: 2021 • The OWASP Top 10 as a Standard Non-Technical:...\""
+  },
+  {
+    "question": "What is A10 (Server-Side Request Forgery) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A10 as Server-Side Request Forgery. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"Secure Misconfiguration Vulnerabilities 19 • Missing appropriate security hardening across any part of the application stack or improperly configured ...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Broken Access Control (A01) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Broken Access Control involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"A07:2021 – Identification and Authentication Failures 24 Example Scenario: Most authentication attacks occur due to the continued use of passwords as ...\""
+  },
+  {
+    "question": "Explain the security risks associated with A02: Cryptographic Failures.",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Cryptographic Failures poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Insecure Design Prevention 17 • Establish and use a secure development lifecycle with AppSec professionals to help evaluate and design security and pr...\""
+  },
+  {
+    "question": "What is A03 (Injection) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "OWASP Top 10 classifies A03 as Injection. This vulnerability occurs when systems fail to enforce appropriate boundaries or configurations. Source guidance: \"References • “Broken Access Control,” OWASP. N.d. https://owasp.org/Top10/A01_2021-Broken_Access_Control/ • “Cryptographic Failures,” OWASP. N.d. http...\""
+  },
+  {
+    "question": "How do you prevent and mitigate Insecure Design (A04) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Mitigation for Insecure Design involves standard secure coding practices such as strict validation, proper credential management, or encryption. As stated in OWASP Top 10: \"Understanding the Top 10 4 • The 10 Categories  8 of 10 categories are contributed data  2 of the categories come from the Top 10 community survey •...\""
+  },
+  {
+    "question": "Explain the security risks associated with A05: Security Misconfiguration.",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf",
+    "expectedAnswer": "Security Misconfiguration poses significant security risks including data exposure, system compromise, or unauthorized takeover. Refer to the OWASP risk analysis: \"Data Factors 5 Data factors are listed for each of the Top 10 categories: • CWEs Mapped: The number of CWEs mapped to a category by the Top 10 team • ...\""
+  }
+]

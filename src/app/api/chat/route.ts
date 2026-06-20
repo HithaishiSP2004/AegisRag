@@ -16,7 +16,7 @@
 // failing the whole request.
 // =============================================================================
 
-import { randomUUID }        from 'crypto'
+// randomUUID import removed
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient }      from '@/lib/supabase/server'
 import { searchDocuments }   from '@/features/retrieval'
@@ -29,6 +29,7 @@ import { checkLimit, incrementUsage } from '@/features/trial/limits.server'
 import { executePromptWorkflow } from '@/features/prompts/manager'
 import { scanInputPrompt } from '@/features/guardrails/guardrailEngine'
 import { scanOutputResponse, cleanCitations } from '@/features/guardrails/outputGuardrailEngine'
+import { evaluateRetrievalQuery } from '@/features/guardrails/queryGuardrail'
 
 
 export const dynamic    = 'force-dynamic'
@@ -71,58 +72,79 @@ function parseCitations(answer: string, sources: SearchResult[]): CitationRef[] 
     }))
 }
 
-// ── ReAct Search Query Planner ────────────────────────────────────────────────
-async function reasonSearchQuery(question: string, orgId: string): Promise<string> {
-  const questionLower = question.toLowerCase().trim()
+// ── Classify query type for detailed telemetry (Sprint 6C) ────────────────────
+export function classifyQueryType(question: string): 'title_query' | 'fact_query' | 'compliance_query' | 'citation_query' {
+  const normalized = question.toLowerCase().trim();
+  if (/title|filename|document\s+name|pdf|what\s+is\s+this\s+document\s+called|what\s+is\s+the\s+name\s+of\s+the\s+document|what\s+document/i.test(normalized)) {
+    return 'title_query';
+  }
+  if (/cite|citation|source|reference|page|paragraph|where\s+does\s+it\s+say|according\s+to/i.test(normalized)) {
+    return 'citation_query';
+  }
+  if (/soc|nist|iso|hipaa|gdpr|pci|comply|compliance|framework|audit|regulation|policy|policies/i.test(normalized)) {
+    return 'compliance_query';
+  }
+  return 'fact_query';
+}
 
-  const safeguardKeywords = [
-    'title', 'author', 'authors', 'abstract', 'conclusion', 'summary',
-    'introduction', 'methodology', 'results', 'discussion', 'references',
-    'dataset', 'figure', 'table', 'section', 'chapter', 'paper', 'document', 'pdf'
-  ]
+// ── Secure ReAct Search Query Planner ────────────────────────────────────────
+//
+// Pipeline:
+//   1. evaluateRetrievalQuery() — security scan + intent classification
+//   2. If attackType is set → log and reject (return null to signal caller)
+//   3. If shouldPreserveQuery → return sanitized query as-is (e.g. ToC, abstract)
+//   4. Otherwise → let Gemini rewrite for vector/keyword optimization
+//
+async function reasonSearchQuery(
+  question: string,
+  orgId: string
+): Promise<{ query: string; blocked: boolean; attackType: string | null }> {
 
-  const safeguardPhrases = [
-    'summarize this paper', 'summarize this document', 'summarize this pdf',
-    'this paper', 'this document', 'this pdf'
-  ]
+  // ── Stage 1: Security evaluation + intent classification ──────────────────
+  const guard = evaluateRetrievalQuery(question)
 
-  const hasKeyword = safeguardKeywords.some(kw => {
-    const regex = new RegExp(`\\b${kw}s?\\b`, 'i')
-    return regex.test(questionLower)
-  })
-
-  const hasPhrase = safeguardPhrases.some(phrase => {
-    return questionLower.includes(phrase)
-  })
-
-  if (hasKeyword || hasPhrase) {
-    console.log(`[ReAct Query Planner] Preserved original query (document-specific query detected): "${question}"`)
-    return question.trim()
+  if (!guard.safe) {
+    console.warn(
+      `[QueryGuard] BLOCKED query — attackType=${guard.attackType} riskScore=${guard.riskScore} hash=${guard.queryHash}`
+    )
+    return { query: '', blocked: true, attackType: guard.attackType }
   }
 
+  // ── Stage 2: Preserve document-structural queries verbatim ────────────────
+  // ToC, metadata, and abstract queries must not be rewritten by Gemini
+  // because the rewriter strips critical structural terms.
+  if (guard.shouldPreserveQuery) {
+    console.log(
+      `[QueryGuard] Preserving query — intent=${guard.intent} hash=${guard.queryHash}`
+    )
+    return { query: guard.sanitizedQuery, blocked: false, attackType: null }
+  }
+
+  // ── Stage 3: Gemini-assisted query optimization (non-structural queries) ──
   if (!process.env.GEMINI_API_KEY) {
-    return question
+    return { query: guard.sanitizedQuery, blocked: false, attackType: null }
   }
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
     const res = await ai.models.generateContent({
-      model: AI_MODELS.GENERATION_PRIMARY,
+      model: AI_MODELS.GENERATION_FALLBACK_1,
       contents: `You are a search query planner. Reason about what information is required to answer the user question.
 Create a search query (maximum 6 words) optimized for vector and keyword search to retrieve the relevant compliance controls or evidence.
 Output ONLY the raw search query words, with no punctuation, tags, or extra text.
 
-USER QUESTION: ${question}
+USER QUESTION: ${guard.sanitizedQuery}
 SEARCH QUERY:`
     })
-    const query = res.text?.trim()
-    if (query) {
-      console.log(`[ReAct Query Planner] Optimized "${question}" -> "${query}"`)
-      return query
+    const optimized = res.text?.trim()
+    if (optimized && optimized.length > 0 && optimized.length < 200) {
+      console.log(`[QueryGuard] Optimized "${guard.sanitizedQuery}" -> "${optimized}" (intent=${guard.intent})`)
+      return { query: optimized, blocked: false, attackType: null }
     }
   } catch (err) {
-    console.error('[ReAct Query Planner] Failed to reason search query, using raw question:', err)
+    console.error('[QueryGuard] Gemini query optimization failed, using sanitized original:', err)
   }
-  return question
+
+  return { query: guard.sanitizedQuery, blocked: false, attackType: null }
 }
 
 // ── Auto-generate conversation title from first message ───────────────────────
@@ -131,6 +153,7 @@ function makeTitle(question: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  let logData = '=== RUNTIME FORENSIC TRACE: POST /api/chat ===\n'
   // ── 1. Auth ───────────────────────────────────────────────────────────────
   const supabase = await createClient()
   const { data: { user }, error: authErr } = await supabase.auth.getUser()
@@ -190,7 +213,12 @@ export async function POST(req: NextRequest) {
         .single()
 
       if (convErr || !newConv) {
-        conversationId = randomUUID()
+        console.error('[api/chat] conversation create failed', {
+          userId: user.id,
+          orgId: profile.org_id,
+          error: convErr
+        })
+        return NextResponse.json({ error: 'Failed to create conversation' }, { status: 500 })
       } else {
         conversationId = newConv.id
         isNew = true
@@ -289,9 +317,12 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (convErr || !newConv) {
-      console.error('[api/chat] conversation create error:', convErr)
-      // Fallback: proceed without DB persistence
-      conversationId = randomUUID()
+      console.error('[api/chat] conversation create failed', {
+        userId: user.id,
+        orgId: profile.org_id,
+        error: convErr
+      })
+      return NextResponse.json({ error: 'Failed to create conversation' }, { status: 500 })
     } else {
       conversationId = newConv.id
       isNew = true
@@ -323,18 +354,47 @@ export async function POST(req: NextRequest) {
     citations:       [],
   })
 
-  // ── 5. Retrieve context with ReAct intent reasoning ────────────────────────
+  // ── 5. Retrieve context with ReAct intent reasoning + security guard ────────
   console.log('[api/chat] user id   :', user.id)
   console.log('[api/chat] org_id    :', profile.org_id)
   console.log('[api/chat] question  :', question)
 
-  // Reason (Step 1 of ReAct): Determine optimal keyword/vector search query
-  const optimizedQuery = await reasonSearchQuery(question, profile.org_id)
+  // Stage 1 — Secure Query Guard: evaluate intent + detect attack patterns
+  const queryGuardResult = await reasonSearchQuery(question, profile.org_id)
 
-  // Action (Step 2 of ReAct): Retrieve context using optimized search query
+  if (queryGuardResult.blocked) {
+    const blockedMsg = `Query blocked by AegisRAG security engine. Reason: ${queryGuardResult.attackType ?? 'POLICY_VIOLATION'}`
+
+    // Persist to guardrail telemetry for audit trail
+    await (supabase as any).from('guardrail_telemetry').insert({
+      org_id: profile.org_id,
+      user_id: user.id,
+      guardrail_type: 'retrieval_query',
+      category: queryGuardResult.attackType ?? 'unknown',
+      severity: 'BLOCK',
+      risk_score: 100,
+      action_taken: 'blocked',
+      prompt_hash: null,
+      metadata: { attack_type: queryGuardResult.attackType, query_preview: question.slice(0, 80) }
+    })
+
+    await (supabase as any).from('messages').insert({
+      conversation_id: conversationId,
+      org_id:          profile.org_id,
+      role:            'assistant',
+      content:         blockedMsg,
+      citations:       [],
+      retrieval_mode:  'keyword',
+      reasoning_metadata: { guardrail_blocked: true, attack_type: queryGuardResult.attackType }
+    })
+
+    return NextResponse.json({ error: blockedMsg, guardrailBlocked: true }, { status: 400 })
+  }
+
+  // Stage 2 — Action: Retrieve context using security-vetted, intent-classified query
   const retrievalStart = Date.now()
   const sources = await searchDocuments(
-    optimizedQuery,
+    queryGuardResult.query,
     profile.org_id,
     {
       department:     body.filters?.department,
@@ -355,6 +415,7 @@ export async function POST(req: NextRequest) {
   const metrics = (sources as any).metrics
 
   const mode = sources[0]?.mode ?? 'keyword'
+
 
   // ── 5B. NO_EVIDENCE Bypass ─────────────────────────────────────────────────
   if (sources.length === 0) {
@@ -422,6 +483,15 @@ export async function POST(req: NextRequest) {
         reasoningMode: 'react'
       })
 
+      // TEMPORARY FORENSIC LOGGING
+      const fullContext = sources.map((s, i) => `[${i + 1}] (${s.document.originalName}, page ${s.metadata.page_number})\n${s.content}`).join('\n\n---\n\n')
+      logData += '==================================================\n'
+      logData += `1. Retrieved chunk count : ${sources.length}\n`
+      logData += `2. Context length        : ${fullContext.length}\n`
+      logData += `3. First 1000 chars of context:\n${fullContext.substring(0, 1000)}\n\n`
+      logData += `4. Final prompt sent to Gemini:\n${result.promptText}\n\n`
+      logData += `5. Raw Gemini response:\n${result.text}\n\n`
+
       // Parse reasoning summary & final answer
       let parsedAnswer = result.text
       try {
@@ -439,6 +509,8 @@ export async function POST(req: NextRequest) {
         console.warn('[chat] Failed to parse JSON response from Gemini, falling back to raw response:', err)
       }
       answer = parsedAnswer
+      logData += `6. Parsed answer:\n${parsedAnswer}\n\n`
+      logData += '==================================================\n'
     } catch (err) {
       console.error('[api/chat] generation error:', err)
       answer = `Retrieved ${sources.length} source${sources.length > 1 ? 's' : ''}, but generation failed. ${sources.map((_, i) => `[${i + 1}]`).join(' ')}`
@@ -461,7 +533,17 @@ export async function POST(req: NextRequest) {
   )
 
   // If output guardrail is BLOCK, rewrite answer and citations
+  const avgRetrievalScore = sources.length > 0
+    ? Math.round(sources.reduce((acc, s) => acc + (s.score || 0.85), 0) / sources.length * 100)
+    : 0
+
   if (outputGuard.severity === 'BLOCK') {
+    console.warn(`[governance] RESPONSE BLOCKED due to low groundedness or high hallucination risk.
+      Groundedness Score: ${outputGuard.groundedness_score}
+      Hallucination Score: ${outputGuard.risk_score}
+      Retrieval Confidence: ${avgRetrievalScore}%
+      Citation Count: ${outputGuard.metadata.total_citations}
+      Source Count: ${sources.length}`);
     answer = "Response blocked by AegisRAG AI Governance Engine due to low groundedness or high hallucination risk."
     citations = []
   }
@@ -479,13 +561,13 @@ export async function POST(req: NextRequest) {
     metadata: {
       ...outputGuard.metadata,
       groundedness_score: outputGuard.groundedness_score,
-      confidence: outputGuard.confidence
+      confidence: outputGuard.confidence,
+      retrieval_confidence: avgRetrievalScore,
+      source_count: sources.length,
+      retrievalMode: process.env.ENABLE_PARENT_CHILD_RETRIEVAL === 'true' ? 'parent_child' : mode,
+      queryType: classifyQueryType(question)
     }
   })
-
-  const avgRetrievalScore = sources.length > 0
-    ? Math.round(sources.reduce((acc, s) => acc + (s.score || 0.85), 0) / sources.length * 100)
-    : 0
 
   // Combine reasoning metadata and guardrail results
   const reasoningMetadataPayload = {
@@ -548,10 +630,26 @@ export async function POST(req: NextRequest) {
         vector_candidates:    metrics?.vector_candidates,
         reranked_candidates:   metrics?.reranked_candidates,
         context_tokens_saved: metrics?.context_tokens_saved,
+        reranker_enabled:     metrics?.reranker_enabled,
+        reranker_model:       metrics?.reranker_model,
+        pre_rerank_score:     metrics?.pre_rerank_score,
+        post_rerank_score:    metrics?.post_rerank_score,
+        reranker_lift:        metrics?.reranker_lift,
       }
     )
   } else {
     console.log('[api/chat] skipping retrieval evaluation (ENABLE_RETRIEVAL_EVALS !== true)')
+  }
+
+  logData += `7. Final responsePayload.answer:\n${responsePayload.answer}\n`
+  logData += '==================================================\n'
+
+  try {
+    const fs = require('fs')
+    const path = require('path')
+    fs.writeFileSync(path.resolve('forensic-trace.txt'), logData)
+  } catch (err) {
+    console.error('Failed to write forensic-trace.txt:', err)
   }
 
   return NextResponse.json(responsePayload, { status: 200 })

@@ -35,11 +35,30 @@ export async function keywordSearch(query: SearchQuery): Promise<SearchResult[]>
 
   if (!text.trim()) return []
 
+  // ── Pre-process text to make it lenient for keyword search ──
+  // 1. Remove appended controls details if any (everything after the first colon)
+  const cleanText = text.split(':')[0].trim()
+  
+  // 2. If it's a long sentence, convert it to OR joined keywords. If it is already short, leave it as is.
+  let queryText = cleanText
+  if (cleanText.split(/\s+/).length > 3) {
+    const words = cleanText
+      .replace(/[^\w\s-]/g, '')
+      .split(/\s+/)
+      .map(w => w.trim())
+      .filter(w => w.length > 2 && !['and', 'for', 'the', 'with', 'from', 'this', 'that', 'these', 'those'].includes(w.toLowerCase()))
+      .filter(w => !['table', 'contents', 'list', 'page', 'pages', 'show', 'give', 'what', 'where', 'how', 'does'].includes(w.toLowerCase()))
+    
+    if (words.length > 0) {
+      queryText = words.join(' OR ')
+    }
+  }
+
   const admin = createAdminClient()
 
   // ── Call the PG function ─────────────────────────────────────────────────
   const rpcPayload = {
-    query_text:            text,
+    query_text:            queryText,
     match_org_id:          orgId,
     match_user_id:         query.userId ?? null,
     match_user_role:       query.userRole ?? null,
@@ -56,8 +75,12 @@ export async function keywordSearch(query: SearchQuery): Promise<SearchResult[]>
   console.log('[retrieval/keyword] match_org_id :', orgId)
   console.log('[retrieval/keyword] RPC payload  :', JSON.stringify(rpcPayload))
 
+  const rpcName = process.env.ENABLE_PARENT_CHILD_RETRIEVAL === 'true'
+    ? 'search_chunks_keyword_parent_child'
+    : 'search_chunks_keyword'
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rpcResult = await (admin as any).rpc('search_chunks_keyword', rpcPayload) as {
+  const rpcResult = await (admin as any).rpc(rpcName, rpcPayload) as {
     data:  RawKeywordRow[] | null
     error: { message: string; code?: string; details?: string } | null
   }
@@ -104,8 +127,7 @@ export async function keywordSearch(query: SearchQuery): Promise<SearchResult[]>
     })
   }
 
-  // ── Map to stable SearchResult shape ─────────────────────────────────────
-  return rows.map((row): SearchResult => ({
+  const rawResults = rows.map((row): SearchResult => ({
     chunkId:    row.chunk_id,
     documentId: row.document_id,
     pageId:     row.page_id,
@@ -122,4 +144,27 @@ export async function keywordSearch(query: SearchQuery): Promise<SearchResult[]>
       department:   row.metadata.department ?? null,
     },
   }))
+
+  if (process.env.ENABLE_PARENT_CHILD_RETRIEVAL === 'true') {
+    const deduped = deduplicateByParent(rawResults)
+    console.log(`[retrieval/keyword] parent-child dedup: ${rawResults.length} children → ${deduped.length} parents`)
+    return deduped
+  }
+
+  return rawResults
+}
+
+function deduplicateByParent(results: SearchResult[]): SearchResult[] {
+  const best = new Map<string, SearchResult>()
+
+  for (const result of results) {
+    const existing = best.get(result.chunkId)
+
+    if (!existing || result.score > existing.score) {
+      best.set(result.chunkId, result)
+    }
+  }
+
+  return Array.from(best.values())
+    .sort((a, b) => b.score - a.score)
 }

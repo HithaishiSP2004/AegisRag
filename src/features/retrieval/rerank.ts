@@ -96,7 +96,7 @@ RESPONSE FORMAT: ["chunk_id_1", "chunk_id_2", ...]`
     
     // 3-second timeout race
     const rerankPromise = ai.models.generateContent({
-      model:    AI_MODELS.GENERATION_PRIMARY,
+      model:    AI_MODELS.GENERATION_FALLBACK_1,
       contents: prompt,
       config:   { responseMimeType: 'application/json' },
     })

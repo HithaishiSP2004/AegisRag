@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/server'
 import { processDocument } from '@/features/pipeline/processor'
+import { processDocumentParentChild, dryRunParentChildProcessor } from '@/features/pipeline/parentChildProcessor'
 
 export const maxDuration = 300  // 5-minute timeout (Vercel Pro / self-hosted)
 export const dynamic    = 'force-dynamic'
@@ -75,8 +76,56 @@ export async function POST(
   // ── 4. Run the pipeline (synchronous within the request lifecycle) ───────
   //    For production at scale this should be a background job (e.g. BullMQ
   //    or Supabase Edge Function queue), but for Sprint 1B this is sufficient.
-  console.log('[process-route] Triggering pipeline for doc:', documentId)
+  const requestedMode = _req.nextUrl.searchParams.get('chunking_mode')
+  const chunkingMode = requestedMode || 
+    (process.env.ENABLE_PARENT_CHILD_RETRIEVAL === 'true' ? 'parent_child' : 'legacy')
+  const isDryRun     = _req.nextUrl.searchParams.get('dry_run') === 'true'
 
+  console.log('[process-route] Triggering pipeline for doc:', documentId, '| requested_mode:', requestedMode ?? 'absent', '| selected_mode:', chunkingMode)
+
+  // ── Parent-child dry-run (Stage 3) — no DB writes ─────────────────────
+  if (chunkingMode === 'parent_child' && isDryRun) {
+    const dryResult = await dryRunParentChildProcessor(documentId)
+    return NextResponse.json({
+      dry_run:               true,
+      document_id:           documentId,
+      document_name:         dryResult.documentName,
+      page_count:            dryResult.pageCount,
+      projected_parents:     dryResult.projectedParents,
+      projected_children:    dryResult.projectedChildren,
+      projected_embeddings:  dryResult.projectedEmbeddings,
+      avg_children_per_parent: dryResult.avgChildrenPerParent,
+      avg_parent_chars:      dryResult.avgParentChars,
+      avg_child_chars:       dryResult.avgChildChars,
+      estimated_storage_delta_kb: dryResult.estimatedStorageDeltaKB,
+      success:               dryResult.success,
+      error:                 dryResult.error,
+    }, { status: dryResult.success ? 200 : 500 })
+  }
+
+  // ── Parent-child live processing ───────────────────────────────────────
+  if (chunkingMode === 'parent_child') {
+    const result = await processDocumentParentChild(documentId)
+    if (!result.success) {
+      return NextResponse.json({
+        success:      false,
+        error:        result.error,
+        document_id:  documentId,
+        chunking_mode: 'parent_child',
+      }, { status: 500 })
+    }
+    return NextResponse.json({
+      success:            true,
+      document_id:        documentId,
+      chunking_mode:      'parent_child',
+      pages_processed:    result.pagesProcessed,
+      parents_created:    result.parentsCreated,
+      children_created:   result.childrenCreated,
+      embeddings_created: result.embeddingsCreated,
+    }, { status: 200 })
+  }
+
+  // ── Legacy pipeline (default — unchanged) ─────────────────────────────
   const result = await processDocument(documentId)
 
   if (!result.success) {

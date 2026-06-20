@@ -45,6 +45,20 @@ export async function deletePageAction(
 ): Promise<{ success: boolean; error: string | null }> {
   try {
     const { user, profile } = await authenticateAdmin()
+
+    // Validate document ownership
+    const supabase = await createClient()
+    const { data: docExists, error: docExistsErr } = await supabase
+      .from('documents')
+      .select('id')
+      .eq('id', documentId)
+      .eq('org_id', profile.org_id)
+      .maybeSingle()
+
+    if (docExistsErr || !docExists) {
+      return { success: false, error: 'Document not found or inaccessible' }
+    }
+
     const admin = createAdminClient()
 
     // 1. Get the page record to confirm existence and fetch page ID
@@ -109,7 +123,22 @@ export async function reprocessPageAction(
   pageNumber: number
 ): Promise<{ success: boolean; error: string | null }> {
   try {
+    embeddingService.resetStats();
     const { user, profile } = await authenticateAdmin()
+
+    // Validate document ownership
+    const supabase = await createClient()
+    const { data: docExists, error: docExistsErr } = await supabase
+      .from('documents')
+      .select('id, original_name')
+      .eq('id', documentId)
+      .eq('org_id', profile.org_id)
+      .maybeSingle()
+
+    if (docExistsErr || !docExists) {
+      return { success: false, error: 'Document not found or inaccessible' }
+    }
+
     const admin = createAdminClient()
 
     // 1. Get the page text
@@ -156,6 +185,7 @@ export async function reprocessPageAction(
         org_id:               profile.org_id,
         chunk_in_page:        i,
         total_chunks_in_page: textChunks.length,
+        document_title:       docExists.original_name,
       }
     }))
 
@@ -170,9 +200,11 @@ export async function reprocessPageAction(
     }
 
     // 6. Generate embeddings
-    // Guard missing API key for Gemini provider — skip embeddings rather than crashing
-    if (embeddingService.getProviderName() === 'gemini' && !process.env.GEMINI_API_KEY) {
-      console.warn('[reprocessPageAction] GEMINI_API_KEY not set — page marked chunked, embeddings skipped')
+    // Validate configuration — skip embeddings rather than crashing
+    try {
+      embeddingService.validateConfiguration()
+    } catch (err: any) {
+      console.warn('[reprocessPageAction] Configuration validation failed — page marked chunked, embeddings skipped:', err.message)
       await admin
         .from('pages')
         .update({ status: 'chunked', updated_at: new Date().toISOString() })
@@ -215,9 +247,14 @@ export async function reprocessPageAction(
       newValue: { page_number: pageNumber, page_id: page.id }
     })
 
+    const stats = embeddingService.getStats();
+    console.log(`[embedding-cache]\nhits=${stats.hits}\nmisses=${stats.misses}\nhit_rate=${stats.hitRate}%`);
+
     revalidatePath('/dashboard/diagnostics')
     return { success: true, error: null }
   } catch (err: any) {
+    const stats = embeddingService.getStats();
+    console.log(`[embedding-cache]\nhits=${stats.hits}\nmisses=${stats.misses}\nhit_rate=${stats.hitRate}%`);
     return { success: false, error: err.message || 'An error occurred' }
   }
 }
@@ -231,7 +268,22 @@ export async function replacePageAction(
   newText: string
 ): Promise<{ success: boolean; error: string | null }> {
   try {
+    embeddingService.resetStats();
     const { user, profile } = await authenticateAdmin()
+
+    // Validate document ownership
+    const supabase = await createClient()
+    const { data: docExists, error: docExistsErr } = await supabase
+      .from('documents')
+      .select('id, original_name')
+      .eq('id', documentId)
+      .eq('org_id', profile.org_id)
+      .maybeSingle()
+
+    if (docExistsErr || !docExists) {
+      return { success: false, error: 'Document not found or inaccessible' }
+    }
+
     const admin = createAdminClient()
 
     // 1. Find or create the page record
@@ -320,6 +372,7 @@ export async function replacePageAction(
         org_id:               profile.org_id,
         chunk_in_page:        i,
         total_chunks_in_page: textChunks.length,
+        document_title:       docExists.original_name,
       }
     }))
 
@@ -334,9 +387,11 @@ export async function replacePageAction(
     }
 
     // 6. Generate embeddings
-    // Guard missing API key for Gemini provider — skip embeddings rather than crashing
-    if (embeddingService.getProviderName() === 'gemini' && !process.env.GEMINI_API_KEY) {
-      console.warn('[replacePageAction] GEMINI_API_KEY not set — page marked chunked, embeddings skipped')
+    // Validate configuration — skip embeddings rather than crashing
+    try {
+      embeddingService.validateConfiguration()
+    } catch (err: any) {
+      console.warn('[replacePageAction] Configuration validation failed — page marked chunked, embeddings skipped:', err.message)
       await admin
         .from('pages')
         .update({ status: 'chunked', updated_at: new Date().toISOString() })
@@ -379,9 +434,14 @@ export async function replacePageAction(
       newValue: { page_number: pageNumber, page_id: pageId, replaced: true }
     })
 
+    const stats = embeddingService.getStats();
+    console.log(`[embedding-cache]\nhits=${stats.hits}\nmisses=${stats.misses}\nhit_rate=${stats.hitRate}%`);
+
     revalidatePath('/dashboard/diagnostics')
     return { success: true, error: null }
   } catch (err: any) {
+    const stats = embeddingService.getStats();
+    console.log(`[embedding-cache]\nhits=${stats.hits}\nmisses=${stats.misses}\nhit_rate=${stats.hitRate}%`);
     return { success: false, error: err.message || 'An error occurred' }
   }
 }
@@ -391,7 +451,21 @@ export async function replacePageAction(
  */
 export async function fetchDocumentPagesAction(documentId: string) {
   try {
-    await authenticateAdmin()
+    const { user, profile } = await authenticateAdmin()
+
+    // Validate document ownership
+    const supabase = await createClient()
+    const { data: docExists, error: docExistsErr } = await supabase
+      .from('documents')
+      .select('id')
+      .eq('id', documentId)
+      .eq('org_id', profile.org_id)
+      .maybeSingle()
+
+    if (docExistsErr || !docExists) {
+      return { success: false, pages: [], error: 'Document not found or inaccessible' }
+    }
+
     const admin = createAdminClient()
     
     // Fetch pages for document
@@ -417,15 +491,39 @@ export async function fetchDocumentPagesAction(documentId: string) {
       chunkMap.set(c.page_id, (chunkMap.get(c.page_id) || 0) + 1)
     })
 
-    const result = pages?.map(p => ({
-      id: p.id,
-      page_number: p.page_number,
-      word_count: p.word_count,
-      status: p.status,
-      error_message: p.error_message,
-      raw_text: p.raw_text,
-      chunk_count: chunkMap.get(p.id) || 0
-    })) || []
+    // Fetch chunk embeddings for provenance data
+    const { data: chunkEmbeddings, error: embedErr } = await admin
+      .from('chunks')
+      .select('id, page_id, embeddings(provider, model_name, embedding_dimensions)')
+      .eq('document_id', documentId);
+
+    const pageEmbeddingMap = new Map<string, { provider: string; model_name: string; dimensions: number }>();
+    chunkEmbeddings?.forEach((c: any) => {
+      const emb = Array.isArray(c.embeddings) ? c.embeddings[0] : c.embeddings;
+      if (emb) {
+        pageEmbeddingMap.set(c.page_id, {
+          provider: emb.provider || 'gemini',
+          model_name: emb.model_name || 'gemini-embedding-2',
+          dimensions: emb.embedding_dimensions || 768
+        });
+      }
+    });
+
+    const result = pages?.map(p => {
+      const emb = pageEmbeddingMap.get(p.id);
+      return {
+        id: p.id,
+        page_number: p.page_number,
+        word_count: p.word_count,
+        status: p.status,
+        error_message: p.error_message,
+        raw_text: p.raw_text,
+        chunk_count: chunkMap.get(p.id) || 0,
+        embedding_provider: emb?.provider || null,
+        embedding_model: emb?.model_name || null,
+        embedding_dimensions: emb?.dimensions || null
+      };
+    }) || []
 
     return { success: true, pages: result, error: null }
   } catch (err: any) {

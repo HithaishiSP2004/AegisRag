@@ -28,16 +28,34 @@ function buildCorrelationData(data: any) {
   const comp      = data?.compliance ?? data?.stats
   const retrieval = data?.retrieval ?? data?.stats
 
-  const currentRisk     = riskScore?.risk_score ?? 29
+  const currentRisk     = riskScore?.risk_score ?? 0
   const currentCoverage = comp?.total_controls > 0
     ? Math.round((comp.controls_with_evidence / comp.total_controls) * 100)
-    : 69
-  const currentEvidence  = comp?.controls_with_evidence ?? 22
-  const currentBacklog   = comp?.reviews_pending ?? 3
-  const currentGroundedness  = Math.round((retrieval?.avg_groundedness ?? 0.88) * 100)
-  const currentHallucination = retrieval?.hallucination_rate_pct ?? 1.8
-  const currentReadiness     = 78  // derived from audit_readiness composite
-  const currentHealth        = 92
+    : 0
+  const currentEvidence  = comp?.controls_with_evidence ?? 0
+  const currentBacklog   = comp?.reviews_pending ?? 0
+  const currentGroundedness  = retrieval?.avg_groundedness
+    ? Math.round(retrieval.avg_groundedness <= 1 ? retrieval.avg_groundedness * 100 : retrieval.avg_groundedness)
+    : 0
+  const currentHallucination = retrieval?.hallucination_rate_pct ?? 0
+  
+  const currentReadiness = (() => {
+    const approvedReviews = comp?.reviews_approved ?? 0
+    const pendingReviews = comp?.reviews_pending ?? 0
+    const totalReviews = approvedReviews + pendingReviews
+    const reviewScore = totalReviews > 0 ? (approvedReviews / totalReviews) * 100 : 0
+    const approvedScore = reviewScore
+    const freshnessScore = 85 // default telemetry
+    const integrityScore = 90 // default telemetry
+    return Math.round(
+      (currentCoverage * 0.4) +
+      (approvedScore * 0.3) +
+      (freshnessScore * 0.2) +
+      (integrityScore * 0.1)
+    )
+  })()
+
+  const currentHealth = Math.round(currentCoverage * 1.1 > 100 ? 94 : currentCoverage * 1.1)
 
   // Build 5-point series anchored to current values, working backwards
   const N = 5
@@ -103,7 +121,7 @@ function pearsonR(xs: number[], ys: number[]): number | null {
 
 export function CorrelationAnalytics({ data, loading }: Props) {
   const [activeChart, setActiveChart] = useState<CorrelationType>('coverage_vs_risk')
-  const [containerRef, containerSize] = useResizeObserver()
+  const [containerRef, containerSize] = useResizeObserver(600, 280)
 
   if (loading) {
     return (
@@ -307,48 +325,43 @@ export function CorrelationAnalytics({ data, loading }: Props) {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          minWidth: 0
+          minWidth: 0,
+          overflow: 'hidden'
         }}>
-          {containerSize.width > 0 && containerSize.height > 0 ? (
-            <LineChart width={containerSize.width} height={containerSize.height} data={activeData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-              <XAxis 
-                dataKey="x" 
-                stroke={colors.textMuted} 
-                fontSize={10} 
-                label={{ value: activeMeta.xLabel, position: 'insideBottom', offset: -5, fill: colors.textMuted, fontSize: 10 }}
-              />
-              <YAxis 
-                stroke={colors.textMuted} 
-                fontSize={10}
-                label={{ value: activeMeta.yLabel, angle: -90, position: 'insideLeft', fill: colors.textMuted, fontSize: 10 }}
-              />
-              <Tooltip 
-                contentStyle={{
-                  background: 'rgba(9, 13, 22, 0.9)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: radius.md,
-                  fontSize: '11px',
-                  color: colors.textPrimary
-                }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="y" 
-                stroke={colors.indigoLight} 
-                strokeWidth={2}
-                dot={{ fill: colors.indigoLight, r: 4 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          ) : (
-            <div style={{ color: colors.textSecondary, fontSize: 11 }}>
-              Recalculating layout...
-            </div>
-          )}
+          <LineChart width={containerSize.width} height={containerSize.height} data={activeData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+            <XAxis 
+              dataKey="x" 
+              stroke={colors.textMuted} 
+              fontSize={10} 
+              label={{ value: activeMeta.xLabel, position: 'insideBottom', offset: -5, fill: colors.textMuted, fontSize: 10 }}
+            />
+            <YAxis 
+              stroke={colors.textMuted} 
+              fontSize={10}
+              label={{ value: activeMeta.yLabel, angle: -90, position: 'insideLeft', fill: colors.textMuted, fontSize: 10 }}
+            />
+            <Tooltip 
+              contentStyle={{
+                background: 'rgba(9, 13, 22, 0.9)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: radius.md,
+                fontSize: '11px',
+                color: colors.textPrimary
+              }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="y" 
+              stroke={colors.indigoLight} 
+              strokeWidth={2}
+              dot={{ fill: colors.indigoLight, r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
         </div>
 
-        {/* Right: Deloitte Executive narrative */}
+        {/* Right: Professional Executive narrative */}
         <div style={{
           display: 'flex',
           flexDirection: 'column',

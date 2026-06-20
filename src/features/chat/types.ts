@@ -31,6 +31,7 @@ export interface SearchFiltersUI {
   department?:  string
   docType?:     string
   sensitivity?: string
+  documentId?:  string
   dateFrom?:    string   // ISO date string
   dateTo?:      string   // ISO date string
 }

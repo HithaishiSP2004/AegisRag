@@ -12,4 +12,5 @@ export interface EmbeddingProvider {
   getModelName(): string;
   getDimensions(): number;
   getHealth(): Promise<ProviderHealth>;
+  validateConfiguration(): void;
 }

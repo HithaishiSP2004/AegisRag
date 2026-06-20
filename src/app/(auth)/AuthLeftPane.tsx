@@ -15,7 +15,7 @@ const nodes = [
 
 export default function AuthLeftPane() {
   const [activeStep, setActiveStep] = useState(0)
-  const [time, setTime] = useState('')
+  const [showInfo, setShowInfo] = useState(false)
 
   useEffect(() => {
     // Cycle through pipeline steps
@@ -25,110 +25,19 @@ export default function AuthLeftPane() {
     return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date()
-      setTime(now.toLocaleTimeString())
-    }
-    updateTime()
-    const tInterval = setInterval(updateTime, 1000)
-    return () => clearInterval(tInterval)
-  }, [])
-
   const activeNodes = activeStep === 5 ? [5, 6] : [activeStep]
-
-  const getGovernanceInsights = () => {
-    switch (activeStep) {
-      case 0:
-        return [
-          { label: 'Data Residency', value: 'US East (N. Virginia)', status: 'Verified', color: '#10B981' },
-          { label: 'Access Control', value: 'RBAC Enforced', status: 'Secure', color: '#10B981' },
-          { label: 'Ingestion Status', value: 'Evaluating context chunks', status: 'Pending', color: '#3B82F6' },
-        ]
-      case 1:
-        return [
-          { label: 'Retrieval Strategy', value: 'Hybrid Semantic + Vector', status: 'Active', color: '#10B981' },
-          { label: 'Context Windows', value: '4 Source Blocks Loaded', status: 'Grounded', color: '#10B981' },
-          { label: 'Safety Filters', value: 'Initializing policy scan', status: 'Running', color: '#F59E0B' },
-        ]
-      case 2:
-        return [
-          { label: 'Content Safety', value: '0 Violations Detected', status: 'Passed', color: '#10B981' },
-          { label: 'Prompt Injection Gate', value: 'Score: 0.99 (Safe)', status: 'Cleared', color: '#10B981' },
-          { label: 'Groundedness Index', value: 'Calculating citation match', status: 'Running', color: '#3B82F6' },
-        ]
-      case 3:
-        return [
-          { label: 'Hallucination Check', value: 'Score: 0.02 (Negligible)', status: 'Passed', color: '#10B981' },
-          { label: 'PII Scrubbing', value: '0 Sensitive Records Found', status: 'Clean', color: '#10B981' },
-          { label: 'Compliance Audit', value: 'Validating HIPAA/GDPR constraints', status: 'Running', color: '#8B5CF6' },
-        ]
-      case 4:
-        return [
-          { label: 'Compliance Clearance', value: '100% Alignment verified', status: 'Passed', color: '#10B981' },
-          { label: 'Data Sovereign Log', value: 'Queueing to secure ledger', status: 'Active', color: '#3B82F6' },
-          { label: 'Audit Signature', value: 'Generating HMAC sha256', status: 'Running', color: '#F59E0B' },
-        ]
-      case 5:
-        return [
-          { label: 'Cryptographic Ledger', value: 'Block #89104 committed', status: 'Verified', color: '#10B981' },
-          { label: 'PII & Safety Shield', value: 'Filters active (100% Safe)', status: 'Enforced', color: '#10B981' },
-          { label: 'Approved Output', value: 'Signed token generated', status: 'Ready', color: '#10B981' },
-        ]
-      default:
-        return []
-    }
-  }
-
-  const getConsoleLogs = () => {
-    const ts = time || '14:14:23'
-    switch (activeStep) {
-      case 0:
-        return [
-          `[${ts}] INCOMING: Query request initiated`,
-          `[${ts}] PIPELINE: Resolving knowledge vectors...`
-        ]
-      case 1:
-        return [
-          `[${ts}] PIPELINE: Knowledge retrieved (score: 0.96)`,
-          `[${ts}] SECURITY: Initiating safety gate evaluation...`
-        ]
-      case 2:
-        return [
-          `[${ts}] SECURITY: Safety policies passed (0 triggers)`,
-          `[${ts}] ATTEST: Running groundedness analysis...`
-        ]
-      case 3:
-        return [
-          `[${ts}] ATTEST: Groundedness verified (score: 0.98)`,
-          `[${ts}] COMPLIANCE: Auditing HIPAA / GDPR rules...`
-        ]
-      case 4:
-        return [
-          `[${ts}] COMPLIANCE: 100% compliance score verified`,
-          `[${ts}] LEDGER: Executing cryptographic audit write...`
-        ]
-      case 5:
-        return [
-          `[${ts}] LEDGER: Audit write committed (block=89104)`,
-          `[${ts}] PIPELINE: Safe response signed & authorized!`
-        ]
-      default:
-        return []
-    }
-  }
 
   return (
     <div
       className="left-pane-container"
       style={{
         flex: 1,
-        background: '#030712',
+        background: '#020617',
         borderRight: '1px solid rgba(255, 255, 255, 0.03)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: '32px 36px',
+        padding: '32px 36px 32px 84px',
         position: 'relative',
         overflow: 'hidden',
         width: '100%',
@@ -142,227 +51,280 @@ export default function AuthLeftPane() {
       <div className="glow-spot" style={{ bottom: '-10%', left: '-10%' }} />
       <div className="glow-spot" style={{ top: '10%', right: '-10%', width: '300px', height: '300px' }} />
 
-      {/* Brand & Header */}
-      <div className="left-pane-brand-wrapper" style={{ position: 'relative', zIndex: 2 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }} className="left-pane-brand-logo">
-          <div
-            style={{
-              width: '30px',
-              height: '30px',
-              borderRadius: '6px',
-              background: '#0F172A',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Icon icon="solar:shield-check-bold" width={16} style={{ color: '#3B82F6' }} />
-          </div>
-          <div>
-            <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#F8FAFC', margin: 0, letterSpacing: '-0.01em' }}>
-              Governance Intelligence Network
-            </h2>
-            <span style={{ fontSize: '0.58rem', color: '#475569', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              AegisRAG Node Console
-            </span>
-          </div>
-        </div>
-
-        <h1
-          className="left-pane-title"
-          style={{
-            fontSize: '1.65rem',
-            fontWeight: 700,
-            color: '#F8FAFC',
-            lineHeight: '1.25',
-            letterSpacing: '-0.03em',
-            margin: '0 0 10px',
-            maxWidth: '520px',
-          }}
-        >
-          Trust Every Decision.
-        </h1>
-        <p className="left-pane-description" style={{ color: '#64748B', fontSize: '0.82rem', lineHeight: '1.5', margin: '0 0 16px', maxWidth: '520px' }}>
-          AegisRAG is the enterprise operating system for AI Governance, Compliance, Security and Trust. Secure vector contexts, enforce corporate boundaries, and log cryptographic audit records instantly.
-        </p>
+      {/* Left Vertical Brand Column */}
+      <div style={{
+        position: 'absolute',
+        left: '28px',
+        top: '32px',
+        bottom: '32px',
+        width: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        pointerEvents: 'none',
+        userSelect: 'none',
+        zIndex: 2,
+      }}>
+        <span style={{ fontSize: '0.52rem', fontWeight: 800, color: '#475569', letterSpacing: '0.35em', writingMode: 'vertical-rl', transform: 'rotate(180deg)', textTransform: 'uppercase' }}>
+          SECURE
+        </span>
+        <div style={{ flex: 1, width: '1px', background: 'linear-gradient(to bottom, rgba(71,85,105,0.2) 30%, rgba(255,255,255,0.02) 100%)', margin: '16px 0' }} />
+        <span style={{
+          fontSize: '2rem',
+          fontWeight: 900,
+          color: 'rgba(255, 255, 255, 0.018)',
+          letterSpacing: '0.12em',
+          writingMode: 'vertical-rl',
+          transform: 'rotate(180deg)',
+          fontFamily: 'var(--font-inter), sans-serif',
+          textTransform: 'uppercase',
+          background: 'linear-gradient(to bottom, rgba(255,255,255,0.02), rgba(255,255,255,0))',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          marginBottom: '12px',
+        }}>
+          AEGIS
+        </span>
       </div>
 
-      {/* Main Grid: SVG Pipeline Left, Telemetry & Status Right */}
-      <div className="left-pane-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: '24px', position: 'relative', zIndex: 2, margin: '12px 0', width: '100%' }}>
-
-        {/* Left Column: Animated SVG Pipeline */}
-        <div className="left-pane-svg-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.01)', border: '1px solid rgba(255, 255, 255, 0.03)', borderRadius: '12px', padding: '16px 12px', height: '360px' }}>
-          <svg viewBox="0 0 320 365" width="100%" height="100%" style={{ maxHeight: '340px' }}>
-            <defs>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-            </defs>
-
-            {/* Connection Line */}
-            <path d="M 30 25 L 30 337" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="2" />
-            <path d="M 30 25 L 30 337" stroke="rgba(59, 130, 246, 0.15)" strokeWidth="1" strokeDasharray="4 4" />
-
-            {/* Glowing flowing data packets */}
-            {activeStep < 5 && (
-              <circle r="4" fill="#3B82F6" filter="url(#glow)">
-                <animateMotion
-                  path={`M 30 ${25 + activeStep * 52} L 30 ${25 + (activeStep + 1) * 52}`}
-                  dur="1.8s"
-                  repeatCount="indefinite"
-                />
-              </circle>
-            )}
-
-            {activeStep === 5 && (
-              <circle r="4" fill="#10B981" filter="url(#glow)">
-                <animateMotion
-                  path="M 30 25 L 30 337"
-                  dur="3s"
-                  repeatCount="indefinite"
-                />
-              </circle>
-            )}
-
-            {/* Render Nodes */}
-            {nodes.map((node, index) => {
-              const Y = 25 + index * 52
-              const isActive = activeNodes.includes(index)
-
-              return (
-                <g key={node.id} style={{ cursor: 'pointer' }}>
-                  <title>{node.label}</title>
-                  {/* Pulsing Back Glow Circle */}
-                  {isActive && (
-                    <circle
-                      cx={30}
-                      cy={Y}
-                      r={20}
-                      fill="none"
-                      stroke={node.color}
-                      strokeWidth="1.5"
-                      opacity="0.6"
-                      style={{
-                        animation: 'pulse-ring 1.8s cubic-bezier(0.215, 0.610, 0.355, 1) infinite',
-                        transformOrigin: `30px ${Y}px`,
-                      }}
-                    />
-                  )}
-
-                  {/* Node Icon Circle */}
-                  <circle
-                    cx={30}
-                    cy={Y}
-                    r={14}
-                    fill={isActive ? 'rgba(59, 130, 246, 0.12)' : '#070C18'}
-                    stroke={isActive ? node.color : 'rgba(255, 255, 255, 0.06)'}
-                    strokeWidth={isActive ? '1.5' : '1'}
-                    style={{ transition: 'all 0.3s ease' }}
-                  />
-
-                  {/* Icon Inside Circle */}
-                  <foreignObject x={18} y={Y - 12} width={24} height={24}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '100%',
-                      height: '100%',
-                      color: isActive ? node.color : '#475569',
-                      transition: 'color 0.3s ease',
-                    }}>
-                      <Icon icon={node.icon} width={13} />
-                    </div>
-                  </foreignObject>
-
-                  {/* Text Label */}
-                  <text
-                    x={56}
-                    y={Y + 4}
-                    fill={isActive ? '#F8FAFC' : '#475569'}
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: isActive ? 600 : 500,
-                      transition: 'fill 0.3s ease',
-                      fontFamily: 'var(--font-inter), sans-serif',
-                    }}
-                  >
-                    {node.label}
-                  </text>
-                </g>
-              )
-            })}
-          </svg>
+      {/* Brand & Header */}
+      <div className="left-pane-brand-wrapper" style={{ position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }} className="left-pane-brand-logo">
+          <img
+            src="/logo-icon.png"
+            alt="AegisRAG Logo Icon"
+            style={{ width: '22px', height: '22px', objectFit: 'contain' }}
+            draggable={false}
+          />
+          <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', textTransform: 'uppercase', fontFamily: 'var(--font-inter), sans-serif' }}>
+            AEGISRAG
+          </span>
+          <span style={{
+            fontSize: '0.52rem',
+            color: '#6366F1',
+            borderColor: 'rgba(99, 102, 241, 0.4)',
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderRadius: '4px',
+            padding: '1px 6px',
+            fontWeight: 700,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            marginLeft: '4px',
+          }}>
+            ENTERPRISE
+          </span>
         </div>
 
-        {/* Right Column: Active Governance Insights & Live Audit Feed */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'center' }} className="left-pane-right-col">
+        {/* Premium Meets-Its-Aegis Typography Layout with Info Circle */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', margin: '20px 0 12px', width: '100%' }} className="header-split-row">
+          <span className="hero-meets-text">
+            AI governance meets its
+          </span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px' }}>
+            <h1 className="hero-aegis-text">
+              Aegis<span className="hero-aegis-dot">.</span>
+            </h1>
 
-          {/* Active Governance Insights */}
-          <div className="left-pane-insights" style={{
-            background: 'rgba(10, 15, 30, 0.4)',
-            border: '1px solid rgba(255, 255, 255, 0.05)',
-            borderRadius: '10px',
-            padding: '16px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-          }}>
-            <div className="left-pane-insights-header" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <Icon icon="solar:shield-up-bold" style={{ color: '#3B82F6' }} width={14} />
+            {/* Simple elegant Info Trigger Button */}
+            <button
+              onClick={() => setShowInfo(true)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '50%',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#64748B',
+                transition: 'all 0.2s ease',
+                outline: 'none',
+                transform: 'translateY(-10px)',
+              }}
+              className="info-trigger-btn"
+              title="About AegisRAG"
+            >
+              <Icon icon="solar:info-circle-bold" width={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Grid: SVG Pipeline & Security Specs */}
+      <div className="left-pane-grid-horizontal" style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'relative', zIndex: 2, margin: '24px 0', width: '100%' }}>
+        
+        {/* Connection pipeline wrapper */}
+        <div style={{
+          background: 'rgba(10, 15, 30, 0.4)',
+          border: '1px solid rgba(255, 255, 255, 0.05)',
+          borderRadius: '12px',
+          padding: '24px 20px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          width: '100%',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.03)', paddingBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span className="pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
               <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#3B82F6', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                Active Governance Insights
+                Governance Pipeline Monitor
               </span>
             </div>
-
-            <div className="left-pane-insights-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {getGovernanceInsights().map((insight) => (
-                <div key={insight.label} className="left-pane-insights-item" style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
-                  borderBottom: '1px solid rgba(255,255,255,0.02)',
-                  paddingBottom: '8px',
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 500 }}>{insight.label}</span>
-                    <span style={{ fontSize: '0.62rem', fontWeight: 700, color: insight.color, background: `${insight.color}10`, padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      {insight.status}
-                    </span>
-                  </div>
-                  <span style={{ fontSize: '0.8rem', color: '#E2E8F0', fontWeight: 600 }}>
-                    {insight.value}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <span style={{ fontSize: '0.65rem', color: '#475569', fontFamily: 'monospace' }}>
+              NODE_STATE: ACTIVE (CYCLES/SEC: 0.35)
+            </span>
           </div>
 
-          {/* Terminal Console Log (Live Audit Feed) */}
-          <div className="left-pane-terminal-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#475569', letterSpacing: '0.08em' }}>LIVE AUDIT FEED</span>
-            <div className="left-pane-terminal" style={{
-              background: '#040811',
-              border: '1px solid rgba(255, 255, 255, 0.04)',
-              borderRadius: '6px',
-              padding: '12px',
-              fontFamily: 'monospace',
-              fontSize: '0.68rem',
-              lineHeight: '1.5',
-              color: '#64748B',
-              minHeight: '62px',
+          <div className="left-pane-svg-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <svg viewBox="0 0 740 100" width="100%" height="100%" style={{ maxHeight: '100px' }}>
+              <defs>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              {/* Connection Line */}
+              <path d="M 40 40 L 700 40" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="2" />
+              <path d="M 40 40 L 700 40" stroke="rgba(59, 130, 246, 0.15)" strokeWidth="1" strokeDasharray="4 4" />
+
+              {/* Glowing flowing data packet */}
+              {activeStep < 6 && (
+                <circle r="4" fill="#3B82F6" filter="url(#glow)">
+                  <animateMotion
+                    path={`M ${40 + activeStep * 110} 40 L ${40 + (activeStep === 5 ? 5 : activeStep + 1) * 110} 40`}
+                    dur="2.8s"
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              )}
+
+              {/* Render Nodes */}
+              {nodes.map((node, index) => {
+                const X = 40 + index * 110
+                const isActive = activeNodes.includes(index)
+                const words = node.label.split(' ')
+
+                return (
+                  <g key={node.id} style={{ cursor: 'pointer' }}>
+                    <title>{node.label}</title>
+                    {/* Pulsing Back Glow Circle */}
+                    {isActive && (
+                      <circle
+                        cx={X}
+                        cy={40}
+                        r={18}
+                        fill="none"
+                        stroke={node.color}
+                        strokeWidth="1.5"
+                        opacity="0.6"
+                        style={{
+                          animation: 'pulse-ring 1.8s cubic-bezier(0.215, 0.610, 0.355, 1) infinite',
+                          transformOrigin: `${X}px 40px`,
+                        }}
+                      />
+                    )}
+
+                    {/* Node Icon Circle */}
+                    <circle
+                      cx={X}
+                      cy={40}
+                      r={12}
+                      fill={isActive ? 'rgba(59, 130, 246, 0.12)' : '#070C18'}
+                      stroke={isActive ? node.color : 'rgba(255, 255, 255, 0.06)'}
+                      strokeWidth={isActive ? '1.5' : '1'}
+                      style={{ transition: 'all 0.3s ease' }}
+                    />
+
+                    {/* Icon Inside Circle */}
+                    <foreignObject x={X - 8} y={40 - 8} width={16} height={16}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        height: '100%',
+                        color: isActive ? node.color : '#475569',
+                        transition: 'color 0.3s ease',
+                      }}>
+                        <Icon icon={node.icon} width={11} />
+                      </div>
+                    </foreignObject>
+
+                    {/* Text Labels */}
+                    <text
+                      x={X}
+                      y={68}
+                      fill={isActive ? '#F8FAFC' : '#475569'}
+                      textAnchor="middle"
+                      style={{
+                        fontSize: '9px',
+                        fontWeight: isActive ? 600 : 500,
+                        transition: 'fill 0.3s ease',
+                        fontFamily: 'var(--font-inter), sans-serif',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {words[0]}
+                    </text>
+                    <text
+                      x={X}
+                      y={79}
+                      fill={isActive ? '#F8FAFC' : '#475569'}
+                      textAnchor="middle"
+                      style={{
+                        fontSize: '9px',
+                        fontWeight: isActive ? 600 : 500,
+                        transition: 'fill 0.3s ease',
+                        fontFamily: 'var(--font-inter), sans-serif',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {words[1]}
+                    </text>
+                  </g>
+                )
+              })}
+            </svg>
+          </div>
+        </div>
+
+        {/* Security attestation & specifications section */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '16px',
+          width: '100%',
+        }} className="specifications-grid">
+          {[
+            { label: 'Cryptographic Engine', value: 'AES-GCM-256', sub: 'Audit Ledger' },
+            { label: 'Policy Enforcement', value: 'Zero-Trust Broker', sub: 'Policy Validation' },
+            { label: 'Hardware Attestation', value: 'Secure Enclave', sub: 'TPM 2.0 Verified' },
+            { label: 'Compliance Mapping', value: 'HIPAA & GDPR', sub: 'Automated Controls' },
+          ].map((spec) => (
+            <div key={spec.label} style={{
+              background: 'rgba(255, 255, 255, 0.01)',
+              border: '1px solid rgba(255, 255, 255, 0.03)',
+              borderRadius: '8px',
+              padding: '12px 16px',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
+              gap: '4px',
             }}>
-              {getConsoleLogs().map((log, idx) => (
-                <div key={idx} style={{ color: idx === 1 ? '#3B82F6' : '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {log}
-                </div>
-              ))}
+              <span style={{ fontSize: '0.62rem', color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {spec.label}
+              </span>
+              <span style={{ fontSize: '0.85rem', color: '#E2E8F0', fontWeight: 700 }}>
+                {spec.value}
+              </span>
+              <span style={{ fontSize: '0.58rem', color: '#64748B', fontFamily: 'monospace' }}>
+                {spec.sub}
+              </span>
             </div>
-          </div>
-
+          ))}
         </div>
 
       </div>
@@ -376,6 +338,74 @@ export default function AuthLeftPane() {
           SECURE CONNECTION
         </span>
       </div>
+
+      {/* Description Overlay Modal */}
+      {showInfo && (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(2, 6, 23, 0.82)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 100,
+          padding: '24px',
+          animation: 'fadeIn 0.25s ease-out forwards',
+        }}>
+          <div style={{
+            background: 'rgba(11, 17, 32, 0.95)',
+            border: '1px solid rgba(59, 130, 246, 0.25)',
+            borderRadius: '16px',
+            padding: '32px 28px',
+            maxWidth: '460px',
+            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.1)',
+            position: 'relative',
+            animation: 'scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+          }}>
+            {/* Close Button */}
+            <button
+              onClick={() => setShowInfo(false)}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                background: 'none',
+                border: 'none',
+                color: '#64748B',
+                cursor: 'pointer',
+                padding: '4px',
+                transition: 'color 0.2s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#64748B')}
+            >
+              <Icon icon="solar:close-circle-bold" width={20} />
+            </button>
+
+            {/* Modal Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <img
+                src="/logo-icon.png"
+                alt="AegisRAG Logo"
+                style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+              />
+              <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+                AEGISRAG
+              </span>
+            </div>
+
+            {/* Modal Content */}
+            <p style={{ color: '#E2E8F0', fontSize: '0.9rem', lineHeight: '1.6', margin: '0 0 16px', fontWeight: 500 }}>
+              AegisRAG is the enterprise operating system for AI Governance, Compliance, Security and Trust.
+            </p>
+            <p style={{ color: '#94A3B8', fontSize: '0.82rem', lineHeight: '1.5', margin: 0 }}>
+              Secure vector contexts, enforce corporate boundaries, and log cryptographic audit records instantly. Built for mission-critical deployments where security is non-negotiable.
+            </p>
+          </div>
+        </div>
+      )}
 
       <style jsx global>{`
         .grid-bg {
@@ -406,8 +436,54 @@ export default function AuthLeftPane() {
             opacity: 0;
           }
         }
+        @keyframes pulse-glow {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 1; }
+        }
+        .pulse-dot {
+          animation: pulse-glow 1.5s ease-in-out infinite;
+        }
         
-        /* Height-based responsiveness for standard monitors with low heights (e.g. 1280x600, laptop screens) */
+        .info-trigger-btn:hover {
+          background: rgba(99, 102, 241, 0.15) !important;
+          border-color: rgba(99, 102, 241, 0.4) !important;
+          color: #FFFFFF !important;
+          box-shadow: 0 0 12px rgba(99, 102, 241, 0.3) !important;
+        }
+
+        .hero-meets-text {
+          font-size: 2.1rem;
+          font-weight: 300;
+          color: #94A3B8;
+          letter-spacing: -0.04em;
+          line-height: 1.1;
+        }
+        .hero-aegis-text {
+          font-size: 5.2rem;
+          font-weight: 900;
+          color: #FFFFFF;
+          letter-spacing: -0.05em;
+          line-height: 0.95;
+          margin: 4px 0 0 0;
+          display: flex;
+          align-items: baseline;
+        }
+        .hero-aegis-dot {
+          color: #6366F1;
+          text-shadow: 0 0 16px rgba(99, 102, 241, 0.85);
+          font-size: 5.2rem;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scaleUp {
+          from { transform: scale(0.95); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Height-based responsiveness for standard monitors with low heights */
         @media (max-height: 720px) {
           .left-pane-container {
             padding: 16px 20px !important;
@@ -415,45 +491,21 @@ export default function AuthLeftPane() {
           .left-pane-brand-logo {
             margin-bottom: 8px !important;
           }
-          .left-pane-title {
-            font-size: 1.35rem !important;
-            margin-bottom: 6px !important;
+          .hero-meets-text {
+            font-size: 1.4rem !important;
           }
-          .left-pane-description {
-            font-size: 0.72rem !important;
-            line-height: 1.4 !important;
-            margin-bottom: 10px !important;
+          .hero-aegis-text {
+            font-size: 3.6rem !important;
           }
-          .left-pane-grid {
+          .hero-aegis-dot {
+            font-size: 3.6rem !important;
+          }
+          .left-pane-grid-horizontal {
             margin: 6px 0 !important;
             gap: 12px !important;
           }
-          .left-pane-svg-container {
-            height: 240px !important;
-            padding: 8px !important;
-          }
-          .left-pane-right-col {
+          .specifications-grid {
             gap: 10px !important;
-          }
-          .left-pane-insights {
-            padding: 10px 12px !important;
-          }
-          .left-pane-insights-header {
-            margin-bottom: 8px !important;
-          }
-          .left-pane-insights-list {
-            gap: 6px !important;
-          }
-          .left-pane-insights-item {
-            padding-bottom: 4px !important;
-            gap: 2px !important;
-          }
-          .left-pane-terminal-wrapper {
-            gap: 4px !important;
-          }
-          .left-pane-terminal {
-            padding: 8px 10px !important;
-            min-height: 48px !important;
           }
           .left-pane-footer {
             padding-top: 10px !important;
@@ -461,12 +513,9 @@ export default function AuthLeftPane() {
         }
 
         @media (max-width: 1200px) {
-          .left-pane-grid {
-            grid-template-columns: 1fr !important;
-            gap: 24px !important;
-          }
-          .left-pane-svg-container {
-            height: 380px !important;
+          .specifications-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
           }
         }
       `}</style>

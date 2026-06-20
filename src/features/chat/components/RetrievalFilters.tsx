@@ -19,6 +19,7 @@ export interface RetrievalFiltersState {
   department?:  string
   docType?:     string
   sensitivity?: string
+  documentId?:  string
 }
 
 interface Props {
@@ -71,9 +72,11 @@ const SENSITIVITY_COLOR: Record<string, string> = {
 // ── Chip strip (read-only, shows active filters inline) ───────────────────────
 export function ActiveFilterChips({
   filters,
+  documents = [],
   onClear,
 }: {
   filters:  RetrievalFiltersState
+  documents?: { id: string; originalName: string }[]
   onClear:  (field: keyof RetrievalFiltersState) => void
 }) {
   const chips: { key: keyof RetrievalFiltersState; label: string; color?: string }[] = []
@@ -88,6 +91,14 @@ export function ActiveFilterChips({
       label: SENSITIVITIES.find(([v]) => v === filters.sensitivity)?.[1] ?? filters.sensitivity,
       color: SENSITIVITY_COLOR[filters.sensitivity],
     })
+  if (filters.documentId) {
+    const doc = documents.find((d) => d.id === filters.documentId)
+    chips.push({
+      key:   'documentId',
+      label: doc ? doc.originalName : 'Selected PDF',
+      color: '#06B6D4',
+    })
+  }
 
   if (chips.length === 0) return null
 
@@ -257,15 +268,17 @@ export function RetrievalScopePanel({
   onClose,
   filters,
   onChange,
+  documents = [],
 }: {
   isOpen: boolean
   onClose: () => void
   filters: RetrievalFiltersState
   onChange: (f: RetrievalFiltersState) => void
+  documents?: { id: string; originalName: string }[]
 }) {
   if (!isOpen) return null
 
-  const activeCount = [filters.department, filters.docType, filters.sensitivity].filter(Boolean).length
+  const activeCount = [filters.department, filters.docType, filters.sensitivity, filters.documentId].filter(Boolean).length
 
   function set(key: keyof RetrievalFiltersState, value: string) {
     onChange({ ...filters, [key]: value || undefined })
@@ -429,6 +442,35 @@ export function RetrievalScopePanel({
             {SENSITIVITIES.map(([v, l]) => (
               <option key={v} value={v} style={{ background:'#0D1117', color: v ? (SENSITIVITY_COLOR[v] ?? 'inherit') : 'inherit' }}>
                 {l}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Document Scoping Filter */}
+        <div>
+          <label style={{
+            display:       'block',
+            color:         colors.textMuted,
+            fontSize:      font.sizes.xs,
+            fontWeight:    600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            marginBottom:  '8px',
+            fontFamily:    font.mono,
+          }}>
+            Target Document (PDF)
+          </label>
+          <select
+            id="scope-filter-document"
+            value={filters.documentId ?? ''}
+            onChange={(e) => set('documentId', e.target.value)}
+            style={scopeSelectStyle(!!filters.documentId)}
+          >
+            <option value="" style={{ background:'#0D1117' }}>All Documents</option>
+            {documents.map((doc) => (
+              <option key={doc.id} value={doc.id} style={{ background:'#0D1117' }}>
+                {doc.originalName}
               </option>
             ))}
           </select>

@@ -221,7 +221,7 @@ export function SecurityScorecard({ data, loading }: Props) {
           </div>
         </div>
 
-        {/* Right: Deloitte/KPMG Advisory Narrative */}
+        {/* Right: Security Advisory Narrative */}
         <div style={{
           background: '#0B0F19', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: radius.xl,
           padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '16px'
@@ -229,7 +229,7 @@ export function SecurityScorecard({ data, loading }: Props) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h4 style={{ color: colors.textPrimary, fontSize: '13px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Sparkles size={14} style={{ color: '#F43F5E' }} />
-              KPMG Security Advisory Narrative
+              Cyber Security Advisory Narrative
             </h4>
           </div>
 

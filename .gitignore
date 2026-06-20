@@ -54,14 +54,22 @@ next-env.d.ts
 # ─── LOCAL DEV / DEBUG SCRIPTS (never commit) ────────────────────────────────
 # One-off debug & scratch scripts at repo root
 check-all-profiles.js
+check-auth-users.js
 check-profile.js
 check-tables.js
+check-docs.ts
 db-audit.js
 debug-risk-query.js
 scratch-counts.js
 scratch-test.js
 seed-dashboard.js
 test-e2e-api.js
+test-api-chat.ts
+trigger_process.ts
+search-dollar-chunks.ts
+
+# forensic / trace logs — local only
+forensic-trace.txt
 
 # scratch / temporary work directory
 /scratch/

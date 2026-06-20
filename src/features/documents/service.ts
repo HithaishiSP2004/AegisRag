@@ -122,6 +122,35 @@ export async function generateUploadUrl(params: {
   }
 }
 
+function mapClassificationToDb(val?: string): 'global' | 'organization' | 'user' {
+  if (!val) return 'organization'
+  if (val === 'personal') return 'user'
+  if (val === 'global') return 'global'
+  return 'organization' // department and team map to organization
+}
+
+function mapFrameworkToDb(val?: string | null): 'GDPR' | 'HIPAA' | 'SOC2' | 'ISO27001' | 'NIST' | 'OWASP_LLM_TOP_10' | 'EU_AI_ACT' | 'SECURITY_FRAMEWORKS' | 'RESEARCH_PAPERS' | null {
+  if (!val) return null
+  switch (val) {
+    case 'GDPR': return 'GDPR'
+    case 'HIPAA': return 'HIPAA'
+    case 'SOC2': return 'SOC2'
+    case 'ISO27001': return 'ISO27001'
+    case 'NIST': return 'NIST'
+    case 'NIST_CSF': return 'NIST'
+    case 'OWASP': return 'OWASP_LLM_TOP_10'
+    case 'OWASP_LLM_TOP_10': return 'OWASP_LLM_TOP_10'
+    case 'EU_AI_ACT': return 'EU_AI_ACT'
+    case 'PCI_DSS': return 'SECURITY_FRAMEWORKS'
+    case 'RESEARCH': return 'RESEARCH_PAPERS'
+    case 'RESEARCH_PAPERS': return 'RESEARCH_PAPERS'
+    case 'SECURITY': return 'SECURITY_FRAMEWORKS'
+    case 'SECURITY_FRAMEWORKS': return 'SECURITY_FRAMEWORKS'
+    case 'CUSTOM': return 'SECURITY_FRAMEWORKS'
+    default: return 'SECURITY_FRAMEWORKS'
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. REGISTER DOCUMENT IN DB (status = 'uploading')
 // Called BEFORE the storage upload begins so we have a document row to
@@ -142,6 +171,9 @@ export async function registerDocument(
   const safeExt = isAllowedExt ? originalExt : '.pdf'
   const filename = safe.endsWith(safeExt) ? safe : `${safe}${safeExt}`
 
+  const dbClassification = mapClassificationToDb(input.classification)
+  const dbFramework = mapFrameworkToDb(input.framework)
+
   const insertPayload = {
     id:              docId,
     org_id:          orgId,
@@ -151,12 +183,12 @@ export async function registerDocument(
     storage_path:    storagePath,
     file_size_bytes: input.file.size,
     page_count:      0,
-    status:          'uploading' as import('./types').DocumentStatus,
+    status:          'uploading' as any,
     doc_type:        input.doc_type,
     department:      input.department,
     sensitivity:     input.sensitivity,
-    classification:  input.classification ?? 'organization',
-    framework:       input.framework ?? null,
+    classification:  dbClassification,
+    framework:       dbFramework,
   }
 
   const { data, error } = await supabase
@@ -204,7 +236,7 @@ export async function updateDocumentStatus(
   const { error } = await admin
     .from('documents')
     .update({
-      status,
+      status: status as any,
       ...(extras?.page_count !== undefined ? { page_count: extras.page_count } : {}),
       ...(extras?.error_message !== undefined ? { error_message: extras.error_message } : {}),
       updated_at: new Date().toISOString(),
@@ -287,7 +319,7 @@ export async function listDocuments(
     .neq('status', 'deleted')
     .order('created_at', { ascending: false })
 
-  if (filters.status) query = query.eq('status', filters.status)
+  if (filters.status) query = query.eq('status', filters.status as any)
   if (filters.doc_type) query = query.eq('doc_type', filters.doc_type)
   if (filters.department) query = query.eq('department', filters.department)
   if (filters.sensitivity) query = query.eq('sensitivity', filters.sensitivity)
@@ -373,18 +405,36 @@ export async function softDeleteDocument(
     })
     .eq('id', docId)
 
-  if (!updateError) {
-    await logAuditEvent({
-      orgId: profile.org_id,
-      userId: profile.id,
-      action: 'document.soft_delete',
-      resourceType: 'document',
-      resourceId: docId,
-      newValue: { status: 'deleted' },
-    })
+  if (updateError) {
+    return { error: updateError.message }
   }
 
-  return { error: updateError?.message ?? null }
+  // ── Phase 3C.1: Cancel embedding jobs to prevent ghost resurrection ──────
+  // Soft-delete keeps the document row (status='deleted') for audit traceability.
+  // Pages, chunks, and embeddings are intentionally preserved.
+  //
+  // Only embedding_jobs are cancelled here, because an active or queued job
+  // is the sole mechanism by which a deleted document can "resurrect" — the
+  // background worker picks it up and sets status back to 'processing'.
+  //
+  // The DB trigger trg_cancel_jobs_on_document_delete (migration 0048) also
+  // fires on the status UPDATE above, marking queued/processing jobs as 'failed'.
+  // This application-layer delete is defence-in-depth.
+  await admin
+    .from('embedding_jobs')
+    .delete()
+    .eq('document_id', docId)
+
+  await logAuditEvent({
+    orgId: profile.org_id,
+    userId: profile.id,
+    action: 'document.soft_delete',
+    resourceType: 'document',
+    resourceId: docId,
+    newValue: { status: 'deleted' },
+  })
+
+  return { error: null }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

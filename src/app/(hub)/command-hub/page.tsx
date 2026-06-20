@@ -64,6 +64,15 @@ export default function CommandHubPage() {
       side: 'left'
     },
     {
+      id: 'workflows',
+      label: 'Compliance Workflows',
+      descriptor: 'Governance Operations',
+      bullets: ['Workflow Templates', 'Multi-model Runs', 'Execution Auditing', 'Resilience Pipeline'],
+      route: '/workflows',
+      icon: <Activity size={18} />,
+      side: 'left'
+    },
+    {
       id: 'vault',
       label: 'Knowledge Vault',
       descriptor: 'Knowledge Infrastructure',
@@ -312,6 +321,7 @@ export default function CommandHubPage() {
   const labelHighlights: Record<string, string> = {
     'mission-control': 'RISK',
     'workbench': 'GROUNDEDNESS',
+    'workflows': 'COMPLIANCE',
     'vault': 'INFRASTRUCTURE',
     'security': 'RISK',
     'compliance': 'COMPLIANCE',
@@ -376,30 +386,54 @@ export default function CommandHubPage() {
           backdropFilter: 'blur(16px)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div
+        <Link
+          href="/command-hub"
+          className="aegis-logo-link"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            textDecoration: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          <img
+            src="/logo-icon.png"
+            alt="AegisRAG Logo"
+            className="logo-img"
             style={{
               width: '24px',
               height: '24px',
-              borderRadius: '4px',
-              background: `linear-gradient(135deg, ${colors.indigo}, ${colors.violet})`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 0 10px rgba(99, 102, 241, 0.25)',
+              objectFit: 'contain',
+              userSelect: 'none',
+              transition: 'transform 0.3s ease, filter 0.3s ease',
             }}
-          >
-            <Shield size={12} style={{ color: '#fff' }} />
-          </div>
+            draggable={false}
+          />
           <div>
-            <span style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.12em', fontFamily: font.mono }}>
+            <span
+              className="logo-text"
+              style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                letterSpacing: '0.12em',
+                fontFamily: font.mono,
+                background: 'linear-gradient(135deg, #22D3EE 0%, #6366F1 50%, #8B5CF6 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                color: 'transparent',
+                display: 'inline-block',
+                transition: 'filter 0.3s ease',
+              }}
+            >
               AEGISRAG
             </span>
             <span style={{ color: colors.textMuted, fontSize: '8.5px', marginLeft: '12px', letterSpacing: '0.04em', fontFamily: font.mono }}>
               SYS_VERSION: 1.0.4-BETA
             </span>
           </div>
-        </div>
+        </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '9px', color: colors.emerald, fontFamily: font.mono, letterSpacing: '0.04em' }}>

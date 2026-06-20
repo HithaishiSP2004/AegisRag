@@ -111,7 +111,7 @@ export function useAudit(initial: AuditFilters = {}) {
         const data = await res.json()
         const rawLogs = data.logs || []
         const { generateAuditPdf } = await import('../utils/auditPdfExporter')
-        generateAuditPdf({
+        await generateAuditPdf({
           logs: rawLogs,
           filters: {
             actor: filters.actor,

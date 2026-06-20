@@ -31,6 +31,9 @@ interface PageDetail {
   error_message: string | null
   raw_text: string | null
   chunk_count: number
+  embedding_provider?: string | null
+  embedding_model?: string | null
+  embedding_dimensions?: number | null
 }
 
 interface Props {
@@ -44,9 +47,16 @@ interface Props {
     documents_updated_today: number
     documents_deleted_today: number
   }
+  queueMetrics?: {
+    queued: number
+    processing: number
+    completed: number
+    failed: number
+    avgProcessingTimeMs: number
+  }
 }
 
-export function DiagnosticsCockpit({ documents, orgStats }: Props) {
+export function DiagnosticsCockpit({ documents, orgStats, queueMetrics }: Props) {
   const toast = useToast()
   const [selectedDocId, setSelectedDocId] = useState<string>('')
   const [pages, setPages] = useState<PageDetail[]>([])
@@ -54,6 +64,28 @@ export function DiagnosticsCockpit({ documents, orgStats }: Props) {
   const [editingPageNum, setEditingPageNum] = useState<number | null>(null)
   const [editText, setEditText] = useState('')
   const [isPending, startTransition] = useTransition()
+  const [cacheStats, setCacheStats] = useState<{
+    provider: string
+    model: string
+    dimensions: number
+    cache_entries: number
+    cache_hit_rate: number
+  } | null>(null)
+
+  useEffect(() => {
+    const fetchCacheStats = async () => {
+      try {
+        const res = await fetch('/api/admin/cache/stats')
+        if (res.ok) {
+          const data = await res.json()
+          setCacheStats(data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch cache stats:', err)
+      }
+    }
+    fetchCacheStats()
+  }, [])
 
   // Find the selected document metadata
   const selectedDoc = documents.find(d => d.id === selectedDocId)
@@ -126,6 +158,40 @@ export function DiagnosticsCockpit({ documents, orgStats }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+      {/* ── Background Queue Metrics ───────────────────────────────────── */}
+      {queueMetrics && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: colors.bgCard, border: `1px solid ${colors.glassBorder}`, borderRadius: radius.xl, padding: '16px', boxShadow: shadow.sm }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px', marginBottom: '4px' }}>
+            <RefreshCw size={14} style={{ color: colors.violetLight }} />
+            <span style={{ color: colors.textPrimary, fontWeight: 700, fontSize: '0.85rem' }}>Background Embedding Queue Metrics</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+            <div style={{ padding: '12px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: radius.md }}>
+              <span style={{ fontSize: '0.62rem', color: colors.textSecondary, textTransform: 'uppercase' }}>Queued Jobs</span>
+              <div style={{ fontSize: '1.25rem', fontWeight: 700, color: colors.textPrimary, fontFamily: font.mono, marginTop: '4px' }}>{queueMetrics.queued}</div>
+            </div>
+            <div style={{ padding: '12px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: radius.md }}>
+              <span style={{ fontSize: '0.62rem', color: colors.textSecondary, textTransform: 'uppercase' }}>Processing Jobs</span>
+              <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#818CF8', fontFamily: font.mono, marginTop: '4px' }}>{queueMetrics.processing}</div>
+            </div>
+            <div style={{ padding: '12px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: radius.md }}>
+              <span style={{ fontSize: '0.62rem', color: colors.textSecondary, textTransform: 'uppercase' }}>Completed Jobs</span>
+              <div style={{ fontSize: '1.25rem', fontWeight: 700, color: colors.emerald, fontFamily: font.mono, marginTop: '4px' }}>{queueMetrics.completed}</div>
+            </div>
+            <div style={{ padding: '12px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: radius.md }}>
+              <span style={{ fontSize: '0.62rem', color: colors.textSecondary, textTransform: 'uppercase' }}>Failed Jobs</span>
+              <div style={{ fontSize: '1.25rem', fontWeight: 700, color: colors.rose, fontFamily: font.mono, marginTop: '4px' }}>{queueMetrics.failed}</div>
+            </div>
+            <div style={{ padding: '12px', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: radius.md }}>
+              <span style={{ fontSize: '0.62rem', color: colors.textSecondary, textTransform: 'uppercase' }}>Avg Job Duration</span>
+              <div style={{ fontSize: '1.25rem', fontWeight: 700, color: colors.cyan, fontFamily: font.mono, marginTop: '4px' }}>
+                {queueMetrics.avgProcessingTimeMs > 0 ? `${(queueMetrics.avgProcessingTimeMs / 1000).toFixed(1)}s` : '—'}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* ── Stats Summary Cards ─────────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
@@ -168,6 +234,34 @@ export function DiagnosticsCockpit({ documents, orgStats }: Props) {
             <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>Deleted today</span>
           </div>
         </div>
+
+        {cacheStats && (
+          <div style={{ padding: '16px', background: colors.bgCard, border: `1px solid ${colors.glassBorder}`, borderRadius: radius.lg, boxShadow: shadow.sm, gridColumn: 'span 2' }}>
+            <span style={{ fontSize: '0.65rem', fontWeight: 700, color: colors.textSecondary, textTransform: 'uppercase', fontFamily: font.mono }}>Active Embedding Cache Stats</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px', marginTop: '8px' }}>
+              <div>
+                <span style={{ fontSize: '0.6rem', color: colors.textSecondary }}>PROVIDER</span>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: colors.textPrimary, textTransform: 'capitalize' }}>{cacheStats.provider}</div>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.6rem', color: colors.textSecondary }}>MODEL</span>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: colors.textPrimary }}>{cacheStats.model}</div>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.6rem', color: colors.textSecondary }}>DIMENSIONS</span>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: colors.violetLight }}>{cacheStats.dimensions}d</div>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.6rem', color: colors.textSecondary }}>CACHED ENTRIES</span>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: colors.emerald }}>{cacheStats.cache_entries}</div>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.6rem', color: colors.textSecondary }}>HIT RATE</span>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: colors.cyan }}>{cacheStats.cache_hit_rate}%</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Document Explorer Cockpit ──────────────────────────────────── */}
@@ -207,7 +301,11 @@ export function DiagnosticsCockpit({ documents, orgStats }: Props) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.65rem', color: colors.textSecondary }}>
                     <span>{doc.classification.toUpperCase()} · {doc.page_count} Pages</span>
                     <span style={{
-                      color: doc.status === 'indexed' ? colors.emerald : doc.status === 'failed' || doc.status === 'embedding_failed' ? colors.rose : colors.violetLight
+                      color: doc.status === 'indexed' ? colors.emerald 
+                           : doc.status === 'failed' || doc.status === 'embedding_failed' ? colors.rose 
+                           : doc.status === 'queued' ? colors.textMuted
+                           : doc.status === 'processing' ? '#818CF8'
+                           : colors.violetLight
                     }}>
                       {doc.status}
                     </span>
@@ -292,7 +390,12 @@ export function DiagnosticsCockpit({ documents, orgStats }: Props) {
                         </div>
 
                         {/* Page Stats */}
-                        <div style={{ display: 'flex', gap: '16px', fontSize: '0.7rem', color: colors.textSecondary }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.7rem', color: colors.textSecondary }}>
+                          {page.embedding_provider && (
+                            <span style={{ color: colors.violetLight }}>
+                              Provenance: <strong>{page.embedding_provider} ({page.embedding_model}, {page.embedding_dimensions}d)</strong>
+                            </span>
+                          )}
                           <span>Word Count: <strong style={{ color: colors.textPrimary, fontFamily: font.mono }}>{page.word_count}</strong></span>
                           <span>Chunks: <strong style={{ color: colors.textPrimary, fontFamily: font.mono }}>{page.chunk_count}</strong></span>
                           <span>Vectors: <strong style={{ color: colors.textPrimary, fontFamily: font.mono }}>{page.chunk_count}</strong></span>

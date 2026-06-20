@@ -13,10 +13,10 @@ function fmt(n: number | null | undefined, decimals = 0) {
 
 // Color breakdown mapping for different AI models
 const MODEL_COLORS: Record<string, string> = {
-  'gemini-2.5-flash':      '#C084FC', // Purple
   'gemini-3.5-flash':      '#38BDF8', // Cyan
-  'gemini-3-flash':        '#34D399', // Emerald
   'gemini-3.1-flash-lite': '#FBBF24', // Amber
+  'gemini-2.5-flash':      '#C084FC', // Purple
+  'gemini-2.5-flash-lite': '#F472B6', // Pink
   'gemini-embedding-2':    '#FB923C', // Orange
   'raw_chunk_fallback':    '#94A3B8', // Muted
 }
@@ -51,14 +51,16 @@ export function GovernancePanel() {
 
   // Dynamically compute Model Failover Telemetry from database stats
   const failoverTelemetry = useMemo(() => {
-    let primary = 'gemini-2.5-flash'
-    let fallback = 'gemini-3.5-flash'
+    const primary = AI_MODELS.GENERATION_PRIMARY
+    let fallback: string = AI_MODELS.GENERATION_FALLBACK_1
 
     if (modelBreakdown.length > 0) {
-      const sortedByCalls = [...modelBreakdown].sort((a, b) => b.calls - a.calls)
-      primary = sortedByCalls[0]?.model || primary
-      const fallbackModel = sortedByCalls.find(m => m.model !== primary && m.fallback_count > 0) || sortedByCalls[1]
-      fallback = fallbackModel?.model || fallback
+      // Find active fallback models (excluding primary and embedding models)
+      const activeFallbacks = modelBreakdown.filter(m => m.model !== primary && m.model !== AI_MODELS.EMBEDDING)
+      if (activeFallbacks.length > 0) {
+        const sortedFallbacks = [...activeFallbacks].sort((a, b) => b.calls - a.calls)
+        fallback = sortedFallbacks[0]?.model || fallback
+      }
     }
     
     // Total failover counts (any query executed with a fallback_level > 0 in model breakdown)

@@ -1,0 +1,977 @@
+[
+  {
+    "question": "What is A01 (Broken Access Control) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Cryptographic Failures (A02) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A03: Injection.",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A04 (Insecure Design) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Security Misconfiguration (A05) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A06: Vulnerable and Outdated Components.",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A07 (Identification and Authentication Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Software and Data Integrity Failures (A08) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A09: Security Logging and Monitoring Failures.",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A10 (Server-Side Request Forgery) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Broken Access Control (A01) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A02: Cryptographic Failures.",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A03 (Injection) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Insecure Design (A04) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A05: Security Misconfiguration.",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A06 (Vulnerable and Outdated Components) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Identification and Authentication Failures (A07) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A08: Software and Data Integrity Failures.",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A09 (Security Logging and Monitoring Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Server-Side Request Forgery (A10) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A01: Broken Access Control.",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A02 (Cryptographic Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Injection (A03) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A04: Insecure Design.",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A05 (Security Misconfiguration) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Vulnerable and Outdated Components (A06) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A07: Identification and Authentication Failures.",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A08 (Software and Data Integrity Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Security Logging and Monitoring Failures (A09) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A10: Server-Side Request Forgery.",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A01 (Broken Access Control) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Cryptographic Failures (A02) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A03: Injection.",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A04 (Insecure Design) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Security Misconfiguration (A05) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A06: Vulnerable and Outdated Components.",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A07 (Identification and Authentication Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Software and Data Integrity Failures (A08) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A09: Security Logging and Monitoring Failures.",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A10 (Server-Side Request Forgery) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Broken Access Control (A01) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A02: Cryptographic Failures.",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A03 (Injection) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Insecure Design (A04) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A05: Security Misconfiguration.",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A06 (Vulnerable and Outdated Components) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Identification and Authentication Failures (A07) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A08: Software and Data Integrity Failures.",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A09 (Security Logging and Monitoring Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Server-Side Request Forgery (A10) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A01: Broken Access Control.",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A02 (Cryptographic Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Injection (A03) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A04: Insecure Design.",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A05 (Security Misconfiguration) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Vulnerable and Outdated Components (A06) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A07: Identification and Authentication Failures.",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A08 (Software and Data Integrity Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Security Logging and Monitoring Failures (A09) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A10: Server-Side Request Forgery.",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A01 (Broken Access Control) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Cryptographic Failures (A02) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A03: Injection.",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A04 (Insecure Design) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Security Misconfiguration (A05) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A06: Vulnerable and Outdated Components.",
+    "expectedKeywords": [
+      "a06",
+      "vulnerable",
+      "and",
+      "outdated",
+      "components",
+      "cve"
+    ],
+    "expectedControlFamily": "A06",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A07 (Identification and Authentication Failures) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a07",
+      "identification",
+      "and",
+      "authentication",
+      "failures",
+      "session"
+    ],
+    "expectedControlFamily": "A07",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Software and Data Integrity Failures (A08) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a08",
+      "software",
+      "and",
+      "data",
+      "integrity",
+      "failures"
+    ],
+    "expectedControlFamily": "A08",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A09: Security Logging and Monitoring Failures.",
+    "expectedKeywords": [
+      "a09",
+      "security",
+      "logging",
+      "and",
+      "monitoring",
+      "failures"
+    ],
+    "expectedControlFamily": "A09",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A10 (Server-Side Request Forgery) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a10",
+      "server-side",
+      "request",
+      "forgery",
+      "ssrf",
+      "url"
+    ],
+    "expectedControlFamily": "A10",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Broken Access Control (A01) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a01",
+      "broken",
+      "access",
+      "control",
+      "access control",
+      "privileges"
+    ],
+    "expectedControlFamily": "A01",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A02: Cryptographic Failures.",
+    "expectedKeywords": [
+      "a02",
+      "cryptographic",
+      "failures",
+      "cryptography",
+      "encryption",
+      "ssl"
+    ],
+    "expectedControlFamily": "A02",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "What is A03 (Injection) in the OWASP Top 10 vulnerabilities?",
+    "expectedKeywords": [
+      "a03",
+      "injection",
+      "sql injection",
+      "xss",
+      "command injection",
+      "sanitize"
+    ],
+    "expectedControlFamily": "A03",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "How do you prevent and mitigate Insecure Design (A04) according to OWASP Top 10?",
+    "expectedKeywords": [
+      "a04",
+      "insecure",
+      "design",
+      "architecture",
+      "threat modeling",
+      "secure lifecycle"
+    ],
+    "expectedControlFamily": "A04",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  },
+  {
+    "question": "Explain the security risks associated with A05: Security Misconfiguration.",
+    "expectedKeywords": [
+      "a05",
+      "security",
+      "misconfiguration",
+      "default",
+      "credentials",
+      "xml external entity"
+    ],
+    "expectedControlFamily": "A05",
+    "expectedSourceDocument": "owasp-top-10.pdf"
+  }
+]

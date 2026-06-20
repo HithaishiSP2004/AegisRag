@@ -208,7 +208,7 @@ export function ComplianceScorecard({ data, loading }: Props) {
         </div>
       </div>
 
-      {/* Split details layout: Remediation list + Deloitte Executive Storytelling */}
+      {/* Split details layout: Remediation list + Professional Advisory Narrative */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.2fr)',
@@ -254,7 +254,7 @@ export function ComplianceScorecard({ data, loading }: Props) {
           )}
         </div>
 
-        {/* Right: PwC/Deloitte Executive Storytelling */}
+        {/* Right: Professional Advisory Narrative */}
         <div style={{
           background: '#0B0F19', border: '1px solid rgba(255,255,255,0.06)', borderRadius: radius.xl,
           padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '16px'

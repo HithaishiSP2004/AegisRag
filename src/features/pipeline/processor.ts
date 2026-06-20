@@ -12,6 +12,7 @@
 
 import { createAdminClient } from '@/lib/supabase/server'
 import { embeddingService } from '@/features/embeddings/embeddingService'
+import { normalizeText, computeSHA256 } from '@/features/embeddings/cache/contentHash'
 import type { Json } from '@/types/database'
 import { PDFParse } from 'pdf-parse'
 import mammoth from 'mammoth'
@@ -37,12 +38,13 @@ export async function processDocument(documentId: string): Promise<{
   embeddingsCreated: number
   error?: string
 }> {
+  embeddingService.resetStats();
   const admin = createAdminClient()
 
   // ── 1. Fetch document metadata ────────────────────────────────────────────
   const { data: rawDoc, error: docErr } = await admin
     .from('documents')
-    .select('id, org_id, storage_path, doc_type, department, sensitivity, uploaded_by, filename, classification, framework')
+    .select('id, org_id, storage_path, doc_type, department, sensitivity, uploaded_by, filename, classification, framework, original_name')
     .eq('id', documentId)
     .single()
 
@@ -63,6 +65,7 @@ export async function processDocument(documentId: string): Promise<{
     filename: string
     classification: string
     framework: string | null
+    original_name: string
   }
 
   console.log('[pipeline] Starting for doc:', documentId, '| org:', doc.org_id)
@@ -270,6 +273,7 @@ export async function processDocument(documentId: string): Promise<{
             framework:            doc.framework,
             chunk_in_page:        i,
             total_chunks_in_page: textChunks.length,
+            document_title:       doc.original_name,
           } satisfies Json,
         })
       }
@@ -299,115 +303,44 @@ export async function processDocument(documentId: string): Promise<{
       }
     }
 
-    // ── 8. Set status → embedding ─────────────────────────────────────────────
-    await setStatus(admin, documentId, 'embedding')
+    // ── 8. Enqueue background embedding job ───────────────────────────────────
+    await setStatus(admin, documentId, 'queued')
 
-    // ── 9. Generate embeddings ────────────────────────────────────────────────
-    console.log('[pipeline] Generating embeddings for', insertedChunkIds.length, 'chunks...')
-    let embeddingRows: EmbeddingInsertRow[] = []
+    // Import queue service and background worker dynamically
+    const { queueService } = await import('@/features/embeddings/queue/queueService')
+    const { backgroundWorker } = await import('@/features/embeddings/queue/worker')
 
-    if (insertedChunkIds.length > 0) {
-      const { data: chunkRows, error: fetchChunkErr } = await admin
-        .from('chunks')
-        .select('id, content')
-        .in('id', insertedChunkIds)
-        .order('chunk_index', { ascending: true })
-
-      if (fetchChunkErr || !chunkRows) {
-        throw new Error(`Failed to fetch chunks for embedding: ${fetchChunkErr?.message}`)
-      }
-
-      embeddingRows = await generateEmbeddings(
-        doc.org_id,
-        chunkRows as Array<{ id: string; content: string }>
-      )
-
-      console.log('[pipeline] Generated', embeddingRows.length, 'embeddings')
-
-      // Insert embeddings in batches of 50
-      for (let i = 0; i < embeddingRows.length; i += 50) {
-        const batch = embeddingRows.slice(i, i + 50)
-        const { error: embErr } = await admin.from('embeddings').insert(batch)
-        if (embErr) {
-          throw new Error(`embeddings INSERT batch ${i / 50} failed: ${embErr.message}`)
-        }
-      }
-
-      // Mark processed pages as embedded
-      const pageIdsToEmbed = pagesToProcess.map(p => p.id)
-      if (pageIdsToEmbed.length > 0) {
-        await admin
-          .from('pages')
-          .update({ status: 'embedded' })
-          .in('id', pageIdsToEmbed)
-      }
-    }
+    // Create background job with default priority (100)
+    const jobId = await queueService.createJob(documentId, doc.org_id, allChunks.length, 100)
+    console.log(`[pipeline] Enqueued background job=${jobId} with ${allChunks.length} chunks`)
 
     // Write page-level update audit logs
     for (const page of pagesToProcess) {
       await auditLog(admin, doc.org_id, doc.uploaded_by, 'PAGE_UPDATED', documentId, { page_number: page.page_number, page_id: page.id })
     }
 
-    // ── 10. Set final status ──────────────────────────────────────────────────
-    if (pagesToProcess.length > 0 && embeddingRows.length === 0 && insertedChunkIds.length > 0) {
-      const reason = 'Embedding step produced 0 vectors — check GEMINI_API_KEY and quota.'
-      console.warn('[pipeline] ⚠ embedding_failed:', reason)
-
-      await admin
-        .from('documents')
-        .update({
-          status:        'embedding_failed',
-          error_message: reason,
-          updated_at:    new Date().toISOString(),
-        })
-        .eq('id', documentId)
-
-      await auditLog(admin, doc.org_id, doc.uploaded_by, 'document.parser_completed', documentId, {
-        pages:            insertedPages.length,
-        chunks:           allChunks.length,
-        embeddings:       0,
-        embedding_status: 'failed — 0 vectors generated',
-      })
-
-      return {
-        success:           false,
-        pagesProcessed:    pagesToProcess.length,
-        chunksCreated:     allChunks.length,
-        embeddingsCreated: 0,
-        error:             reason,
-      }
-    }
-
-    await setStatus(admin, documentId, 'indexed')
-
-    // Audit: DOCUMENT_CREATED or DOCUMENT_UPDATED
+    // Audit: DOCUMENT_QUEUED
     const completionAction = isUpdate ? 'DOCUMENT_UPDATED' : 'DOCUMENT_CREATED'
     await auditLog(admin, doc.org_id, doc.uploaded_by, completionAction, documentId, {
       pages:      parsedPages.length,
-      is_update:  isUpdate
+      is_update:  isUpdate,
+      queued:     true
     })
 
-    // Audit: parser completed (legacy compatibility)
-    await auditLog(admin, doc.org_id, doc.uploaded_by, 'document.parser_completed', documentId, {
-      pages:      parsedPages.length,
-      chunks:     allChunks.length,
-      embeddings: embeddingRows.length,
-    })
-
-    console.log('[pipeline] ✅ Complete:', {
-      pages: parsedPages.length,
-      chunks: allChunks.length,
-      embeddings: embeddingRows.length,
-    })
+    // Trigger background worker asynchronously (fire-and-forget)
+    backgroundWorker.startWorker()
 
     return {
       success:           true,
       pagesProcessed:    parsedPages.length,
       chunksCreated:     allChunks.length,
-      embeddingsCreated: embeddingRows.length,
+      embeddingsCreated: 0,
     }
 
   } catch (err: unknown) {
+    const stats = embeddingService.getStats();
+    console.log(`[embedding-cache]\nhits=${stats.hits}\nmisses=${stats.misses}\nhit_rate=${stats.hitRate}%`);
+
     const msg = err instanceof Error ? err.message : String(err)
     console.error('[pipeline] ❌ FAILED:', msg, err instanceof Error ? err.stack : '')
 
@@ -552,6 +485,9 @@ export interface EmbeddingInsertRow {
   org_id:     string
   embedding:  number[]
   model_used: string
+  provider:   string
+  model_name: string
+  embedding_dimensions: number
 }
 
 export async function generateEmbeddings(
@@ -568,24 +504,47 @@ export async function generateEmbeddings(
     chunkCount: chunks.length,
   })
 
-  const rows: EmbeddingInsertRow[] = []
-  const texts = chunks.map(c => c.content)
+  const hashToChunks = new Map<string, Array<{ id: string; content: string }>>();
+  const uniqueHashes: string[] = [];
+  const uniqueTexts: string[] = [];
 
-  // Call the single entry point
-  const embeddings = await embeddingService.generateEmbeddings(texts)
-
-  for (let i = 0; i < chunks.length; i++) {
-    const values = embeddings[i]
-    if (!values || values.length !== expectedDimensions) {
-      console.warn(`[pipeline] Unexpected embedding dimension or failed embedding for chunk ${chunks[i].id} — skipping`)
-      continue
+  for (const chunk of chunks) {
+    const hash = computeSHA256(normalizeText(chunk.content));
+    if (!hashToChunks.has(hash)) {
+      hashToChunks.set(hash, []);
+      uniqueHashes.push(hash);
+      uniqueTexts.push(chunk.content);
     }
-    rows.push({
-      chunk_id:   chunks[i].id,
-      org_id:     orgId,
-      embedding:  values,
-      model_used: modelName,
-    })
+    hashToChunks.get(hash)!.push(chunk);
+  }
+
+  console.log(`[embedding-dedup] In-batch deduplication: unique_chunks=${uniqueTexts.length}/${chunks.length}`);
+
+  const uniqueEmbeddings = await embeddingService.generateEmbeddings(uniqueTexts);
+
+  const rows: EmbeddingInsertRow[] = [];
+  for (let i = 0; i < uniqueHashes.length; i++) {
+    const hash = uniqueHashes[i];
+    const embedding = uniqueEmbeddings[i];
+    const chunksWithHash = hashToChunks.get(hash) || [];
+
+    if (!embedding || embedding.length !== expectedDimensions) {
+      throw new Error(
+        `[pipeline] Failed to generate valid embedding for chunk at index ${i} (hash=${hash}): expected ${expectedDimensions} dimensions, got ${embedding?.length ?? 0}. Aborting to prevent checkpoint advancement on incomplete data.`
+      );
+    }
+
+    for (const chunk of chunksWithHash) {
+      rows.push({
+        chunk_id:             chunk.id,
+        org_id:               orgId,
+        embedding:            embedding,
+        model_used:           modelName,
+        provider:             providerName,
+        model_name:           modelName,
+        embedding_dimensions: expectedDimensions,
+      });
+    }
   }
 
   console.log('[embedding] generated vectors:', rows.length)
@@ -594,9 +553,13 @@ export async function generateEmbeddings(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function setStatus(admin: any, docId: string, status: string) {
+  const updateData: any = { status, updated_at: new Date().toISOString() }
+  if (status !== 'failed') {
+    updateData.error_message = null
+  }
   await admin
     .from('documents')
-    .update({ status, updated_at: new Date().toISOString() })
+    .update(updateData)
     .eq('id', docId)
   console.log('[pipeline] Status →', status)
 }

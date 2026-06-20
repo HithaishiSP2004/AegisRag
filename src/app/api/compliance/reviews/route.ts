@@ -208,6 +208,28 @@ export async function PATCH(req: NextRequest) {
   if (next_review_date !== undefined) updatePayload.next_review_date = next_review_date
 
   const admin = createAdminClient()
+
+  // Verify that the control review belongs to the user's organization before updating
+  const { data: existingReview, error: checkErr } = await admin
+    .from('control_reviews')
+    .select(`
+      id,
+      compliance_controls!inner(
+        compliance_frameworks!inner(org_id)
+      )
+    `)
+    .eq('id', id)
+    .maybeSingle()
+
+  if (checkErr || !existingReview) {
+    return NextResponse.json({ error: 'Control review not found or unauthorized' }, { status: 404 })
+  }
+
+  const reviewOrgId = (existingReview as any).compliance_controls?.compliance_frameworks?.org_id
+  if (reviewOrgId !== profile.org_id) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const { data, error } = await admin
     .from('control_reviews')
     .update(updatePayload)

@@ -10,7 +10,7 @@ import { Icon } from '@iconify/react'
 import { CloudUploadIcon, File01Icon, AlertCircleIcon } from 'hugeicons-react'
 import { useDocumentUpload } from '../hooks/useDocumentUpload'
 import { DOC_TYPE_LABELS, SENSITIVITY_LABELS } from '../types'
-import type { DocumentUploadInput, DocumentType, SensitivityLevel } from '../types'
+import type { DocumentUploadInput, DocumentType, SensitivityLevel, DocumentFramework, DocumentClassification } from '../types'
 
 interface UploadDropzoneProps {
   onUploadComplete?: (documentId: string) => void
@@ -22,6 +22,8 @@ export function UploadDropzone({ onUploadComplete }: UploadDropzoneProps) {
   const [docType, setDocType] = useState<DocumentType>('other')
   const [sensitivity, setSensitivity] = useState<SensitivityLevel>('internal')
   const [department, setDepartment] = useState('')
+  const [framework, setFramework] = useState<DocumentFramework | ''>('')
+  const [classification, setClassification] = useState<DocumentClassification>('organization')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { progress, upload, reset } = useDocumentUpload({
@@ -64,12 +66,16 @@ export function UploadDropzone({ onUploadComplete }: UploadDropzoneProps) {
       doc_type: docType,
       sensitivity,
       department: department.trim() || null,
+      classification,
+      framework: framework || null,
     }
     await upload(input)
   }
 
   const handleReset = () => {
     setSelectedFile(null)
+    setFramework('')
+    setClassification('organization')
     reset()
   }
 
@@ -189,6 +195,48 @@ export function UploadDropzone({ onUploadComplete }: UploadDropzoneProps) {
                 {(Object.entries(SENSITIVITY_LABELS) as [SensitivityLevel, string][]).map(([val, label]) => (
                   <option key={val} value={val} style={{ background: '#0D1117', color: '#F8FAFC' }}>{label}</option>
                 ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', color: '#94A3B8', fontSize: '0.75rem', marginBottom: '6px', fontWeight: 500 }}>
+                Compliance Framework
+              </label>
+              <select
+                value={framework}
+                onChange={(e) => setFramework(e.target.value as DocumentFramework | '')}
+                style={selectStyle}
+                disabled={isActive}
+              >
+                <option value="" style={{ background: '#0D1117', color: '#F8FAFC' }}>None</option>
+                <option value="SOC2" style={{ background: '#0D1117', color: '#F8FAFC' }}>SOC2</option>
+                <option value="NIST" style={{ background: '#0D1117', color: '#F8FAFC' }}>NIST</option>
+                <option value="NIST_CSF" style={{ background: '#0D1117', color: '#F8FAFC' }}>NIST_CSF</option>
+                <option value="OWASP" style={{ background: '#0D1117', color: '#F8FAFC' }}>OWASP</option>
+                <option value="ISO27001" style={{ background: '#0D1117', color: '#F8FAFC' }}>ISO27001</option>
+                <option value="PCI_DSS" style={{ background: '#0D1117', color: '#F8FAFC' }}>PCI_DSS</option>
+                <option value="HIPAA" style={{ background: '#0D1117', color: '#F8FAFC' }}>HIPAA</option>
+                <option value="GDPR" style={{ background: '#0D1117', color: '#F8FAFC' }}>GDPR</option>
+                <option value="RESEARCH" style={{ background: '#0D1117', color: '#F8FAFC' }}>RESEARCH</option>
+                <option value="SECURITY" style={{ background: '#0D1117', color: '#F8FAFC' }}>SECURITY</option>
+                <option value="CUSTOM" style={{ background: '#0D1117', color: '#F8FAFC' }}>CUSTOM</option>
+              </select>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', color: '#94A3B8', fontSize: '0.75rem', marginBottom: '6px', fontWeight: 500 }}>
+                Classification *
+              </label>
+              <select
+                value={classification}
+                onChange={(e) => setClassification(e.target.value as DocumentClassification)}
+                style={selectStyle}
+                disabled={isActive}
+              >
+                <option value="organization" style={{ background: '#0D1117', color: '#F8FAFC' }}>Organization</option>
+                <option value="department" style={{ background: '#0D1117', color: '#F8FAFC' }}>Department</option>
+                <option value="team" style={{ background: '#0D1117', color: '#F8FAFC' }}>Team</option>
+                <option value="personal" style={{ background: '#0D1117', color: '#F8FAFC' }}>Personal</option>
               </select>
             </div>
 
