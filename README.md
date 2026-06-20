@@ -1,4 +1,4 @@
-# AegisRAG 🛡️
+# AegisRAG
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-v16-black.svg)](https://nextjs.org/)
@@ -11,29 +11,29 @@
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
-1. [What Is AegisRAG?](#-what-is-aegisrag)
-2. [Problem Statement](#-problem-statement)
-3. [Key Features](#-key-features)
-4. [System Architecture](#-system-architecture)
-5. [5-Stage Retrieval Pipeline](#-5-stage-retrieval-pipeline)
-6. [Security & Multi-Tenant Design](#-security--multi-tenant-design)
-7. [Application Screens](#-application-screens)
-8. [Technology Stack](#-technology-stack)
-9. [Prerequisites](#-prerequisites)
-10. [Installation & Setup](#-installation--setup)
-11. [Environment Variables Reference](#-environment-variables-reference)
-12. [Running the BGE Sidecar (Optional)](#-running-the-bge-sidecar-optional)
-13. [Database Migrations](#-database-migrations)
-14. [Project Structure](#-project-structure)
-15. [Future Roadmap](#-future-roadmap)
-16. [Contributing](#-contributing)
-17. [License](#-license)
+1. [What Is AegisRAG?](#what-is-aegisrag)
+2. [Problem Statement](#problem-statement)
+3. [Key Features](#key-features)
+4. [System Architecture](#system-architecture)
+5. [5-Stage Retrieval Pipeline](#5-stage-retrieval-pipeline)
+6. [Security & Multi-Tenant Design](#security--multi-tenant-design)
+7. [Application Screens](#application-screens)
+8. [Technology Stack](#technology-stack)
+9. [Prerequisites](#prerequisites)
+10. [Installation & Setup](#installation--setup)
+11. [Environment Variables Reference](#environment-variables-reference)
+12. [Running the BGE Sidecar (Optional)](#running-the-bge-sidecar-optional)
+13. [Database Migrations](#database-migrations)
+14. [Project Structure](#project-structure)
+15. [Future Roadmap](#future-roadmap)
+16. [Contributing](#contributing)
+17. [License](#license)
 
 ---
 
-## 🤔 What Is AegisRAG?
+## What Is AegisRAG?
 
 AegisRAG is a full-stack web application that replaces manual compliance document review with an AI-powered, security-hardened question-answering system. Instead of downloading and manually reading through hundreds of pages of compliance PDFs, you upload them to AegisRAG and ask questions in plain English.
 
@@ -46,7 +46,7 @@ AegisRAG retrieves the exact relevant sections, cites them, and generates a grou
 
 ---
 
-## 🚨 Problem Statement
+## Problem Statement
 
 Standard RAG (Retrieval-Augmented Generation) pipelines fail in enterprise compliance environments due to four critical problems:
 
@@ -61,21 +61,21 @@ Standard RAG (Retrieval-Augmented Generation) pipelines fail in enterprise compl
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-- 🔍 **Hybrid Search** — Combines semantic vector search (pgvector cosine similarity) with PostgreSQL full-text keyword search (TSVector), merged via Reciprocal Rank Fusion (RRF)
-- 👨‍👩‍👧 **Parent-Child Retrieval** — Child chunks (256 tokens) are indexed for precise search; parent chunks (1024 tokens) are returned to the LLM for rich context
-- 🧠 **Neural Reranking** — Optional local BGE Reranker sidecar scores candidates against the query for maximum relevance before LLM context injection
-- 🛡️ **Dual-Layer Guardrails** — Input guardrail blocks prompt injection; output guardrail redacts PII and validates citations before rendering
-- 🔒 **Database-Level Multi-Tenancy** — PostgreSQL Row-Level Security (RLS) enforces org isolation at the engine, not the application layer
-- 🎯 **Sensitivity Clearance Gates** — Filter document results dynamically by user clearance level (Public / Internal / Confidential / Restricted)
-- 📊 **RAG Evaluation Suite** — Automated benchmarking panel measuring Faithfulness, Answer Relevance, and Context Recall
-- 📄 **Compliance PDF Reports** — One-click PDF export of full audit reports with citations, risk scores, and remediation steps
-- 🏗️ **Embedding Provider Abstraction** — Swap between Google Gemini embeddings and a local BGE FastAPI sidecar without code changes
+- **Hybrid Search** — Combines semantic vector search (pgvector cosine similarity) with PostgreSQL full-text keyword search (TSVector), merged via Reciprocal Rank Fusion (RRF)
+- **Parent-Child Retrieval** — Child chunks (256 tokens) are indexed for precise search; parent chunks (1024 tokens) are returned to the LLM for rich context
+- **Neural Reranking** — Optional local BGE Reranker sidecar scores candidates against the query for maximum relevance before LLM context injection
+- **Dual-Layer Guardrails** — Input guardrail blocks prompt injection; output guardrail redacts PII and validates citations before rendering
+- **Database-Level Multi-Tenancy** — PostgreSQL Row-Level Security (RLS) enforces org isolation at the engine, not the application layer
+- **Sensitivity Clearance Gates** — Filter document results dynamically by user clearance level (Public / Internal / Confidential / Restricted)
+- **RAG Evaluation Suite** — Automated benchmarking panel measuring Faithfulness, Answer Relevance, and Context Recall
+- **Compliance PDF Reports** — One-click PDF export of full audit reports with citations, risk scores, and remediation steps
+- **Embedding Provider Abstraction** — Swap between Google Gemini embeddings and a local BGE FastAPI sidecar without code changes
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 AegisRAG is built on **Next.js 16 App Router** integrated with **Supabase (PostgreSQL + pgvector)**. The query lifecycle coordinates five stages of retrieval before generating a response:
 
@@ -91,20 +91,20 @@ graph TD
     E -->|pgvector Cosine Similarity| G[match_chunks_parent_child]
     F -->|Full-Text Search Match| H[search_chunks_keyword_parent_child]
 
-    G -->|Resolve Children → Parent IDs| I[Parent Resolution & Sibling Deduplication]
-    H -->|Resolve Children → Parent IDs| J[Parent Resolution & Sibling Deduplication]
+    G -->|Resolve Children to Parent IDs| I[Parent Resolution & Sibling Deduplication]
+    H -->|Resolve Children to Parent IDs| J[Parent Resolution & Sibling Deduplication]
 
-    I --> K[Reciprocal Rank Fusion — RRF]
+    I --> K[Reciprocal Rank Fusion - RRF]
     J --> K
 
-    K -->|Stage 4 — Optional| L[BGE Reranker Sidecar :8002]
-    L -->|Stage 5| M[Clean Context Window → LLM]
+    K -->|Stage 4 - Optional| L[BGE Reranker Sidecar :8002]
+    L -->|Stage 5| M[Clean Context Window to LLM]
     M -->|Output Guardrail Check| N[Final Audited Response]
 ```
 
 ---
 
-## 🔬 5-Stage Retrieval Pipeline
+## 5-Stage Retrieval Pipeline
 
 ### Stage 1 & 2 — Parent-Child Vector Retrieval
 
@@ -150,7 +150,7 @@ The final cleaned context window is sent to **Google Gemini** (`gemini-2.0-flash
 
 ---
 
-## 🔒 Security & Multi-Tenant Design
+## Security & Multi-Tenant Design
 
 ### Row-Level Security (RLS)
 
@@ -186,7 +186,7 @@ Document segments are tagged with a `sensitivity_level`. Retrieval queries dynam
 
 ---
 
-## 💻 Application Screens
+## Application Screens
 
 | Screen | Description |
 |:-------|:------------|
@@ -200,7 +200,7 @@ Document segments are tagged with a `sensitivity_level`. Retrieval queries dynam
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Technology | Version | Purpose |
 |:------|:-----------|:--------|:--------|
@@ -221,7 +221,7 @@ Document segments are tagged with a `sensitivity_level`. Retrieval queries dynam
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before you begin, make sure you have the following installed and configured:
 
@@ -230,19 +230,19 @@ Before you begin, make sure you have the following installed and configured:
 | **Node.js** | v18.0.0+ | Required for Next.js |
 | **npm** | v9.0.0+ | Comes with Node.js |
 | **Git** | Any | For cloning the repo |
-| **Supabase Account** | - | Free tier is sufficient. Create at [supabase.com](https://supabase.com) |
-| **Google AI Studio Account** | - | Get a free Gemini API key at [aistudio.google.com](https://aistudio.google.com/app/apikey) |
+| **Supabase Account** | — | Free tier is sufficient. Create at [supabase.com](https://supabase.com) |
+| **Google AI Studio Account** | — | Get a free Gemini API key at [aistudio.google.com](https://aistudio.google.com/app/apikey) |
 | **Python 3.9+** *(Optional)* | 3.9+ | Only needed if running the local BGE reranker sidecar |
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Step 1 — Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/aegisrag.git
-cd aegisrag
+git clone https://github.com/HithaishiSP2004/AegisRag.git
+cd AegisRag
 ```
 
 ### Step 2 — Install Node.js Dependencies
@@ -259,9 +259,9 @@ Copy the example environment file and fill in your credentials:
 cp .env.example .env.local
 ```
 
-Open `.env.local` in a text editor and fill in all the required values. See the [Environment Variables Reference](#-environment-variables-reference) below for details on each variable.
+Open `.env.local` in a text editor and fill in all the required values. See the [Environment Variables Reference](#environment-variables-reference) section below for details on each variable.
 
-> ⚠️ **IMPORTANT**: Never commit `.env.local` to Git. It is already listed in `.gitignore`.
+> **Important:** Never commit `.env.local` to Git. It is already listed in `.gitignore` to prevent this.
 
 ### Step 4 — Set Up Your Supabase Project
 
@@ -295,7 +295,7 @@ Register a new account via the signup page. The first user in an organization au
 
 ---
 
-## ⚙️ Environment Variables Reference
+## Environment Variables Reference
 
 Create a `.env.local` file based on `.env.example`. Here is a description of every variable:
 
@@ -305,7 +305,7 @@ Create a `.env.local` file based on `.env.example`. Here is a description of eve
 |:---------|:------------|:--------------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project's API URL | Supabase Dashboard → Project Settings → API |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anonymous client key | Supabase Dashboard → Project Settings → API |
-| `SUPABASE_SERVICE_ROLE_KEY` | Admin service role key — **keep this secret, server-side only** | Supabase Dashboard → Project Settings → API |
+| `SUPABASE_SERVICE_ROLE_KEY` | Admin service role key — keep this secret, server-side only | Supabase Dashboard → Project Settings → API |
 
 ### Google Gemini (Required)
 
@@ -365,7 +365,7 @@ Create a `.env.local` file based on `.env.example`. Here is a description of eve
 
 ---
 
-## 🐍 Running the BGE Sidecar (Optional)
+## Running the BGE Sidecar (Optional)
 
 AegisRAG optionally uses a local Python FastAPI sidecar for **neural reranking** and/or **local embeddings**. This is entirely optional — the default setup uses Google Gemini.
 
@@ -389,11 +389,11 @@ uvicorn app:app --host 0.0.0.0 --port 8002
 
 Set `RERANKER_PROVIDER=bge` and `BGE_RERANKER_URL=http://localhost:8002/rerank` in `.env.local`.
 
-> 💡 **Tip**: First-time startup will download the model weights from HuggingFace (~270 MB). Subsequent startups are fast.
+> **Note:** First-time startup will download the model weights from HuggingFace (~270 MB). Subsequent startups are fast.
 
 ---
 
-## 🗄️ Database Migrations
+## Database Migrations
 
 All Supabase migrations are in the `supabase/migrations/` directory. They are applied in order and cover:
 
@@ -407,16 +407,17 @@ All Supabase migrations are in the `supabase/migrations/` directory. They are ap
 | `0051` | Parent-child retrieval functions (`match_chunks_parent_child`, `search_chunks_keyword_parent_child`) |
 
 To apply all migrations:
+
 ```bash
 supabase db push
 ```
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-aegisrag/
+AegisRag/
 ├── .env.example                   # Template for environment variables (safe to commit)
 ├── .gitignore                     # Excludes .env.local, node_modules, corpus/, etc.
 ├── supabase/
@@ -455,10 +456,10 @@ aegisrag/
 
 ---
 
-## 🗺️ Future Roadmap
+## Future Roadmap
 
 - [ ] **Multi-Vector Index Tuning** — Dynamic HNSW parameters (`m`, `ef_construction`) for large-scale deployments (500k+ chunks)
-- [ ] **AI-Powered Crosswalk Mapping** — Auto-map controls across frameworks (e.g., SOC 2 CC6.1 ↔ NIST AC-2)
+- [ ] **AI-Powered Crosswalk Mapping** — Auto-map controls across frameworks (e.g., SOC 2 CC6.1 to NIST AC-2)
 - [ ] **Virus-Scanning Storage Hook** — ClamAV integration to scan uploaded PDFs for malware during ingestion
 - [ ] **Local LLM Offline Gateway** — Ollama / LlamaCpp support for air-gapped government networks
 - [ ] **Continuous Evaluation Cron** — Scheduled weekly benchmark runs to monitor RAG quality drift
@@ -466,29 +467,29 @@ aegisrag/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! To contribute:
+Contributions are welcome. To contribute:
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feat/my-new-feature`
-3. Make your changes and commit: `git commit -m 'feat: add my new feature'`
+3. Commit your changes: `git commit -m 'feat: add my new feature'`
 4. Push your branch: `git push origin feat/my-new-feature`
 5. Open a Pull Request
 
-**Before opening a PR, please:**
-- Run `npm run type-check` to ensure no TypeScript errors
-- Run `npm run format:check` to verify code formatting
-- Make sure `.env.local` is **not** included in your commit
+Before opening a PR, please ensure:
+- `npm run type-check` passes with no TypeScript errors
+- `npm run format:check` passes with no formatting issues
+- `.env.local` is **not** included in your commit
 
 ---
 
-## 📄 License
+## License
 
 AegisRAG is released under the [MIT License](LICENSE).
 
 ---
 
 <div align="center">
-  <p>Built with ❤️ for enterprise compliance teams who deserve better tooling.</p>
+  <p>Built for enterprise compliance teams who deserve better tooling.</p>
 </div>
